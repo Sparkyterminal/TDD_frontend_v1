@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "cormoreg";
+  src: url("/Font/Cormorant_Garamond/CormorantGaramond-Regular.ttf")
+    format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "glancyr";
+  src: url(/Font/Glancyr/Glancyr-Regular.otf) format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "summer";
+  src: url(/Font/Summer/South_Signature.otf) format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "cormobold";
+  src: url("/Font/Cormorant_Garamond/CormorantGaramond-Bold.ttf")
+    format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "kannada";
+  src: url("/Font/Kannada/NotoSerifKannada-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+body {
+  background-color: #ebe5db;
+  /* background-color: #adc290; */
+}
+
+/* Default fonts */
+/* h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "cormoreg", serif;
+} */
+
+/* body,
+p,
+span,
+a,
+div {
+  font-family: "cormoreg", sans-serif;
+} */
