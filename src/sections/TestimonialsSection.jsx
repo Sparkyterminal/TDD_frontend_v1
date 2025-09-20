@@ -37,7 +37,9 @@ const testimonials = [
 const TestimonialCard = ({ text, author }) => {
   return (
     <div className="bg-[#adc290] text-black p-4 rounded-md shadow-md flex flex-col justify-between h-full w-80 mx-4">
-      <p className="mb-4 font-bold font-[cormoreg]">&quot;{text}&quot;</p>
+      <p className="mb-4 font-bold text-2xl font-[cormoreg]">
+        &quot;{text}&quot;
+      </p>
       <p className="text-right font-semibold">&mdash; {author}</p>
     </div>
   );
@@ -46,7 +48,7 @@ const TestimonialCard = ({ text, author }) => {
 const TestimonialsSection = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 py-8">
-      <h2 className="text-4xl font-medium mb-8 text-black text-center font-[glancyr]">
+      <h2 className="text-4xl font-medium mb-8 text-center font-[glancyr]">
         What Our Clients Say
       </h2>
 

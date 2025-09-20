@@ -62,9 +62,11 @@ const TabSection = () => {
           <img
             src={img}
             alt={name}
-            className="w-full h-32 object-cover rounded-md mb-2"
+            className="w-full h-60 object-cover rounded-md mb-2"
           />
-          <span className="text-center font-medium text-gray-900">{name}</span>
+          <span className="text-center text-lg font-medium text-gray-900">
+            {name}
+          </span>
         </div>
       ))}
     </div>
@@ -105,9 +107,16 @@ const TabSection = () => {
 
         {activeTab === "groupClasses" && (
           <div>
-            <h3 className="text-xl font-medium mb-4 text-center">
-              {tabData.groupClasses.subheading}
-            </h3>
+            <div className="flex items-center justify-center mb-4">
+              <span
+                className="inline-block w-3 h-3 rounded-full mr-2"
+                style={{ backgroundColor: "#D2663A" }}
+                aria-hidden="true"
+              ></span>
+              <h3 className="text-xl font-medium text-center m-0">
+                {tabData.groupClasses.subheading}
+              </h3>
+            </div>
             {renderItems(tabData.groupClasses.items)}
           </div>
         )}
@@ -134,10 +143,17 @@ const TabSection = () => {
               ))}
             </div>
 
-            {/* Subheading */}
-            <h4 className="text-lg font-medium mb-4 text-center">
-              {tabData.kids[kidsSubTab].subheading}
-            </h4>
+            {/* Subheading with circle */}
+            <div className="flex items-center justify-center mb-4">
+              <span
+                className="inline-block w-3 h-3 rounded-full mr-2"
+                style={{ backgroundColor: "#D2663A" }}
+                aria-hidden="true"
+              ></span>
+              <h4 className="text-lg font-medium text-center m-0">
+                {tabData.kids[kidsSubTab].subheading}
+              </h4>
+            </div>
             {/* Render kids items */}
             {renderItems(tabData.kids[kidsSubTab].items)}
           </div>

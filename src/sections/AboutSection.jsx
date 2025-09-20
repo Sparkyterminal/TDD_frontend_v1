@@ -7,12 +7,12 @@ const AboutSection = () => {
         {/* Left Image */}
         <div>
           <img
-            src="/assets/about2.png"
+            src="/assets/about1.png"
             alt="Dance Studio"
             className="w-full h-auto rounded-lg object-cover"
-            // style={{
-            //   filter: "drop-shadow(0 0 10px white) drop-shadow(0 0 6px white)",
-            // }}
+            style={{
+              filter: "drop-shadow(0 0 10px white) drop-shadow(0 0 6px white)",
+            }}
           />
         </div>
 
