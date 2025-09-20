@@ -112,7 +112,7 @@ const Header = ({ scrollToSection }) => {
                     navigate(route);
                     if (scrollToSection) scrollToSection(route);
                   }}
-                  className="font-[glancyr] text-base font-normal transition-all duration-200 rounded focus:outline-none hover:opacity-70"
+                  className="font-[glancyr] text-base font-normal transition-all duration-200 rounded focus:outline-none hover:opacity-70 cursor-pointer"
                   style={{ color }}
                 >
                   {label}
@@ -121,7 +121,7 @@ const Header = ({ scrollToSection }) => {
             })}
             <button
               onClick={() => navigate("/getmembership")}
-              className="ml-4 inline-flex items-center justify-center px-5 py-2 font-[glancyr] text-base leading-6 transition-all duration-200 border rounded-full focus:outline-none hover:bg-black/10"
+              className="ml-4 inline-flex items-center justify-center px-5 py-2 font-[glancyr] text-base leading-6 transition-all duration-200 border rounded-full focus:outline-none hover:bg-black/10 cursor-pointer"
               style={{
                 color: defaultTextColor,
                 borderColor: defaultTextColor,
@@ -131,7 +131,7 @@ const Header = ({ scrollToSection }) => {
             </button>
             <button
               onClick={() => navigate("/login")}
-              className="ml-2 inline-flex items-center justify-center px-5 py-2 font-[glancyr] text-base leading-6 transition-all duration-200 border rounded-full focus:outline-none hover:bg-black/10"
+              className="ml-2 inline-flex items-center justify-center px-5 py-2 font-[glancyr] text-base leading-6 transition-all duration-200 border rounded-full focus:outline-none hover:bg-black/10 cursor-pointer"
               style={{
                 color: defaultTextColor,
                 borderColor: defaultTextColor,
@@ -167,7 +167,7 @@ const Header = ({ scrollToSection }) => {
                         navigate(route);
                         if (scrollToSection) scrollToSection(route);
                       }}
-                      className="font-[glancyr] text-base font-normal transition-all duration-200 rounded p-2 hover:bg-black/10"
+                      className="font-[glancyr] text-base font-normal transition-all duration-200 rounded p-2 hover:bg-black/10 cursor-pointer"
                       style={{ color }}
                     >
                       {label}
