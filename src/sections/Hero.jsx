@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
+import { motion } from "motion/react";
 
 const Hero = () => {
   return (
@@ -12,18 +14,24 @@ const Hero = () => {
         muted
         playsInline
       />
-      {/* Black overlay */}
-      {/* <div className="absolute inset-0 bg-black bg-opacity-100"></div> */}
-      {/* <div className="absolute inset-0 bg-black bg-opacity-30"></div> */}
-
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center px-4 w-full">
-        <h1 className="text-yellow-500 font-serif text-6xl md:text-6xl lg:text-8xl font-extrabold mb-4">
+        <motion.h1
+          className="text-yellow-500 font-serif text-6xl md:text-6xl lg:text-8xl font-extrabold mb-4"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
           The Dance District
-        </h1>
-        <p className="text-white font-[summer] text-6xl md:text-7xl font-light">
+        </motion.h1>
+        <motion.p
+          className="text-white font-[summer] text-6xl md:text-7xl font-light"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1 }}
+        >
           by sahitya yogesh
-        </p>
+        </motion.p>
       </div>
     </section>
   );

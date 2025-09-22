@@ -31,7 +31,7 @@ const tabData = {
           name: "Creative Movement",
           img: "/assets/dance/creative-movement.jpg",
         },
-        { name: "Fun Rhythms", img: "/assets/dance/fun-movement.webp" },
+        { name: "Fun Rhythms", img: "/assets/dance/fun-movement.jpg" },
       ],
     },
     subJunior: {
