@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const tabData = {
   danceClasses: [
@@ -51,6 +53,13 @@ const tabData = {
   },
 };
 
+const fadeSlideVariants = {
+  initial: { opacity: 0, x: 40 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -40 },
+  transition: { duration: 0.5, ease: "easeOut" },
+};
+
 const TabSection = () => {
   const [activeTab, setActiveTab] = useState("danceClasses");
   const [kidsSubTab, setKidsSubTab] = useState("junior");
@@ -81,9 +90,18 @@ const TabSection = () => {
       {/* Main Tabs */}
       <div className="flex justify-center gap-6 mb-8 flex-wrap">
         {[
-          { id: "danceClasses", label: "Dance Classes" },
-          { id: "groupClasses", label: "Group Classes" },
-          { id: "kids", label: "Kids" },
+          {
+            id: "danceClasses",
+            label: "Dance Classes",
+          },
+          {
+            id: "groupClasses",
+            label: "Group Classes",
+          },
+          {
+            id: "kids",
+            label: "Kids",
+          },
         ].map(({ id, label }) => (
           <button
             key={id}
@@ -99,65 +117,95 @@ const TabSection = () => {
         ))}
       </div>
 
-      {/* Tab Content */}
-      <div>
-        {activeTab === "danceClasses" && (
-          <div>{renderItems(tabData.danceClasses)}</div>
-        )}
+      {/* Tab Content with AnimatePresence */}
+      <div style={{ minHeight: 350 }}>
+        <AnimatePresence mode="wait">
+          {activeTab === "danceClasses" && (
+            <motion.div
+              key="danceClasses"
+              variants={fadeSlideVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={fadeSlideVariants.transition}
+            >
+              {renderItems(tabData.danceClasses)}
+            </motion.div>
+          )}
 
-        {activeTab === "groupClasses" && (
-          <div>
-            <div className="flex items-center justify-center mb-4">
-              <span
-                className="inline-block w-3 h-3 rounded-full mr-2"
-                style={{ backgroundColor: "#D2663A" }}
-                aria-hidden="true"
-              ></span>
-              <h3 className="text-xl font-medium text-center m-0">
-                {tabData.groupClasses.subheading}
-              </h3>
-            </div>
-            {renderItems(tabData.groupClasses.items)}
-          </div>
-        )}
+          {activeTab === "groupClasses" && (
+            <motion.div
+              key="groupClasses"
+              variants={fadeSlideVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={fadeSlideVariants.transition}
+            >
+              <div className="flex items-center justify-center mb-4">
+                <span
+                  className="inline-block w-3 h-3 rounded-full mr-2"
+                  style={{ backgroundColor: "#D2663A" }}
+                  aria-hidden="true"
+                ></span>
+                <h3 className="text-xl font-medium text-center m-0">
+                  {tabData.groupClasses.subheading}
+                </h3>
+              </div>
+              {renderItems(tabData.groupClasses.items)}
+            </motion.div>
+          )}
 
-        {activeTab === "kids" && (
-          <div>
-            {/* Kids Sub Tabs */}
-            <div className="flex justify-center gap-4 mb-6 flex-wrap">
-              {[
-                { id: "junior", label: "Junior" },
-                { id: "subJunior", label: "Sub-Junior" },
-              ].map(({ id, label }) => (
-                <button
-                  key={id}
-                  onClick={() => setKidsSubTab(id)}
-                  className={`px-4 py-2 font-medium rounded-full transition ${
-                    kidsSubTab === id
-                      ? "bg-gray-900 text-white"
-                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Subheading with circle */}
-            <div className="flex items-center justify-center mb-4">
-              <span
-                className="inline-block w-3 h-3 rounded-full mr-2"
-                style={{ backgroundColor: "#D2663A" }}
-                aria-hidden="true"
-              ></span>
-              <h4 className="text-lg font-medium text-center m-0">
-                {tabData.kids[kidsSubTab].subheading}
-              </h4>
-            </div>
-            {/* Render kids items */}
-            {renderItems(tabData.kids[kidsSubTab].items)}
-          </div>
-        )}
+          {activeTab === "kids" && (
+            <motion.div
+              key="kids"
+              variants={fadeSlideVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={fadeSlideVariants.transition}
+            >
+              {/* Kids Sub Tabs */}
+              <div className="flex justify-center gap-4 mb-6 flex-wrap">
+                {[
+                  {
+                    id: "junior",
+                    label: "Junior",
+                  },
+                  {
+                    id: "subJunior",
+                    label: "Sub-Junior",
+                  },
+                ].map(({ id, label }) => (
+                  <button
+                    key={id}
+                    onClick={() => setKidsSubTab(id)}
+                    className={`px-4 py-2 font-medium rounded-full transition ${
+                      kidsSubTab === id
+                        ? "bg-gray-900 text-white"
+                        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {/* Subheading with circle */}
+              <div className="flex items-center justify-center mb-4">
+                <span
+                  className="inline-block w-3 h-3 rounded-full mr-2"
+                  style={{ backgroundColor: "#D2663A" }}
+                  aria-hidden="true"
+                ></span>
+                <h4 className="text-lg font-medium text-center m-0">
+                  {tabData.kids[kidsSubTab].subheading}
+                </h4>
+              </div>
+              {/* Render kids items */}
+              {renderItems(tabData.kids[kidsSubTab].items)}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   );
