@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import WorkshopCard from "../components/WorkshopCard";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Define workshops data inside this file
 const workshops = [
@@ -82,6 +84,7 @@ const WorkshopSection = () => {
   };
   const [cardsPerPage, setCardsPerPage] = useState(getCardsPerPage);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // 1 for next, -1 for prev
 
   useEffect(() => {
     const handleResize = () => setCardsPerPage(getCardsPerPage());
@@ -92,14 +95,39 @@ const WorkshopSection = () => {
   const totalPages = Math.ceil(upcomingWorkshops.length / cardsPerPage);
   const canShowNavigation = upcomingWorkshops.length > cardsPerPage;
 
-  const nextSlide = () =>
+  const nextSlide = () => {
+    setDirection(1);
     setCurrentIndex((prev) => Math.min(prev + 1, totalPages - 1));
-  const prevSlide = () => setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+  const prevSlide = () => {
+    setDirection(-1);
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
 
   const getCurrentWorkshops = () => {
     const start = currentIndex * cardsPerPage;
     const end = start + cardsPerPage;
     return upcomingWorkshops.slice(start, end);
+  };
+
+  const slideVariants = {
+    initial: (direction) => ({
+      opacity: 0,
+      x: direction > 0 ? 100 : -100,
+      scale: 0.98,
+    }),
+    animate: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+    exit: (direction) => ({
+      opacity: 0,
+      x: direction > 0 ? -100 : 100,
+      scale: 0.98,
+      transition: { duration: 0.4, ease: "easeIn" },
+    }),
   };
 
   return (
@@ -129,11 +157,23 @@ const WorkshopSection = () => {
             </div>
           )}
         </div>
-        {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-          {getCurrentWorkshops().map((workshop, idx) => (
-            <WorkshopCard key={idx} {...workshop} />
-          ))}
+        {/* Cards with animation */}
+        <div className="relative min-h-[340px]">
+          <AnimatePresence custom={direction} mode="wait">
+            <motion.div
+              key={currentIndex}
+              custom={direction}
+              variants={slideVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"
+            >
+              {getCurrentWorkshops().map((workshop, idx) => (
+                <WorkshopCard key={idx} {...workshop} />
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
         {/* Dots */}
         {canShowNavigation && (
@@ -141,7 +181,10 @@ const WorkshopSection = () => {
             {Array.from({ length: totalPages }).map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => {
+                  setDirection(index > currentIndex ? 1 : -1);
+                  setCurrentIndex(index);
+                }}
                 className={`w-2 h-2 rounded-full transition-all duration-200 ${
                   index === currentIndex
                     ? "bg-[#D16539] w-6"

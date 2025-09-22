@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { motion } from "framer-motion";
 
 // Color palette for cards
 const CARD_COLORS = ["bg-[#adc290]", "bg-[#f7e9c4]", "bg-[#e6b8b7]"];
@@ -60,11 +62,20 @@ const Rentals = () => {
     <>
       <Header />
       <div className="min-h-screen pt-24 px-4 sm:pt-28 w-full font-[glancyr] max-w-6xl mx-auto mb-16">
-        <h1 className="text-5xl mt-10 font-medium text-black mb-20 text-center font-[glancyr]">
+        <motion.h1
+          className="text-5xl mt-10 font-medium text-black mb-20 text-center font-[glancyr]"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
           Rent Our Space
-        </h1>
-        {/* Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-16">
+        </motion.h1>
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+        >
           {CARD_TEXTS.map((text, idx) => (
             <div
               key={text}
@@ -75,13 +86,22 @@ const Rentals = () => {
               {text}
             </div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Studio Media Section */}
-        <h2 className="text-4xl font-medium mb-8 text-center font-[glancyr]">
+        <motion.h2
+          className="text-4xl font-medium mb-8 text-center font-[glancyr]"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.6 }}
+        >
           Take a look at our studio
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        </motion.h2>
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.9 }}
+        >
           {studioMedia.map((media, idx) => (
             <div key={idx} className="flex justify-center">
               {media.type === "image" ? (
@@ -101,7 +121,7 @@ const Rentals = () => {
               )}
             </div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Modal */}
         {modalOpen && (

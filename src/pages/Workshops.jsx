@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { motion } from "framer-motion";
 
 // Workshops data inside this file
 const workshops = [
@@ -76,10 +78,20 @@ const Workshops = () => {
     <>
       <Header />
       <main className="min-h-screen pt-24 px-4 sm:pt-28 w-full font-[glancyr] max-w-6xl mx-auto mb-16">
-        <h1 className="text-5xl mt-10 font-medium text-black mb-10 text-center font-[glancyr]">
+        <motion.h1
+          className="text-5xl mt-10 font-medium text-black mb-10 text-center font-[glancyr]"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
           Workshops
-        </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+        </motion.h1>
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+        >
           {upcomingWorkshops.map((workshop, idx) => (
             <div
               key={idx}
@@ -109,7 +121,7 @@ const Workshops = () => {
               </p>
             </div>
           ))}
-        </div>
+        </motion.div>
       </main>
       <Footer />
     </>

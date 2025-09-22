@@ -2,22 +2,33 @@
 import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { motion } from "framer-motion";
 
 const GetMembership = () => {
   return (
     <>
       <Header />
       <section className="min-h-screen max-w-6xl mx-auto px-6 py-16 text-gray-900 font-[glancyr] flex flex-col justify-center">
-        <div className="text-center mb-14">
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
           <h2 className="text-5xl mt-10 font-medium mb-2 font-[glancyr]">
             Get Your Membership Today!
           </h2>
           <p className="text-gray-600 text-lg font-[glancyr]">
             Where every step transforms into rhythm, energy, and art.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          className="grid gap-8 md:grid-cols-2 lg:grid-cols-4"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+        >
           {/* 1 Month */}
           <div className="border border-black rounded-xl p-6 flex flex-col hover:shadow-lg transition-shadow">
             <div className="mx-auto mb-4 w-28 h-10 flex items-center justify-center rounded-lg bg-[#ADC290] font-[glancyr] text-md font-medium text-black">
@@ -93,7 +104,7 @@ const GetMembership = () => {
               Join Now
             </button>
           </div>
-        </div>
+        </motion.div>
       </section>
       <Footer />
     </>

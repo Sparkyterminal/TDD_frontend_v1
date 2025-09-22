@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -7,6 +8,7 @@ import {
   FaInstagram,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const CONTACT_INFO = {
   phone: "+91 80731 39244",
@@ -22,10 +24,20 @@ const Contact = () => {
     <>
       <Header />
       <div className="min-h-screen pt-24 px-4 sm:pt-28 w-full font-[glancyr] max-w-6xl mx-auto mb-16">
-        <h1 className="text-5xl mt-10 font-medium text-black mb-20 text-center font-[glancyr]">
+        <motion.h1
+          className="text-5xl mt-10 font-medium text-black mb-20 text-center font-[glancyr]"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
           Contact Us
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        </motion.h1>
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-10"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+        >
           {/* Map Section */}
           <div className="w-full h-100 rounded-lg overflow-hidden shadow">
             <iframe
@@ -66,7 +78,7 @@ const Contact = () => {
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
       <Footer />
     </>
