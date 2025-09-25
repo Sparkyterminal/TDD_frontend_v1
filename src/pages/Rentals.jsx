@@ -8,10 +8,19 @@ import { motion } from "framer-motion";
 const CARD_COLORS = ["bg-[#adc290]", "bg-[#f7e9c4]", "bg-[#e6b8b7]"];
 
 // Card texts
-const CARD_TEXTS = [
-  "For Wellness Workshops",
-  "For Interviews, Podcasts & Press Meets",
-  "For Sangeet and Wedding Choreography",
+const HERO_IMAGES = [
+  {
+    src: "/assets/rentals/wellness.png", // Change to your path
+    alt: "Wellness Studio Rental",
+  },
+  {
+    src: "/assets/rentals/interview.png", // Change to your path
+    alt: "Interviews & Podcasts Rental Space",
+  },
+  {
+    src: "/assets/rentals/wedding.png", // Change to your path
+    alt: "Wedding choreography Rental Space",
+  },
 ];
 
 // Studio media array (images and videos)
@@ -76,14 +85,19 @@ const Rentals = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
         >
-          {CARD_TEXTS.map((text, idx) => (
-            <div
-              key={text}
-              className={`rounded-xl shadow-lg p-8 text-center items-center justify-center text-2xl font-semibold text-black ${
-                CARD_COLORS[idx % CARD_COLORS.length]
-              }`}
-            >
-              {text}
+          {HERO_IMAGES.map((img, idx) => (
+            <div key={idx} className="flex flex-col items-center">
+              <img
+                src={img.src}
+                alt={img.alt}
+                className="rounded-2xl shadow-lg w-[256px] h-[382px] md:w-[320px] md:h-[477px] lg:w-[320px] lg:h-[477px] xl:w-[350px] xl:h-[520px] object-cover transition-transform duration-200 hover:scale-105"
+                style={{
+                  maxwidth: "1024px",
+                  maxheight: "1526px",
+                  // maxWidth: "100%",
+                  // maxHeight: "400px",
+                }} // for perfect size on large screens, capped at 400px on small
+              />
             </div>
           ))}
         </motion.div>

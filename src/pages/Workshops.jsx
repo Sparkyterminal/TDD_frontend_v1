@@ -1,78 +1,220 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { API_BASE_URL } from "../../config";
+import moment from "moment-timezone";
+import { useNavigate } from "react-router-dom";
 
-// Workshops data inside this file
-const workshops = [
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
-    workshopName: "Advanced Yoga Flow",
-    duration: "2 hours",
-    time: "10:00 AM - 12:00 PM",
-    date: "October 25, 2025",
-    instructor: "Sarah Johnson",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&h=400&fit=crop",
-    workshopName: "HIIT Training Bootcamp",
-    duration: "1.5 hours",
-    time: "6:00 PM - 7:30 PM",
-    date: "October 27, 2025",
-    instructor: "Mike Chen",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=400&fit=crop",
-    workshopName: "Mindfulness & Meditation",
-    duration: "1 hour",
-    time: "7:00 AM - 8:00 AM",
-    date: "October 29, 2025",
-    instructor: "Emily Davis",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=600&h=400&fit=crop",
-    workshopName: "Strength Training Fundamentals",
-    duration: "2.5 hours",
-    time: "2:00 PM - 4:30 PM",
-    date: "November 1, 2025",
-    instructor: "David Wilson",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=400&fit=crop",
-    workshopName: "Pilates Core Power",
-    duration: "1.5 hours",
-    time: "9:00 AM - 10:30 AM",
-    date: "November 3, 2025",
-    instructor: "Jessica Brown",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
-    workshopName: "Dance Fitness Fusion",
-    duration: "1 hour",
-    time: "5:00 PM - 6:00 PM",
-    date: "November 5, 2025",
-    instructor: "Maria Garcia",
-  },
-];
+// Define custom colors for consistency
+const COLORS = {
+  forestGreen: "#26442C",
+  darkForestGreen: "#1E791E", // Slightly darker for hover
+  orange: "#D16539",
+  yellow: "#FFD700", // Gold-like yellow for Hurry Up
+};
 
-// Filter only upcoming workshops
-function getUpcoming(workshops) {
-  const today = new Date();
-  return workshops.filter(({ date }) => {
-    const workshopDate = new Date(date);
-    return workshopDate >= today;
-  });
-}
+const getImageUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
+  return `${API_BASE_URL}api/${url}`;
+};
 
 const Workshops = () => {
-  const upcomingWorkshops = getUpcoming(workshops);
+  const [workshops, setWorkshops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchWorkshops() {
+      try {
+        setLoading(true);
+        // Using a more robust fetch approach for better error handling
+        const res = await axios.get(`${API_BASE_URL}workshop`);
+        const data = res.data?.data || res.data;
+        const list = Array.isArray(data) ? data : [];
+        const filtered = list.filter((w) => !w.is_cancelled);
+
+        // Sort by date/time to ensure recent/upcoming workshops are shown first,
+        // then reverse as done previously (though sorting by date desc is usually better)
+        // I will keep the previous reverse() logic to maintain the original order intent
+        setWorkshops(filtered.reverse());
+      } catch (e) {
+        console.error("Workshop fetch error:", e);
+        setError("Failed to load workshops. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchWorkshops();
+  }, []);
+
+  // Function to determine the status of the workshop
+  const getWorkshopStatus = (workshop) => {
+    const today = moment().tz("Asia/Kolkata").startOf("day");
+    const workshopDate = moment(workshop.date)
+      .tz("Asia/Kolkata")
+      .startOf("day");
+
+    const isExpired = workshopDate.isBefore(today);
+    const isBookedOut = workshop.capacity <= 0;
+    const isHurryUp = !isBookedOut && workshop.capacity < 5;
+
+    if (isExpired)
+      return {
+        tag: "Expired",
+        buttonText: "Expired",
+        isDisabled: true,
+        tagColor: "bg-gray-700 text-white",
+      };
+    if (isBookedOut)
+      return {
+        tag: "All Slots Booked",
+        buttonText: "All Slots Booked",
+        isDisabled: true,
+        tagColor: `bg-[#1E791E] text-white`,
+      };
+    if (isHurryUp)
+      return {
+        tag: "Hurry Up!",
+        buttonText: "Book Now",
+        isDisabled: false,
+        tagColor: `bg-[#FFD700] text-black`,
+      };
+
+    return {
+      tag: null,
+      buttonText: "Book Now",
+      isDisabled: false,
+      tagColor: "",
+    };
+  };
+
+  const MemoizedWorkshopCard = React.memo(({ w }) => {
+    const firstMedia =
+      Array.isArray(w.media) && w.media.length > 0 ? w.media[0] : null;
+    const thumbnail =
+      firstMedia?.image_url?.thumbnail?.low_res ||
+      firstMedia?.image_url?.thumbnail?.high_res;
+    const imageSrc = thumbnail ? getImageUrl(thumbnail) : "";
+    const instructors = Array.isArray(w.instructor_user_ids)
+      ? w.instructor_user_ids
+      : [];
+    const instructorNames = instructors
+      .map((i) => `${i.first_name || ""} ${i.last_name || ""}`.trim())
+      .filter(Boolean)
+      .join(", ");
+
+    const dateStr = w.date
+      ? moment(w.date).tz("Asia/Kolkata").format("DD MMM YYYY")
+      : "";
+    const timeStr = `${moment(w.start_time)
+      .tz("Asia/Kolkata")
+      .format("hh:mm A")} - ${moment(w.end_time)
+      .tz("Asia/Kolkata")
+      .format("hh:mm A")}`;
+
+    const status = getWorkshopStatus(w);
+
+    const DetailItem = ({ label, value, wrapValue = false }) => (
+      <div className="flex justify-between items-start">
+        {/* Label (Always left-aligned) */}
+        <span
+          style={{ color: COLORS.forestGreen }}
+          className="font-semibold mr-2 flex-shrink-0" // flex-shrink-0 prevents label from shrinking
+        >
+          {label}:
+        </span>
+
+        {/* Value (Allows wrapping, right-aligned, and takes up space) */}
+        <span
+          style={{ color: COLORS.orange }}
+          className={`text-right flex-grow ${
+            wrapValue ? "break-words" : "whitespace-nowrap"
+          }`}
+          // Added break-words to ensure long single words don't overflow, though less likely with names
+        >
+          {value}
+        </span>
+      </div>
+    );
+
+    return (
+      <div
+        key={w.id}
+        className="relative border rounded-lg shadow hover:shadow-xl transition duration-300 p-4 flex flex-col"
+      >
+        {status.tag && (
+          <div
+            className={`absolute top-0 right-0 m-4 px-3 py-1 text-xs font-bold rounded-full shadow-md ${status.tagColor}`}
+          >
+            {status.tag}
+          </div>
+        )}
+
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt={w.title}
+            className="w-full h-44 object-cover rounded-md mb-4"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src =
+                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50%' dominant-baseline='middle' text-anchor='middle' font-size='12' fill='gray'%3ENo Image%3C/text%3E%3C/svg%3E";
+            }}
+          />
+        ) : (
+          <div className="w-full h-44 bg-gray-100 rounded-md mb-4 flex items-center justify-center text-gray-400">
+            No Image
+          </div>
+        )}
+
+        {/* Title */}
+        <h2 className="text-xl text-[#26442C] font-bold mb-3">{w.title}</h2>
+
+        {/* Details Container with justified spacing */}
+        <div className="flex flex-col space-y-2 mb-4 flex-grow">
+          {/* Default items use the non-wrapping DetailItem behavior */}
+          <DetailItem label="Date" value={dateStr} />
+          <DetailItem label="Time" value={timeStr} />
+
+          {/* Instructors uses the new 'wrapValue' prop */}
+          <DetailItem
+            label="Instructor(s)"
+            value={instructorNames || "N/A"}
+            wrapValue={true}
+          />
+
+          <DetailItem label="Price" value={`₹${w.price}`} />
+          <DetailItem label="Seats Left" value={w.capacity} />
+        </div>
+
+        {/* Book Now Button */}
+        {/* ... (Button rendering remains the same) */}
+        <button
+          className={`mt-auto font-bold py-3 rounded transition duration-300 transform ${
+            status.isDisabled
+              ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+              : `bg-[#26442C] text-white hover:scale-[1.02] active:scale-[0.98] cursor-pointer`
+          }`}
+          onClick={() => navigate(`/book-workshop/${w.id}`)}
+          disabled={status.isDisabled}
+        >
+          {status.buttonText}
+        </button>
+      </div>
+    );
+  });
+
+  // Workshops List Render
+  const workshopList = workshops.map((w) => (
+    <MemoizedWorkshopCard key={w.id} w={w} />
+  ));
 
   return (
     <>
@@ -86,41 +228,41 @@ const Workshops = () => {
         >
           Workshops
         </motion.h1>
+
+        {error && (
+          <div className="text-center text-[#D16539] mb-6 font-semibold">
+            {error}
+          </div>
+        )}
+
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
         >
-          {upcomingWorkshops.map((workshop, idx) => (
-            <div
-              key={idx}
-              className="border rounded-lg shadow hover:shadow-lg transition p-4 flex flex-col"
-            >
-              <img
-                src={workshop.image}
-                alt={workshop.workshopName}
-                className="w-full h-40 object-cover rounded-md mb-4"
-              />
-              <h2 className="text-xl font-semibold mb-1">
-                {workshop.workshopName}
-              </h2>
-              <p className="text-gray-700 mb-1">
-                <span className="font-semibold">Duration:</span>{" "}
-                {workshop.duration}
-              </p>
-              <p className="text-gray-700 mb-1">
-                <span className="font-semibold">Time:</span> {workshop.time}
-              </p>
-              <p className="text-gray-700 mb-1">
-                <span className="font-semibold">Date:</span> {workshop.date}
-              </p>
-              <p className="text-gray-700">
-                <span className="font-semibold">Instructor:</span>{" "}
-                {workshop.instructor}
-              </p>
+          {!loading && workshops.length > 0 && workshopList}
+
+          {!loading && workshops.length === 0 && !error && (
+            <div className="col-span-full text-center py-10 text-gray-600 text-xl">
+              No workshops currently available. Check back soon!
             </div>
-          ))}
+          )}
+
+          {/* Loading Skeleton */}
+          {loading &&
+            Array.from({ length: 6 }).map((_, idx) => (
+              <div key={idx} className="border rounded-lg p-4 animate-pulse">
+                <div className="w-full h-44 bg-gray-200 rounded mb-4" />
+                <div className="h-4 bg-gray-200 rounded mb-3 w-3/4" />
+                <div className="h-3 bg-gray-200 rounded mb-2 w-1/2" />
+                <div className="h-3 bg-gray-200 rounded mb-2 w-1/3" />
+                <div className="h-3 bg-gray-200 rounded mb-2 w-2/3" />
+                <div className="h-3 bg-gray-200 rounded mb-2 w-1/4" />
+                <div className="h-3 bg-gray-200 rounded mb-4 w-1/2" />
+                <div className="h-10 bg-gray-200 rounded mt-auto" />
+              </div>
+            ))}
         </motion.div>
       </main>
       <Footer />

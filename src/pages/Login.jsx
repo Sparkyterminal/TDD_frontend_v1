@@ -7,7 +7,7 @@ import { API_BASE_URL, ROLES } from "../../config";
 import { login } from "../reducers/users";
 
 export default function Login() {
-  const [email_id, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,28 +24,27 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const apiPayload = { email_id, password };
+      const apiPayload = { email, password };
       const response = await axios.post(
-        `${API_BASE_URL}auth/login`,
+        `${API_BASE_URL}user/login`,
         apiPayload
       );
       if (response.status === 200) {
-        const { token, user } = response.data;
-        const { id, name, email_id, role } = user;
+        const { access_token, user_id, name, email, role } = response.data.data;
         dispatch(
           login({
-            id,
+            id: user_id,
             name,
             role,
-            email_id,
-            access_token: token,
+            email,
+            access_token,
             is_logged_in: true,
           })
         );
         navigate("/dashboard");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials");
+      setError(err.response?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -99,7 +98,7 @@ export default function Login() {
                   type="email"
                   required
                   autoComplete="email"
-                  value={email_id}
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   style={{
