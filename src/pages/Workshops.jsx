@@ -99,8 +99,7 @@ const Workshops = () => {
     const firstMedia =
       Array.isArray(w.media) && w.media.length > 0 ? w.media[0] : null;
     const thumbnail =
-      firstMedia?.image_url?.thumbnail?.low_res ||
-      firstMedia?.image_url?.thumbnail?.high_res;
+      firstMedia.image_url.full?.high_res;
     const imageSrc = thumbnail ? getImageUrl(thumbnail) : "";
     const instructors = Array.isArray(w.instructor_user_ids)
       ? w.instructor_user_ids

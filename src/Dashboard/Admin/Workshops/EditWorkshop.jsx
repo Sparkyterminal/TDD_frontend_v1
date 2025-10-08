@@ -190,15 +190,15 @@ const EditWorkshop = () => {
   
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#ebe5db] py-8 px-2 font-[glancyr]">
+    <div className="min-h-screen flex items-center justify-center py-8 px-2 font-[glancyr]">
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 sm:p-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#adc290] font-[glancyr]">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#26452D] font-[glancyr]">
           Edit Workshop
         </h2>
         <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
           <Card style={{ background: "#fff", border: "none", marginBottom: 24 }}>
             <Divider
-              style={{ color: "#adc290", borderColor: "#adc290", fontWeight: 700 }}
+              style={{ color: "#26452D", borderColor: "#26452D", fontWeight: 700 }}
               orientation="left"
             >
               Upload
@@ -216,7 +216,7 @@ const EditWorkshop = () => {
                 className="w-full"
               >
                 {fileList.length >= 1 ? null : (
-                  <div style={{ textAlign: "center", color: "#adc290" }}>
+                  <div style={{ textAlign: "center", color: "#26452D" }}>
                     <UploadOutlined />
                     <div style={{ marginTop: 8 }}>Upload</div>
                   </div>
@@ -229,7 +229,7 @@ const EditWorkshop = () => {
                   </Button>
                 )}
               </div>
-              <small style={{ color: "#adc290" }}>Max file size 2MB</small>
+              <small style={{ color: "#26452D" }}>Max file size 2MB</small>
             </Form.Item>
           </Card>
 
@@ -294,7 +294,7 @@ const EditWorkshop = () => {
             <div style={{ display: "flex", gap: 12 }}>
               <Button
                 onClick={() => navigate(-1)}
-                style={{ flex: 1, borderColor: "#adc290", color: "#adc290", fontWeight: 600 }}
+                style={{ flex: 1, borderColor: "#26452D", color: "#26452D", fontWeight: 600 }}
               >
                 Cancel
               </Button>
@@ -302,7 +302,7 @@ const EditWorkshop = () => {
                 type="primary"
                 htmlType="submit"
                 loading={uploading || loading}
-                style={{ flex: 1, background: "#adc290", borderColor: "#adc290", fontFamily: "glancyr", fontWeight: 600, fontSize: 16 }}
+                style={{ flex: 1, background: "#26452D", borderColor: "#26452D", fontFamily: "glancyr", fontWeight: 600, fontSize: 16 }}
               >
                 Save Changes
               </Button>

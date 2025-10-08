@@ -66,9 +66,9 @@ const EditClassTypes = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#ebe5db] py-8 px-2 font-[glancyr]">
+    <div className="min-h-screen flex items-center justify-center  py-8 px-2 font-[glancyr]">
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 sm:p-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#adc290] font-[glancyr]">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#26452D] font-[glancyr]">
           Edit Class Type
         </h2>
         {loading ? (
@@ -124,8 +124,8 @@ const EditClassTypes = () => {
                 loading={saving}
                 style={{
                   width: "100%",
-                  background: "#adc290",
-                  borderColor: "#adc290",
+                  background: "#26452D",
+                  borderColor: "#26452D",
                   fontFamily: "glancyr",
                   fontWeight: 600,
                   fontSize: 16,

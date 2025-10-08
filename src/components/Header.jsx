@@ -19,7 +19,7 @@ const Header = ({ scrollToSection }) => {
   const isHome = location.pathname === "/";
 
   // Background color: transparent only if on homepage and not scrolled
-  const bgColor = isHome && !isSticky ? "transparent" : "#EBE5DB";
+  const bgColor = isHome && !isSticky ? "transparent" : "#ebe5db";
 
   // Default text color is black when bgColor is #EBE5DB, white when transparent
   const defaultTextColor = bgColor === "transparent" ? "#FFFFFF" : "#000000";

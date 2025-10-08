@@ -29,15 +29,29 @@ import ViewWorkshop from "./Dashboard/Admin/Workshops/ViewWorkshop";
 import AddClassType from "./Dashboard/Admin/ClassTypes/AddClassType";
 import EditClassTypes from "./Dashboard/Admin/ClassTypes/EditClassTypes";
 import ViewClassTypes from "./Dashboard/Admin/ClassTypes/ViewClassTypes";
-import AddUser from "./Dashboard/Admin/UserManagement/AddUser";
-import EditUser from "./Dashboard/Admin/UserManagement/EditUser";
-import ViewUser from "./Dashboard/Admin/UserManagement/ViewUser";
 import AddCoach from "./Dashboard/Admin/UserManagement/Coach/AddCoach";
 import EditCoach from "./Dashboard/Admin/UserManagement/Coach/EditCoach";
 import ViewCoach from "./Dashboard/Admin/UserManagement/Coach/ViewCoach";
 import UserInfoWorkshop from "./pages/UserInfoWorkshop";
 import Success from "./pages/Success";
 import Failure from "./pages/Failure";
+import AddMembership from "./Dashboard/Admin/Membership/AddMembership";
+import EditMembership from "./Dashboard/Admin/Membership/EditMembership";
+import ViewMembership from "./Dashboard/Admin/Membership/ViewMembership";
+import MembershipUsers from "./Dashboard/Admin/Membership/MembershipUsers";
+import MembershipForm from "./pages/MembershipForm";
+import AddClasses from "./Dashboard/Admin/BookingClasses/AddClasses";
+import EditClasses from "./Dashboard/Admin/BookingClasses/EditClasses";
+import ViewClasses from "./Dashboard/Admin/BookingClasses/ViewClasses";
+import UserDashboard from "./LayoutFixed/UserLayout";
+import UserHomePage from "./Dashboard/User/UserHomePage";
+import Bookclasses from "./Dashboard/User/classes/Bookclasses";
+import ChangePassword from "./Dashboard/User/ChangePassword";
+import EnrolledClasses from "./Dashboard/User/classes/EnrolledClasses";
+import UsersClasses from "./Dashboard/Admin/BookingClasses/UsersClasses";
+import TermsandConditions from "./pages/TermsandConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 // import LoadingPage from "./components/LoadingPage"; // Import your custom LoadingPage
 
 const App = () => {
@@ -107,9 +121,13 @@ const App = () => {
             <Route path="/book-workshop/:id" element={<UserInfoWorkshop />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/getmembership" element={<GetMembership />} />
+            <Route path="membershipform/:id" element={<MembershipForm />} />
             <Route path="/login" element={<Login />} />
             <Route path="/payment-success" element={<Success />} />
             <Route path="/payment-failure" element={<Failure />} />
+            <Route path="/termsandconditions" element={<TermsandConditions />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/refund" element={<RefundPolicy />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
         ) : isAdmin ? (
@@ -124,23 +142,36 @@ const App = () => {
               <Route path="addclasstypes" element={<AddClassType />} />
               <Route path="editclasstypes/:id" element={<EditClassTypes />} />
               <Route path="viewclasstypes" element={<ViewClassTypes />} />
-              <Route path="adduser" element={<AddUser />} />
-              <Route path="edituser/:id" element={<EditUser />} />
-              <Route path="viewuser" element={<ViewUser />} />
               <Route path="addcoach" element={<AddCoach />} />
               <Route path="editcoach/:id" element={<EditCoach />} />
               <Route path="viewcoach" element={<ViewCoach />} />
+              <Route path="addmembership" element={<AddMembership />} />
+              <Route path="editmembership/:id" element={<EditMembership />} />
+              <Route path="viewmembership" element={<ViewMembership />} />
+              <Route path="membershipusers" element={<MembershipUsers />} />
+              <Route path="addclasses" element={<AddClasses />} />
+              <Route path="editclasses/:id" element={<EditClasses />} />
+              <Route path="viewclasses" element={<ViewClasses />} />
+              <Route path="viewclassusers" element={<UsersClasses />} />
+              <Route
+                path="*"
+                element={<Navigate to="workshopusers" replace />}
+              />
             </Route>
           </>
         ) : isUser ? (
           /* If logged in & admin → allow dashboard */
           <>
-            <Route path="/dashboard" element={<LayoutFixed />}>
-              <Route index element={<Navigate to="workshopusers" replace />} />
-              <Route path="workshopusers" element={<ViewUsersInWorkshop />} />
-              <Route path="addworkshop" element={<AddWorkshop />} />
-              <Route path="editworkshop" element={<EditWorkshop />} />
-              <Route path="viewworkshop" element={<ViewWorkshop />} />
+            <Route path="/userdashboard" element={<UserDashboard />}>
+              <Route index element={<Navigate to="home" replace />} />
+
+              <Route path="home" element={<UserHomePage />} />
+
+              <Route path="bookclass" element={<Bookclasses />} />
+
+              <Route path="enrolled" element={<EnrolledClasses />} />
+
+              <Route path="changepassword" element={<ChangePassword />} />
             </Route>
           </>
         ) : (

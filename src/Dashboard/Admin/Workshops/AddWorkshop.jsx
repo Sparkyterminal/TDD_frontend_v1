@@ -147,9 +147,9 @@ const AddWorkshop = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#ebe5db] py-8 px-2 font-[glancyr]">
+    <div className="min-h-screen flex items-center justify-center py-8 px-2 font-[glancyr]">
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 sm:p-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#adc290] font-[glancyr]">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#26452D] font-[glancyr]">
           Add Workshop
         </h2>
         <Form
@@ -163,8 +163,8 @@ const AddWorkshop = () => {
           >
             <Divider
               style={{
-                color: "#adc290",
-                borderColor: "#adc290",
+                color: "#26452D",
+                borderColor: "#26452D",
                 fontWeight: 700,
               }}
               orientation="left"
@@ -197,7 +197,7 @@ const AddWorkshop = () => {
                 className="w-full"
               >
                 {fileList.length >= 1 ? null : (
-                  <div style={{ textAlign: "center", color: "#adc290" }}>
+                  <div style={{ textAlign: "center", color: "#26452D" }}>
                     <UploadOutlined />
                     <div style={{ marginTop: 8 }}>Upload</div>
                   </div>
@@ -210,7 +210,7 @@ const AddWorkshop = () => {
                   </Button>
                 )}
               </div>
-              <small style={{ color: "#adc290" }}>Max file size 2MB</small>
+              <small style={{ color: "#26452D" }}>Max file size 2MB</small>
             </Form.Item>
           </Card>
           {/* 2 inputs per row on desktop, 1 per row on mobile */}
@@ -309,8 +309,8 @@ const AddWorkshop = () => {
               loading={uploading}
               style={{
                 width: "100%",
-                background: "#adc290",
-                borderColor: "#adc290",
+                background: "#26452D",
+                borderColor: "#26452D",
                 fontFamily: "glancyr",
                 fontWeight: 600,
                 fontSize: 16,

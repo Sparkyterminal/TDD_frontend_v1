@@ -15,7 +15,7 @@ const ContactFollowSection = () => {
           href="mailto:sangeetha.yogesh@thedancedistrict.in"
           className="underline hover:text-[#D16539] transition-colors duration-200 break-all"
         >
-          sahithyayogesh@thedancedistrict.in
+          sahityayogesh@thedancedistrict.in
         </a>
         <button
           onClick={handleInstagramClick}

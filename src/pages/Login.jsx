@@ -41,7 +41,13 @@ export default function Login() {
             is_logged_in: true,
           })
         );
-        navigate("/dashboard");
+        if (role === ROLES.ADMIN) {
+          navigate("/dashboard");
+        } else if (role === ROLES.USER) {
+          navigate("/userdashboard");
+        } else {
+          navigate("/"); // default fallback
+        }
       }
     } catch (err) {
       setError(err.response?.message || "Invalid credentials");

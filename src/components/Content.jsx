@@ -37,17 +37,40 @@ const Content = () => {
         </nav>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 pt-4 md:pt-6 border-t border-white border-opacity-20 text-xs sm:text-sm text-white text-opacity-80 text-center sm:text-left mt-auto">
-        <a
-          href="#"
-          className="hover:text-white transition-colors duration-300"
-          onClick={(e) => {
-            e.preventDefault();
-            // Implement navigation if required, e.g. navigate to terms page
-          }}
-        >
-          Terms & Conditions
-        </a>
+      <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-3 sm:gap-4 pt-4 md:pt-6 border-t border-white border-opacity-20 text-xs sm:text-sm text-white text-opacity-80 text-center sm:text-left mt-auto">
+        <div className="flex gap-6">
+          <a
+            href="#"
+            className="hover:text-white transition-colors duration-300 cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/termsandconditions");
+            }}
+          >
+            Terms & Conditions
+          </a>
+          <a
+            href="#"
+            className="hover:text-white transition-colors duration-300 cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/privacy");
+            }}
+          >
+            Privacy Policy
+          </a>
+          <a
+            href="#"
+            className="hover:text-white transition-colors duration-300 cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/refund");
+            }}
+          >
+            Refund Policy
+          </a>
+        </div>
+
         <span className="text-xs sm:text-sm">
           © 2025 The Dance District. All rights reserved.
         </span>

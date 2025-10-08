@@ -17,10 +17,10 @@ import { logout } from "../reducers/users";
 
 const { Header, Sider, Content } = Layout;
 
-// Updated color palette
-const BEIGE = "#ebe5db";
-const GREEN = "#adc290";
-const TEXT_DARK = "#34342F";
+// Updated classic white and dark forest green theme
+const WHITE = "#ffffff";
+const DARK_FOREST_GREEN = "#0b3d0b"; // dark forest green color
+const TEXT_DARK = DARK_FOREST_GREEN;
 
 const LayoutFixed = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -39,76 +39,103 @@ const LayoutFixed = () => {
   // Sidebar menu items for ADMIN
   const adminMenuItems = [
     {
+      key: "Membership",
+      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
+      label: <span style={{ color: TEXT_DARK }}>Membership</span>,
+      children: [
+        {
+          key: "/dashboard/addmembership",
+          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Add Membership</span>,
+        },
+        {
+          key: "/dashboard/viewmembership",
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>View Membership</span>,
+        },
+        {
+          key: "/dashboard/membershipusers",
+          icon: <TeamOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Membership Users</span>,
+        },
+      ],
+    },
+    {
       key: "workshops",
-      icon: <AppstoreOutlined style={{ color: GREEN }} />,
+      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
       label: <span style={{ color: TEXT_DARK }}>Workshops</span>,
       children: [
         {
           key: "/dashboard/addworkshop",
-          icon: <PlusCircleOutlined style={{ color: GREEN }} />,
+          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>Add Workshop</span>,
         },
         {
           key: "/dashboard/viewworkshop",
-          icon: <EyeOutlined style={{ color: GREEN }} />,
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>View Workshop</span>,
         },
         {
           key: "/dashboard/workshopusers",
-          icon: <TeamOutlined style={{ color: GREEN }} />,
+          icon: <TeamOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>View Attendees</span>,
         },
       ],
     },
     {
       key: "ClassTypes",
-      icon: <AppstoreOutlined style={{ color: GREEN }} />,
+      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
       label: <span style={{ color: TEXT_DARK }}>Class Types</span>,
       children: [
         {
           key: "/dashboard/addclasstypes",
-          icon: <PlusCircleOutlined style={{ color: GREEN }} />,
+          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>Add Class Types</span>,
         },
         {
           key: "/dashboard/viewclasstypes",
-          icon: <EyeOutlined style={{ color: GREEN }} />,
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>View Class Types</span>,
         },
       ],
     },
-    // {
-    //   key: "AddUser",
-    //   icon: <AppstoreOutlined style={{ color: GREEN }} />,
-    //   label: <span style={{ color: TEXT_DARK }}>Users</span>,
-    //   children: [
-    //     {
-    //       key: "/dashboard/adduser",
-    //       icon: <PlusCircleOutlined style={{ color: GREEN }} />,
-    //       label: <span style={{ color: TEXT_DARK }}>Add Users</span>,
-    //     },
-    //     {
-    //       key: "/dashboard/viewuser",
-    //       icon: <EyeOutlined style={{ color: GREEN }} />,
-    //       label: <span style={{ color: TEXT_DARK }}>View Users</span>,
-    //     },
-    //   ],
-    // },
     {
       key: "AddCoach",
-      icon: <AppstoreOutlined style={{ color: GREEN }} />,
+      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
       label: <span style={{ color: TEXT_DARK }}>Instructors</span>,
       children: [
         {
           key: "/dashboard/addcoach",
-          icon: <PlusCircleOutlined style={{ color: GREEN }} />,
+          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>Add Instructors</span>,
         },
         {
           key: "/dashboard/viewcoach",
-          icon: <EyeOutlined style={{ color: GREEN }} />,
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>View Instructors</span>,
         },
+      ],
+    },
+    {
+      key: "AddClasses",
+      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
+      label: <span style={{ color: TEXT_DARK }}>Classes</span>,
+      children: [
+        {
+          key: "/dashboard/addclasses",
+          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Add Classes</span>,
+        },
+        {
+          key: "/dashboard/viewclasses",
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>View Classes</span>,
+        },
+        {
+          key: "/dashboard/viewclassusers",
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Class Users</span>,
+        }
       ],
     },
   ];
@@ -117,7 +144,7 @@ const LayoutFixed = () => {
   const userMenuItems = [
     {
       key: "/dashboard/getuserinfo",
-      icon: <UserOutlined style={{ color: GREEN }} />,
+      icon: <UserOutlined style={{ color: DARK_FOREST_GREEN }} />,
       label: <span style={{ color: TEXT_DARK }}>Get User Info</span>,
     },
   ];
@@ -141,15 +168,15 @@ const LayoutFixed = () => {
 
   return (
     <Layout
-      style={{ minHeight: "100vh", background: BEIGE, fontFamily: "glancyr" }}
+      style={{ minHeight: "100vh", background: WHITE, fontFamily: "glancyr" }}
     >
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
         style={{
-          background: BEIGE,
-          boxShadow: "2px 0 8px rgba(173,194,144,0.08)",
+          background: WHITE,
+          boxShadow: "2px 0 8px rgba(11, 61, 11, 0.08)",
         }}
       >
         <div
@@ -169,7 +196,7 @@ const LayoutFixed = () => {
           />
           <span
             style={{
-              color: GREEN,
+              color: DARK_FOREST_GREEN,
               fontWeight: 700,
               fontSize: 18,
               letterSpacing: 1,
@@ -185,17 +212,14 @@ const LayoutFixed = () => {
           mode="inline"
           inlineIndent={12}
           style={{
-            background: BEIGE,
+            background: WHITE,
             color: TEXT_DARK,
             fontWeight: 600,
             fontSize: 16,
             fontFamily: "glancyr",
           }}
-          items={getMenuItems(
-            role === "ADMIN" ? adminMenuItems : userMenuItems
-          )}
+          items={getMenuItems(role === "ADMIN" ? adminMenuItems : userMenuItems)}
           onClick={({ key }) => {
-            // Only navigate if the key is a route (starts with /dashboard)
             if (key.startsWith("/dashboard")) {
               navigate(key);
             }
@@ -206,8 +230,8 @@ const LayoutFixed = () => {
         <Header
           style={{
             padding: 0,
-            background: BEIGE,
-            boxShadow: "0 2px 8px rgba(173,194,144,0.07)",
+            background: WHITE,
+            boxShadow: "0 2px 8px rgba(11, 61, 11, 0.07)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -255,16 +279,16 @@ const LayoutFixed = () => {
 
           {/* Logout on Right */}
           <Button
-            type="primary"
+            type="danger"  // Change the logout button to Danger type
             onClick={handleLogout}
             icon={<LogoutOutlined />}
             style={{
-              backgroundColor: TEXT_DARK,
-              borderColor: TEXT_DARK,
-              color: GREEN,
               fontWeight: "bold",
               marginRight: 16,
               fontFamily: "glancyr",
+              color: WHITE,
+              borderColor: "red",
+              backgroundColor: "red",
             }}
           >
             Logout
@@ -276,9 +300,9 @@ const LayoutFixed = () => {
             margin: "32px 16px",
             padding: 32,
             minHeight: 320,
-            background: BEIGE,
+            background: WHITE,
             borderRadius: borderRadiusLG,
-            boxShadow: "0 2px 16px rgba(173,194,144,0.06)",
+            boxShadow: "0 2px 16px rgba(11, 61, 11, 0.06)",
             fontFamily: "glancyr",
           }}
         >

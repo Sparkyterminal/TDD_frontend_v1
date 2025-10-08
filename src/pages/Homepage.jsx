@@ -21,14 +21,14 @@
 //     if (isInView) {
 //       controls.start({ backgroundColor: "#adc290" });
 //     } else {
-//       controls.start({ backgroundColor: "#ebe5db" });
+//       controls.start({ backgroundColor: "#F1DEBD" });
 //     }
 //   }, [isInView, controls]);
 
 //   return (
 //     <motion.div
 //       animate={controls}
-//       initial={{ backgroundColor: "#ebe5db" }}
+//       initial={{ backgroundColor: "#F1DEBD" }}
 //       transition={{ duration: 1 }}
 //       style={{ minHeight: "100vh" }}
 //     >
@@ -137,7 +137,7 @@ const Homepage = () => {
     <motion.div
       ref={containerRef}
       animate={controls}
-      initial={{ backgroundColor: "#ebe5db" }}
+      initial={{ backgroundColor: "#ebe5db" }}  //#ebe5db original
       transition={{ duration: 1, ease: "easeInOut" }}
       style={{ minHeight: "100vh" }}
     >
@@ -195,15 +195,7 @@ const Homepage = () => {
       >
         <TestimonialsSection />
       </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <ContactFollowSection />
-      </motion.div>
+      <ContactFollowSection />
 
       <motion.div
         initial={{ opacity: 0 }}

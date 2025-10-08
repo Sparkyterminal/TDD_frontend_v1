@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 
 const CONTACT_INFO = {
   phone: "+91 80731 39244",
-  email: "sahithyayogesh@thedancedistrict.in",
+  email: "thedancedistrictbysahitya@gmail.com",
   instagram: "@thedancedistrictbysahitya",
   address: `THE DANCE DISTRICT "SHIPRA SAPPHIRE " 4th Floor, Site No. 101 & 102, JHCS Layout, Gubbalala Main Road, Bengaluru-560061 Land Mark: Opposite to Chowdeshwari Temple., Bangalore, India 560061`,
   mapEmbed:

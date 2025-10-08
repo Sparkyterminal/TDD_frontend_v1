@@ -136,9 +136,9 @@ const ViewClassTypes = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#ebe5db] py-8 px-2 font-[glancyr]">
+    <div className="min-h-screen flex flex-col items-center py-8 px-2 font-[glancyr]">
       <div className="w-full max-w-5xl bg-white rounded-xl shadow-lg p-6 sm:p-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#adc290] font-[glancyr]">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#0B3D0B] font-[glancyr]">
           View Class Types
         </h2>
         <Table
