@@ -98,7 +98,7 @@ const Header = ({ scrollToSection }) => {
           </div>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex md:items-center md:space-x-8 lg:ml-24">
+          {/* <nav className="hidden md:flex md:items-center md:space-x-8 lg:ml-24">
             {menuItems.map(({ label, route }) => {
               // If current path matches route => active color #D2663A else default text color
               const isActive = location.pathname === route;
@@ -141,7 +141,7 @@ const Header = ({ scrollToSection }) => {
             >
               Login
             </button>
-          </nav>
+          </nav> */}
         </div>
 
         {/* Mobile nav menu */}
@@ -154,7 +154,7 @@ const Header = ({ scrollToSection }) => {
                 borderColor: "#CCC9C4",
               }}
             >
-              <nav className="flex flex-col space-y-4">
+              {/* <nav className="flex flex-col space-y-4">
                 {menuItems.map(({ label, route }) => {
                   const isActive = location.pathname === route;
                   const color = isActive ? "#D2663A" : "#000";
@@ -200,7 +200,7 @@ const Header = ({ scrollToSection }) => {
                 >
                   Login
                 </button>
-              </nav>
+              </nav> */}
             </div>
           </div>
         )}

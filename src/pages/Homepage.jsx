@@ -176,7 +176,7 @@ const Homepage = () => {
         <TabSection />
       </motion.div>
 
-      <div ref={workshopRef}>
+      {/* <div ref={workshopRef}>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -185,16 +185,16 @@ const Homepage = () => {
         >
           <WorkshopSection />
         </motion.div>
-      </div>
+      </div> */}
 
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <TestimonialsSection />
-      </motion.div>
+      </motion.div> */}
       <ContactFollowSection />
 
       <motion.div

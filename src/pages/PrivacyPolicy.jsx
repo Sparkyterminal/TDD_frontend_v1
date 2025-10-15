@@ -14,90 +14,60 @@ const PrivacyPolicy = () => {
             </h1>
 
             <p>
-              This Privacy Policy explains how <strong>The Dance District</strong>{" "}
-              collects, uses, and protects your personal information when you use
-              our website and related services.
+              <strong>The Dance District</strong> is committed to protecting your privacy and handling your data responsibly. This policy describes what information we collect, how we use it, and your rights.
             </p>
 
             <h2>1. Information We Collect</h2>
             <p>
-              We collect personal information that you provide to us directly,
-              including your name, email address, phone number, payment details,
-              and membership or workshop information.
+              We collect basic personal information (such as name, email, phone number, and payment details) when you register, enroll, or interact with our platform.
             </p>
 
-            <h2>2. How We Use Your Information</h2>
+            <h2>2. Use of Information</h2>
             <p>
-              Your information is used to manage memberships, process workshop
-              registrations and payments, communicate updates, and enhance our
-              services to improve your overall experience with{" "}
-              <strong>The Dance District</strong>.
+              Your information is used to process memberships, workshop registrations, payments, send essential communications, and improve our services.
             </p>
 
-            <h2>3. Payment Information</h2>
+            <h2>3. Data Sharing & Security</h2>
             <p>
-              All payment transactions are processed securely through a trusted
-              payment gateway. <strong>The Dance District</strong> does not store
-              your complete payment card details on our servers.
+              We do not sell your personal data. Information may be shared with trusted service providers for business operations under strict confidentiality agreements. Industry-standard measures are used to protect your data.
             </p>
 
-            <h2>4. Information Sharing</h2>
+            <h2>4. Legal and Governance</h2>
             <p>
-              We do not sell or rent your personal information. We may share
-              necessary information with trusted third-party service providers who
-              assist in operating our website and business functions, under strict
-              confidentiality and data protection agreements.
+              This policy is governed by Indian laws. We comply with applicable data protection regulations, and may disclose information if legally required.
             </p>
 
-            <h2>5. Data Security</h2>
+            <h2>5. Your Rights & Choices</h2>
             <p>
-              We use appropriate technical and organizational measures to safeguard
-              your personal information from unauthorized access, alteration,
-              disclosure, or destruction.
-            </p>
-
-            <h2>6. Your Rights</h2>
-            <p>
-              You have the right to access, correct, or request deletion of your
-              personal information. To exercise these rights, please contact us at{" "}
+              You may request access, correction, or deletion of your data at any time by contacting us at{" "}
               <a
                 href="mailto:thedancedistrictbysahitya@gmail.com"
                 className="text-indigo-600 underline"
               >
-               thedancedistrictbysahitya@gmail.com
+                thedancedistrictbysahitya@gmail.com
               </a>
-              .
+              . You may refuse cookies in your browser, but some site features may be affected.
             </p>
 
-            <h2>7. Cookies</h2>
+            <h2>6. Policy Updates</h2>
             <p>
-              Our website may use cookies to enhance your user experience. You can
-              disable cookies through your browser settings, but some features of
-              the site may not function properly as a result.
+              We reserve the right to modify this policy at any time. Changes will be posted on this page.
             </p>
 
-            <h2>8. Changes to This Policy</h2>
+            <h2>7. Contact</h2>
             <p>
-              We may update this Privacy Policy periodically. Updates will be
-              reflected on this page with a revised effective date. We encourage
-              you to review this policy regularly to stay informed.
-            </p>
-
-            <h2>9. Contact Us</h2>
-            <p>
-              For any questions or concerns regarding this Privacy Policy, please
-              contact us at{" "}
+              For questions or concerns, please email us at{" "}
               <a
                 href="mailto:thedancedistrictbysahitya@gmail.com"
                 className="text-indigo-600 underline"
               >
-               thedancedistrictbysahitya@gmail.com
+                thedancedistrictbysahitya@gmail.com
               </a>
               .
             </p>
 
             <p className="mt-8 text-sm text-gray-600">
-              Last updated: October 8, 2025
+              Last updated: October 15, 2025
             </p>
           </article>
         </main>
