@@ -16,18 +16,14 @@ const TermsandConditions = () => {
             By using <strong>The Dance District</strong> website and services, you agree to these Terms. Please read them carefully.
           </p>
 
-          <h2>1. Memberships & Workshops</h2>
+          <h2>1. Memberships</h2>
           <p>
             Access and participation are subject to payment and plan type. Fees are non-refundable unless stated by law. We may adjust, reschedule, or cancel offerings with notice.
           </p>
 
           <h2>2. Payments</h2>
           <p>
-            Payments are processed securely via our payment partner. We do not store your payment details. See our{" "}
-            <a href="/privacy" className="text-indigo-600 underline">
-              Privacy Policy
-            </a>
-            .
+            Payments are processed securely via our payment partner. We do not store your payment details. See our Privacy Policy for details.
           </p>
 
           <h2>3. Conduct</h2>
@@ -45,7 +41,17 @@ const TermsandConditions = () => {
             All content is owned by <strong>The Dance District</strong>. Do not reproduce or use materials without permission.
           </p>
 
-          <h2>6. Updates & Contact</h2>
+          <h2>6. Governing Law</h2>
+          <p>
+            All disputes are subject to the jurisdiction of Bengaluru courts.
+          </p>
+
+          <h2>7. Business Name</h2>
+          <p>
+            BANGALORE ANAND SAHITYA
+          </p>
+
+          <h2>8. Updates & Contact</h2>
           <p>
             These Terms may change at any time—updates are effective upon posting. Contact{" "}
             <a

@@ -24,7 +24,7 @@ const NoRefundPolicy = () => {
             are allocated upon enrollment, making refunds impossible.
           </p>
 
-          <h2>2. No Refunds on Workshops</h2>
+          {/* <h2>2. No Refunds on Workshops</h2>
           <p>
             Fees paid for workshops are final and non-refundable regardless of
             cancellation or attendance.
@@ -35,9 +35,9 @@ const NoRefundPolicy = () => {
             In rare events where <strong>The Dance District</strong> cancels a class
             or workshop, participants will be offered either a full credit towards a future
             session or a rescheduled date. Refunds will not be issued.
-          </p>
+          </p> */}
 
-          <h2>4. Contact Us</h2>
+          <h2>2. Contact Us</h2>
           <p>
             For any policy questions, please contact us at{" "}
             <a
