@@ -17,8 +17,8 @@ const AboutSection = () => {
 
         {/* Right Text */}
         <div className="text-gray-900">
-          <h2 className="text-3xl font-bold mb-2 font-[kannada]">
-            ಎಲ್ಲರಿಗು ನಮಸ್ಕಾರ
+          <h2 className="text-3xl font-bold mb-2 font-[cormoreg]">
+            Welcome All
           </h2>
           <p className="mb-2 text-2xl font-bold leading-relaxed font-[cormoreg]">
             At our studio, dance is more than movement — it's expression,

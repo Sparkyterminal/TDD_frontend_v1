@@ -1,78 +1,124 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import here
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import WorkshopCard from "../components/WorkshopCard";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import moment from "moment-timezone";
+import { API_BASE_URL } from "../../config";
 
-// Define workshops data inside this file
-const workshops = [
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
-    workshopName: "Advanced Yoga Flow",
-    duration: "2 hours",
-    time: "10:00 AM - 12:00 PM",
-    date: "October 25, 2025",
-    instructor: "Sarah Johnson",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&h=400&fit=crop",
-    workshopName: "HIIT Training Bootcamp",
-    duration: "1.5 hours",
-    time: "6:00 PM - 7:30 PM",
-    date: "October 27, 2025",
-    instructor: "Mike Chen",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=400&fit=crop",
-    workshopName: "Mindfulness & Meditation",
-    duration: "1 hour",
-    time: "7:00 AM - 8:00 AM",
-    date: "October 29, 2025",
-    instructor: "Emily Davis",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=600&h=400&fit=crop",
-    workshopName: "Strength Training Fundamentals",
-    duration: "2.5 hours",
-    time: "2:00 PM - 4:30 PM",
-    date: "November 1, 2025",
-    instructor: "David Wilson",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=400&fit=crop",
-    workshopName: "Pilates Core Power",
-    duration: "1.5 hours",
-    time: "9:00 AM - 10:30 AM",
-    date: "November 3, 2025",
-    instructor: "Jessica Brown",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
-    workshopName: "Dance Fitness Fusion",
-    duration: "1 hour",
-    time: "5:00 PM - 6:00 PM",
-    date: "November 5, 2025",
-    instructor: "Maria Garcia",
-  },
-];
+// Updated WorkshopCard with navigation
+const WorkshopCard = React.memo(({ w, onBook }) => {
+  const getImageUrl = (url) => {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
+    return `${API_BASE_URL}api/${url}`;
+  };
 
-// Filter only upcoming workshops
-function getUpcoming(workshops) {
-  const today = new Date();
-  return workshops.filter(({ date }) => {
-    const workshopDate = new Date(date);
-    return workshopDate >= today;
-  });
-}
+  const instructorImageUrl =
+    Array.isArray(w.media) && w.media.length > 0
+      ? getImageUrl(w.media[0].image_url.full.high_res)
+      : "";
+
+  const dateStr = w.date
+    ? moment(w.date).tz("Asia/Kolkata").format("DD MMM YYYY")
+    : "";
+
+  return (
+    <div className="bg-[#EBE5DB] rounded p-4 flex flex-col gap-4 shadow hover:shadow-lg transition duration-300">
+      {instructorImageUrl ? (
+        <img
+          src={instructorImageUrl}
+          alt={`Workshop ${w.title}`}
+          className="w-full h-full object-cover rounded"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src =
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='50%' dominant-baseline='middle' text-anchor='middle' font-size='12' fill='gray'%3ENo Image%3C/text%3E%3C/svg%3E";
+          }}
+        />
+      ) : (
+        <div className="w-full h-44 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+          No Image
+        </div>
+      )}
+
+      <h2 className="text-center text-2xl font-bold text-[#26442C] break-words">
+        {w.title}
+      </h2>
+
+      <div className="flex justify-between text-[#26442C] font-semibold">
+        <span>Date:</span>
+        <span>{dateStr}</span>
+      </div>
+
+      <div className="text-[#26442C] break-words">
+        {Array.isArray(w.batches) &&
+          w.batches.map((batch) => {
+            const batchStart = moment(batch.start_time)
+              .tz("Asia/Kolkata")
+              .format("hh:mm A");
+            const batchEnd = moment(batch.end_time)
+              .tz("Asia/Kolkata")
+              .format("hh:mm A");
+            return (
+              <div key={batch._id} className="mb-1 break-words">
+                {batch.name} ({batchStart} - {batchEnd})
+              </div>
+            );
+          })}
+      </div>
+
+      <button
+        className="mt-auto font-bold py-3 rounded bg-[#26442C] text-white hover:scale-[1.02] active:scale-[0.98] cursor-pointer transition duration-300 transform"
+        onClick={onBook}
+        type="button"
+        aria-label="Book Now"
+      >
+        Book Now
+      </button>
+    </div>
+  );
+});
 
 const WorkshopSection = () => {
-  const upcomingWorkshops = getUpcoming(workshops);
+  const [workshops, setWorkshops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [cardsPerPage, setCardsPerPage] = useState(3);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const navigate = useNavigate(); // useNavigate hook here
+
+  useEffect(() => {
+    const fetchWorkshops = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${API_BASE_URL}workshop`);
+        const data = res.data?.data || res.data;
+        const list = Array.isArray(data) ? data : [];
+
+        const today = moment().tz("Asia/Kolkata").startOf("day");
+        const filtered = list.filter(
+          (w) =>
+            !w.is_cancelled &&
+            moment(w.date)
+              .tz("Asia/Kolkata")
+              .startOf("day")
+              .isSameOrAfter(today)
+        );
+
+        setWorkshops(filtered.reverse());
+      } catch (e) {
+        setError("Failed to load workshops. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWorkshops();
+  }, []);
 
   const getCardsPerPage = () => {
     if (typeof window !== "undefined") {
@@ -82,23 +128,22 @@ const WorkshopSection = () => {
     }
     return 3;
   };
-  const [cardsPerPage, setCardsPerPage] = useState(getCardsPerPage);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0); // 1 for next, -1 for prev
 
   useEffect(() => {
+    setCardsPerPage(getCardsPerPage());
     const handleResize = () => setCardsPerPage(getCardsPerPage());
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const totalPages = Math.ceil(upcomingWorkshops.length / cardsPerPage);
-  const canShowNavigation = upcomingWorkshops.length > cardsPerPage;
+  const totalPages = Math.ceil(workshops.length / cardsPerPage);
+  const canShowNavigation = workshops.length > cardsPerPage;
 
   const nextSlide = () => {
     setDirection(1);
     setCurrentIndex((prev) => Math.min(prev + 1, totalPages - 1));
   };
+
   const prevSlide = () => {
     setDirection(-1);
     setCurrentIndex((prev) => Math.max(prev - 1, 0));
@@ -107,7 +152,7 @@ const WorkshopSection = () => {
   const getCurrentWorkshops = () => {
     const start = currentIndex * cardsPerPage;
     const end = start + cardsPerPage;
-    return upcomingWorkshops.slice(start, end);
+    return workshops.slice(start, end);
   };
 
   const slideVariants = {
@@ -133,10 +178,9 @@ const WorkshopSection = () => {
   return (
     <section className="py-14 px-2 sm:py-18 w-full font-[glancyr]">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-10">
           <h2 className="text-3xl sm:text-3xl font-medium text-black">
-            Workshops
+            Upcoming Workshops
           </h2>
           {canShowNavigation && (
             <div className="flex gap-2">
@@ -157,8 +201,7 @@ const WorkshopSection = () => {
             </div>
           )}
         </div>
-        {/* Cards with animation */}
-        <div className="relative min-h-[340px]">
+         <div className="relative min-h-[340px]">
           <AnimatePresence custom={direction} mode="wait">
             <motion.div
               key={currentIndex}
@@ -169,13 +212,34 @@ const WorkshopSection = () => {
               exit="exit"
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"
             >
-              {getCurrentWorkshops().map((workshop, idx) => (
-                <WorkshopCard key={idx} {...workshop} />
-              ))}
+              {!loading &&
+                getCurrentWorkshops().map((w) => (
+                  <WorkshopCard
+                    key={w.id}
+                    w={w}
+                    onBook={() => navigate(`/workshopdetails/${w.id}`)}
+                  />
+                ))}
+
+              {loading &&
+                Array.from({ length: cardsPerPage }).map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="border rounded-lg p-4 animate-pulse"
+                  >
+                    <div className="w-full h-44 bg-gray-200 rounded mb-4" />
+                    <div className="h-4 bg-gray-200 rounded mb-3 w-3/4" />
+                    <div className="h-3 bg-gray-200 rounded mb-2 w-1/2" />
+                    <div className="h-3 bg-gray-200 rounded mb-2 w-1/3" />
+                    <div className="h-3 bg-gray-200 rounded mb-2 w-2/3" />
+                    <div className="h-3 bg-gray-200 rounded mb-2 w-1/4" />
+                    <div className="h-3 bg-gray-200 rounded mb-4 w-1/2" />
+                    <div className="h-10 bg-gray-200 rounded mt-auto" />
+                  </div>
+                ))}
             </motion.div>
           </AnimatePresence>
         </div>
-        {/* Dots */}
         {canShowNavigation && (
           <div className="flex justify-center mt-8 gap-2">
             {Array.from({ length: totalPages }).map((_, index) => (

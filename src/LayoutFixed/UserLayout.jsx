@@ -357,7 +357,7 @@ export default function UserDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-//   const name = useSelector((state) => state.user.value.name || "USER");
+  //   const name = useSelector((state) => state.user.value.name || "USER");
 
   const [currentPage, setCurrentPage] = useState("Home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -411,22 +411,32 @@ export default function UserDashboard() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-28 sm:h-30">
           {/* Left: Logo and Greeting */}
-          <div className="flex items-center space-x-3">
-            <div className="w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center">
-              <img
-                src="/assets/tdd-logo.png"
-                alt="Logo"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div>
-              <span className="hidden font-serif lg:block text-3xl sm:text-2xl font-bold text-amber-400">
-                The Dance District
-              </span>
-              <p className="hidden lg:block text-sm text-gray-500">
-                Let's make today amazing
-              </p>
-            </div>
+          <div
+            className="w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center cursor-pointer"
+            onClick={() => navigate("/userdashboard/home")}
+            role="button"
+            aria-label="Go to home"
+          >
+            <img
+              src="/assets/tdd-logo.png"
+              alt="Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div
+            className="cursor-pointer ml-4"
+            onClick={() => navigate("/userdashboard/home")}
+            role="button"
+          >
+            <span className="hidden md:block text-3xl sm:text-2xl lg:text-3xl font-bold text-amber-400">
+              The Dance District
+            </span>
+            {/* <span className="text-xl font-bold text-amber-400">
+              The Dance District
+            </span> */}
+            <p className="hidden md:block text-sm text-gray-500">
+              Let's make today amazing
+            </p>
           </div>
 
           {/* Middle: Desktop Navigation Menu */}
@@ -438,7 +448,7 @@ export default function UserDashboard() {
                   className="relative inline-block text-left"
                   key={item.name}
                 >
-                  <Menu.Button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/50 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white text-gray-700 font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105">
+                  <Menu.Button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/50 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white text-gray-700 font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105 cursor-pointer">
                     <item.icon className="w-4 h-4" />
                     {item.name}
                     <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
@@ -468,7 +478,7 @@ export default function UserDashboard() {
                                     : active
                                     ? "bg-purple-50 text-gray-900"
                                     : "text-gray-700",
-                                  "flex items-center gap-3 w-full text-left px-4 py-3 text-sm font-medium transition-all duration-200"
+                                  "flex items-center gap-3 w-full text-left px-4 py-3 text-sm font-medium transition-all duration-200 cursor-pointer"
                                 )}
                               >
                                 <sub.icon className="w-4 h-4" />
@@ -489,7 +499,7 @@ export default function UserDashboard() {
                     currentPage === item.name
                       ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md"
                       : "bg-white/50 text-gray-700 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white",
-                    "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
+                    "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105 cursor-pointer"
                   )}
                 >
                   <item.icon className="w-4 h-4" />
@@ -504,7 +514,7 @@ export default function UserDashboard() {
             {/* Hamburger Menu Button - Mobile Only */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl bg-white/50 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white text-gray-700 transition-all duration-200 shadow-sm"
+              className="md:hidden p-2 rounded-xl bg-white/50 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white text-gray-700 transition-all duration-200 shadow-sm cursor-pointer"
             >
               {mobileMenuOpen ? (
                 <XMarkIcon className="w-6 h-6" />
@@ -518,7 +528,7 @@ export default function UserDashboard() {
               as="div"
               className="hidden md:block relative inline-block text-left"
             >
-              <Menu.Button className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200">
+              <Menu.Button className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200 cursor-pointer">
                 <UserCircleIcon className="w-6 h-6" />
               </Menu.Button>
 
@@ -541,7 +551,7 @@ export default function UserDashboard() {
                             active
                               ? "bg-purple-50 text-gray-900"
                               : "text-gray-700",
-                            "flex items-center gap-3 w-full text-left px-4 py-3 text-sm font-medium transition-all duration-200"
+                            "flex items-center gap-3 w-full text-left px-4 py-3 text-sm font-medium transition-all duration-200 cursor-pointer"
                           )}
                         >
                           <Lock className="w-4 h-4" />
@@ -555,7 +565,7 @@ export default function UserDashboard() {
                           onClick={handleLogout}
                           className={classNames(
                             active ? "bg-red-50 text-red-600" : "text-gray-700",
-                            "flex items-center gap-3 w-full text-left px-4 py-3 text-sm font-medium transition-all duration-200"
+                            "flex items-center gap-3 w-full text-left px-4 py-3 text-sm font-medium transition-all duration-200 cursor-pointer"
                           )}
                         >
                           <LogOut className="w-4 h-4" />
@@ -593,7 +603,7 @@ export default function UserDashboard() {
                         currentPage === item.name
                           ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md"
                           : "bg-purple-50 text-gray-700 hover:bg-purple-100",
-                        "flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-semibold"
+                        "flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl transition-all duration-200 font-semibold cursor-pointer"
                       )}
                     >
                       <item.icon className="w-5 h-5" />
@@ -615,7 +625,7 @@ export default function UserDashboard() {
                             currentPage === sub.name
                               ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md"
                               : "bg-purple-50 text-gray-700 hover:bg-purple-100",
-                            "flex items-center gap-3 w-full text-left px-6 py-3 rounded-xl transition-all duration-200 font-medium ml-2"
+                            "flex items-center gap-3 w-full text-left px-6 py-3 rounded-xl transition-all duration-200 font-medium ml-2 cursor-pointer"
                           )}
                         >
                           <sub.icon className="w-4 h-4" />
@@ -631,14 +641,14 @@ export default function UserDashboard() {
               <div className="pt-4 border-t border-gray-200 space-y-2">
                 <button
                   onClick={handleChangePassword}
-                  className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl bg-purple-50 text-gray-700 hover:bg-purple-100 font-medium transition-all duration-200"
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl bg-purple-50 text-gray-700 hover:bg-purple-100 font-medium transition-all duration-200 cursor-pointer"
                 >
                   <Lock className="w-5 h-5" />
                   Change Password
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-medium transition-all duration-200"
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-medium transition-all duration-200 cursor-pointer"
                 >
                   <LogOut className="w-5 h-5" />
                   Logout

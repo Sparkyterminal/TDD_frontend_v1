@@ -3,11 +3,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { API_BASE_URL } from "../../../../config";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { Button, message, Table, Tag, Typography } from "antd";
+import { Button, message, Table, Tag, Typography, Popconfirm, Input } from "antd";
 import { useNavigate } from "react-router-dom";
-import { Popconfirm } from "antd";
 
 const { Title } = Typography;
+const { Search } = Input;
 
 const ViewMembership = () => {
   const user = useSelector((state) => state.user.value);
@@ -27,24 +27,31 @@ const ViewMembership = () => {
     pageSize: 10,
     total: 0,
   });
+  const [searchQuery, setSearchQuery] = useState(""); // search state
 
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${API_BASE_URL}membership-plan/${id}`, config);
       message.success("Membership deleted successfully");
-      // Refresh data after delete
-      fetchMemberships(pagination.current, pagination.pageSize);
+      fetchMemberships(pagination.current, pagination.pageSize, searchQuery);
     } catch (e) {
       message.error("Failed to delete membership");
     }
   };
 
-  const fetchMemberships = async (page = 1, limit = 10) => {
+  const getImageUrl = (url) => {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
+    return `${API_BASE_URL}api/${url}`;
+  };
+
+  const fetchMemberships = async (page = 1, limit = 10, search = "") => {
     setLoading(true);
     try {
       const res = await axios.get(`${API_BASE_URL}membership-plan`, {
         ...config,
-        params: { page, limit },
+        params: { page, limit, search },
       });
       const data = res.data || {};
       const list = Array.isArray(data.items) ? data.items : [];
@@ -62,107 +69,111 @@ const ViewMembership = () => {
   };
 
   useEffect(() => {
-    fetchMemberships(1, pagination.pageSize);
+    fetchMemberships(1, pagination.pageSize, searchQuery);
     // eslint-disable-next-line
   }, []);
 
-  const formatInterval = (val) => {
-    if (!val) return "-";
-    const map = {
-      MONTHLY: "Monthly",
-      QUARTERLY: "3 months",
-      "3_MONTHS": "3 months",
-      "6_MONTHS": "6 months",
-      NINE_MONTHS: "9 months",
-      YEARLY: "12 months",
-      "12_MONTHS": "12 months",
-    };
-    return (
-      map[val] ||
-      val
-        .replaceAll("_", " ")
-        .toLowerCase()
-        .replace(/^./, (c) => c.toUpperCase())
-    );
-  };
-
   const columns = [
+    {
+      title: "Image",
+      key: "image",
+      width: 100,
+      render: (_, record) => {
+        const imgObj = record.image?.image_url?.thumbnail || null;
+        let thumbnailUrl = "";
+        let fullUrl = "";
+        if (imgObj) {
+          thumbnailUrl = getImageUrl(imgObj.low_res || imgObj.high_res);
+          fullUrl = getImageUrl(record.image?.image_url?.full?.high_res || "");
+        }
+        if (!thumbnailUrl) return "-";
+        const altText = record.name || "Membership Image";
+        return (
+          <div style={{ textAlign: "center" }}>
+            <div
+              onClick={() => {
+                fullUrl ? window.open(fullUrl, "_blank") : null;
+              }}
+              style={{ cursor: fullUrl ? "pointer" : "default", display: "inline-block" }}
+              title="Click to view full image"
+            >
+              <img
+                src={thumbnailUrl}
+                alt={altText}
+                style={{ width: 60, height: 40, objectFit: "cover", borderRadius: 6, border: "1px solid #e5e7eb" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.05)";
+                  e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+            {fullUrl && (
+              <Button type="link" size="small" onClick={() => window.open(fullUrl, "_blank")} style={{ padding: 0, marginTop: 4, fontWeight: 500, fontSize: 12 }}>
+                View
+              </Button>
+            )}
+          </div>
+        );
+      },
+    },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      width: 150,
       sorter: (a, b) => (a.name || "").localeCompare(b.name || ""),
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      width: 120,
-      render: (p) =>
-        p || p === 0 ? `₹${Number(p).toLocaleString("en-IN")}` : "-",
-      sorter: (a, b) => Number(a.price || 0) - Number(b.price || 0),
-    },
-    {
-      title: "Billing Interval",
-      dataIndex: "billing_interval",
-      key: "billing_interval",
-      width: 160,
-      render: (v) => (
-        <Tag color="processing" bordered={false}>
-          {formatInterval(v)}
-        </Tag>
+      render: (text) => (
+        <div style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          {text}
+        </div>
       ),
-      filters: [
-        { text: "Monthly", value: "MONTHLY" },
-        { text: "3 months", value: "3_MONTHS" },
-        { text: "6 months", value: "6_MONTHS" },
-        { text: "12 months", value: "YEARLY" },
-      ],
-      onFilter: (value, record) => record.billing_interval === value,
     },
     {
-      title: "Plan For",
-      dataIndex: "plan_for",
-      key: "plan_for",
-      width: 120,
-      filters: [
-        { text: "Kids", value: "KIDS" },
-        { text: "Adult", value: "ADULTS" },
-      ],
-      onFilter: (value, record) => record.plan_for === value,
-      render: (val) =>
-        val === "KIDS" ? (
-          <Tag color="green" bordered={false}>
-            Kids
-          </Tag>
-        ) : val === "ADULTS" ? (
-          <Tag color="orange" bordered={false}>
-            Adult
-          </Tag>
-        ) : (
-          <Tag color="default" bordered={false}>
-            Unknown
-          </Tag>
-        ),
+      title: "Dance Type",
+      key: "dance_type",
+      width: 150,
+      render: (_, record) => {
+        const dt = record.dance_type || {};
+        return <div>{dt.title || "-"}</div>;
+      },
     },
     {
-      title: "Benefits",
-      dataIndex: "benefits",
-      key: "benefits",
-      render: (arr) => {
-        const list = Array.isArray(arr) ? arr : [];
-        if (list.length === 0)
+      title: "Batches",
+      key: "batches",
+      width: 300,
+      render: (_, record) => {
+        const batches = Array.isArray(record.batches) ? record.batches : [];
+        if (batches.length === 0)
           return <span style={{ color: "#64748b" }}>N/A</span>;
         return (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {list.map((b, i) => (
-              <Tag
-                key={`${b}-${i}`}
-                color="#dbeafe"
-                style={{ color: "#1e40af", borderColor: "#bfdbfe", margin: 0 }}
-              >
-                {b}
-              </Tag>
+          <div>
+            {batches.map((batch) => (
+              <div key={batch._id} style={{ marginBottom: 12, borderBottom: "1px solid #e0e0e0", paddingBottom: 8 }}>
+                <div>
+                  {batch.schedule.map((sch) => (
+                    <div key={sch._id} style={{ whiteSpace: "nowrap" }}>
+                      <strong>{sch.day}:</strong> {sch.start_time} - {sch.end_time}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: 4 }}>
+                  <strong>Capacity:</strong> {batch.capacity}
+                </div>
+                <div style={{ marginTop: 4 }}>
+                  {batch.is_active ? (
+                    <Tag color="green" bordered={false}>Active</Tag>
+                  ) : (
+                    <Tag color="red" bordered={false}>Inactive</Tag>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         );
@@ -171,16 +182,14 @@ const ViewMembership = () => {
     {
       title: "Actions",
       key: "actions",
-      width: 120,
+      width: 130,
       render: (_, record) => (
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ whiteSpace: "nowrap", display: "flex", gap: 8 }}>
           <Button
             type="primary"
             size="middle"
             style={{ borderRadius: 6 }}
-            onClick={() =>
-              navigate(`/dashboard/editmembership/${record._id || record.id}`)
-            }
+            onClick={() => navigate(`/dashboard/editmembership/${record._id || record.id}`)}
           >
             Edit
           </Button>
@@ -202,7 +211,13 @@ const ViewMembership = () => {
   const handleTableChange = (pag) => {
     const { current, pageSize } = pag;
     setPagination((prev) => ({ ...prev, current, pageSize }));
-    fetchMemberships(current, pageSize);
+    fetchMemberships(current, pageSize, searchQuery);
+  };
+
+  const onSearch = (value) => {
+    setSearchQuery(value);
+    setPagination((prev) => ({ ...prev, current: 1 })); // reset to page 1 on new search
+    fetchMemberships(1, pagination.pageSize, value);
   };
 
   return (
@@ -210,6 +225,13 @@ const ViewMembership = () => {
       <Title level={3} style={{ marginBottom: 16 }}>
         View Membership details
       </Title>
+      <Search
+        placeholder="Search memberships"
+        enterButton
+        allowClear
+        onSearch={onSearch}
+        style={{ marginBottom: 16, maxWidth: 400 }}
+      />
       <Table
         columns={columns}
         dataSource={items}
@@ -224,6 +246,7 @@ const ViewMembership = () => {
           pageSizeOptions: ["5", "10", "20", "50"],
         }}
         onChange={handleTableChange}
+        scroll={{ x: "max-content" }}
       />
     </div>
   );

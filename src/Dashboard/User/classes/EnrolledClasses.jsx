@@ -36,7 +36,7 @@ const EnrolledClasses = () => {
         if (item.status === "CANCELLED") {
           statusLabel = <Tag color="red">Cancelled</Tag>;
         } else if (isExpired) {
-          statusLabel = <Tag color="orange">Expired</Tag>;
+          statusLabel = <Tag color="orange">Attended</Tag>;
         } else {
           statusLabel = <Tag color="green">{item.status === "CONFIRMED" ? "Active" : item.status}</Tag>;
         }

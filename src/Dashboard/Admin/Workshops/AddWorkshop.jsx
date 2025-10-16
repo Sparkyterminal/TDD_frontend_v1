@@ -1,95 +1,166 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Form,
   Input,
   DatePicker,
   TimePicker,
   Button,
-  Upload,
-  message,
   Card,
   Divider,
-  Select,
+  Space,
+  InputNumber,
+  message,
+  Upload,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { API_BASE_URL } from "../../../../config";
-import { useSelector } from "react-redux";
-import dayjs from "dayjs";
-// If you use moment, you can replace with `import moment from 'moment';`
-
-const { Option } = Select;
 
 const AddWorkshop = () => {
   const [form] = Form.useForm();
+  const [batches, setBatches] = useState([
+    {
+      name: null,
+      start_time: null,
+      end_time: null,
+      capacity: null,
+      pricing: {
+        early_bird: { price: null, capacity_limit: null },
+        regular: { price: null },
+        on_the_spot: { price: null },
+      },
+    },
+  ]);
+  const user = useSelector((state) => state.user.value);
+
+  // media upload state (same logic as AddCoach)
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [imageId, setImageId] = useState(null);
-  const [instructors, setInstructors] = useState([]);
-  const user = useSelector((state) => state.user.value);
 
   const config = {
     headers: {
-      Authorization: user.access_token,
+      Authorization: user?.access_token,
     },
   };
 
-  const messageApi = message;
+  const addBatch = () => {
+    setBatches([
+      ...batches,
+      {
+        name: null,
+        start_time: null,
+        end_time: null,
+        capacity: null,
+        pricing: {
+          early_bird: { price: null, capacity_limit: null },
+          regular: { price: null },
+          on_the_spot: { price: null },
+        },
+      },
+    ]);
+  };
 
-  // ------------- Fetch Instructors on Mount -------------
-  useEffect(() => {
-    async function fetchInstructors() {
-      try {
-        const res = await axios.get(`${API_BASE_URL}user/coaches`, config);
-        // Map the fetched data to include `name` field for display
-        const fetchedInstructors = res.data.data.map((ins) => ({
-          _id: ins._id,
-          name: `${ins.first_name} ${ins.last_name}`, // Combine first and last names
-        }));
-        setInstructors(fetchedInstructors);
-      } catch (e) {
-        message.error("Failed to load instructors");
+  const removeBatch = (index) => {
+    if (batches.length === 1) {
+      message.warning("At least one batch is required.");
+      return;
+    }
+    const newBatches = [...batches];
+    newBatches.splice(index, 1);
+    setBatches(newBatches);
+  };
+
+  const handleBatchChange = (index, field, value) => {
+    const newBatches = [...batches];
+    if (
+      field === "start_time" ||
+      field === "end_time" ||
+      field === "capacity" ||
+      field === "name"
+    ) {
+      newBatches[index][field] = value;
+    } else if (field === "early_bird_price") {
+      newBatches[index].pricing.early_bird.price = value;
+    } else if (field === "early_bird_capacity") {
+      newBatches[index].pricing.early_bird.capacity_limit = value;
+    } else if (field === "regular_price") {
+      newBatches[index].pricing.regular.price = value;
+    } else if (field === "on_the_spot_price") {
+      newBatches[index].pricing.on_the_spot.price = value;
+    }
+    setBatches(newBatches);
+  };
+
+  const validateBatches = () => {
+    for (let i = 0; i < batches.length; i++) {
+      const batch = batches[i];
+      if (!batch.start_time || !batch.end_time) {
+        message.error(`Batch ${i + 1}: Start and End time are required.`);
+        return false;
       }
     }
-    fetchInstructors();
-    // eslint-disable-next-line
-  }, []);
+    return true;
+  };
 
-  // ------------- Media upload logic (unchanged) -------------
+  const formatPricing = (pricing) => {
+    const obj = {};
+    if (pricing.early_bird.price !== null) {
+      obj.early_bird = {
+        price: pricing.early_bird.price,
+      };
+      if (pricing.early_bird.capacity_limit !== null) {
+        obj.early_bird.capacity_limit = pricing.early_bird.capacity_limit;
+      }
+    }
+    if (pricing.regular.price !== null) {
+      obj.regular = { price: pricing.regular.price };
+    }
+    if (pricing.on_the_spot.price !== null) {
+      obj.on_the_spot = { price: pricing.on_the_spot.price };
+    }
+    return obj;
+  };
+
+  // Upload handlers (mirrors AddCoach)
   const handleUploadChange = async ({ fileList: newFileList }) => {
     const latestFileList = newFileList.slice(-1);
     setFileList(latestFileList);
     setImageId(null);
+
     if (latestFileList.length === 0) {
       setImageId(null);
       return;
     }
+
     const file = latestFileList[0].originFileObj;
     if (!file) return;
+
+    // File size check (max 2MB) - same as AddCoach
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      messageApi.error("File must be smaller than 2MB!");
+      message.error("File must be smaller than 2MB!");
       setFileList([]);
       setImageId(null);
       return;
     }
+
     setUploading(true);
     const formData = new FormData();
     formData.append("media", file);
+
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}media`,
-        formData,
-        config
-      );
-      if (response.status !== 201 && response.status !== 200)
-        throw new Error("Upload failed");
-      const imgId = response.data.data || null;
-      setImageId(imgId);
-      messageApi.success("Image uploaded successfully!");
+      const response = await axios.post(`${API_BASE_URL}media`, formData, config);
+      if (response.status !== 201 && response.status !== 200) throw new Error("Upload failed");
+
+      const returnedId = response.data.data || null;
+      setImageId(returnedId);
+      message.success("Image uploaded successfully!");
     } catch (err) {
-      messageApi.error("Image upload failed. Please try again.");
+      console.error("Media upload error:", err);
+      message.error("Image upload failed. Please try again.");
       setImageId(null);
       setFileList([]);
     } finally {
@@ -100,67 +171,68 @@ const AddWorkshop = () => {
   const handleDeleteImage = async () => {
     setFileList([]);
     setImageId(null);
+    // Optionally call API to delete media if needed
   };
 
-  // ------------- Handle final submit -------------
   const onFinish = async (values) => {
-    if (!imageId) {
-      message.error("Please upload an image for the workshop.");
+    if (!validateBatches()) {
       return;
     }
-    setUploading(true);
-    try {
-      const start_time = values.date
-        .clone()
-        .hour(values.startTime.hour())
-        .minute(values.startTime.minute())
-        .second(0)
-        .format("YYYY-MM-DDTHH:mm:ssZ");
-      const end_time = values.date
-        .clone()
-        .hour(values.endTime.hour())
-        .minute(values.endTime.minute())
-        .second(0)
-        .format("YYYY-MM-DDTHH:mm:ssZ");
 
-      const payload = {
-        image: imageId,
-        title: values.title,
-        date: values.date.format("YYYY-MM-DD"),
-        start_time,
-        end_time,
-        capacity: values.capacity,
-        price: values.price,
-        instructor_user_ids: values.instructors, // multiple instructors
+    const formattedBatches = batches.map((batch) => {
+      const pricing = formatPricing(batch.pricing);
+
+      const obj = {
+        ...(batch.name ? { name: batch.name } : {}),
+        start_time: batch.start_time.toISOString(),
+        end_time: batch.end_time.toISOString(),
       };
 
+      if (batch.capacity !== null) obj.capacity = batch.capacity;
+      if (Object.keys(pricing).length > 0) obj.pricing = pricing;
+
+      return obj;
+    });
+
+    const payload = {
+      title: values.title,
+      date: values.date.format("YYYY-MM-DD"),
+      batches: formattedBatches,
+      ...(imageId ? { media: [imageId] } : {}),
+    };
+
+    try {
       await axios.post(`${API_BASE_URL}workshop`, payload, config);
       message.success("Workshop added successfully!");
       form.resetFields();
+      setBatches([
+        {
+          name: null,
+          start_time: null,
+          end_time: null,
+          capacity: null,
+          pricing: {
+            early_bird: { price: null, capacity_limit: null },
+            regular: { price: null },
+            on_the_spot: { price: null },
+          },
+        },
+      ]);
       setFileList([]);
       setImageId(null);
     } catch (err) {
       message.error("Failed to add workshop. Please try again.");
-    } finally {
-      setUploading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-8 px-2 font-[glancyr]">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 sm:p-8">
+      <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg p-6 sm:p-8">
         <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-[#26452D] font-[glancyr]">
           Add Workshop
         </h2>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          className="w-full"
-        >
-          <Card
-            style={{ background: "#fff", border: "none", marginBottom: 24 }}
-          >
+        <Form form={form} layout="vertical" onFinish={onFinish} className="w-full">
+          <Card style={{ background: "#fff", border: "none", marginBottom: 24 }}>
             <Divider
               style={{
                 color: "#26452D",
@@ -173,13 +245,8 @@ const AddWorkshop = () => {
             </Divider>
             <Form.Item
               label="Workshop Image"
-              required
               validateStatus={!imageId && fileList.length === 0 ? "error" : ""}
-              help={
-                !imageId && fileList.length === 0
-                  ? "Please upload an image"
-                  : ""
-              }
+              help={!imageId && fileList.length === 0 ? "Please upload an image" : ""}
               className="mb-0"
             >
               <Upload
@@ -188,13 +255,8 @@ const AddWorkshop = () => {
                 accept="image/*"
                 maxCount={1}
                 listType="picture-card"
-                showUploadList={{
-                  showPreviewIcon: true,
-                  showRemoveIcon: true,
-                }}
                 fileList={fileList}
                 onRemove={handleDeleteImage}
-                className="w-full"
               >
                 {fileList.length >= 1 ? null : (
                   <div style={{ textAlign: "center", color: "#26452D" }}>
@@ -213,100 +275,120 @@ const AddWorkshop = () => {
               <small style={{ color: "#26452D" }}>Max file size 2MB</small>
             </Form.Item>
           </Card>
-          {/* 2 inputs per row on desktop, 1 per row on mobile */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-            <Form.Item
-              label="Workshop Title"
-              name="title"
-              rules={[
-                { required: true, message: "Please enter the workshop title" },
-              ]}
+
+          <Form.Item
+            label="Workshop Title"
+            name="title"
+            rules={[{ required: true, message: "Please enter the workshop title" }]}
+          >
+            <Input placeholder="Enter workshop title" />
+          </Form.Item>
+          <Form.Item
+            label="Date"
+            name="date"
+            rules={[{ required: true, message: "Please select a date" }]}
+          >
+            <DatePicker style={{ width: "100%" }} />
+          </Form.Item>
+
+          <Divider orientation="left">Batches</Divider>
+
+          {batches.map((batch, index) => (
+            <Card
+              key={index}
+              className="mb-4"
+              extra={
+                <Button danger onClick={() => removeBatch(index)} disabled={batches.length === 1}>
+                  Remove
+                </Button>
+              }
             >
-              <Input placeholder="Enter workshop title" />
-            </Form.Item>
-            <Form.Item
-              label="Date"
-              name="date"
-              rules={[{ required: true, message: "Please select a date" }]}
-            >
-              <DatePicker style={{ width: "100%" }} />
-            </Form.Item>
-            <Form.Item
-              label="Start Time"
-              name="startTime"
-              rules={[
-                { required: true, message: "Please select the start time" },
-              ]}
-            >
-              <TimePicker
-                style={{ width: "100%" }}
-                use12Hours
-                format="h:mm a"
-              />
-            </Form.Item>
-            <Form.Item
-              label="End Time"
-              name="endTime"
-              rules={[
-                { required: true, message: "Please select the end time" },
-              ]}
-            >
-              <TimePicker
-                style={{ width: "100%" }}
-                use12Hours
-                format="h:mm a"
-              />
-            </Form.Item>
-            {/* Dropdown for instructors (multiple) */}
-            <Form.Item
-              label="Instructors"
-              name="instructors"
-              className="sm:col-span-2"
-              rules={[{ required: true, message: "Please select at least one instructor" }]}
-            >
-              <Select
-                mode="multiple"
-                showSearch
-                placeholder="Select instructor(s)"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-              >
-                {instructors.map((ins) => (
-                  <Option key={ins._id} value={ins._id}>
-                    {ins.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Price"
-              name="price"
-              rules={[{ required: true, message: "Please enter the price" }]}
-            >
-              <Input type="number" min={0} placeholder="Enter price" />
-            </Form.Item>
-            <Form.Item
-              label="Total Capacity"
-              name="capacity"
-              rules={[
-                { required: true, message: "Please enter total capacity" },
-              ]}
-            >
-              <Input
-                type="number"
-                min={1}
-                placeholder="Enter total seats/capacity"
-              />
-            </Form.Item>
-          </div>
-          <Form.Item className="mt-6">
+              <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+                <Form.Item label="Batch Name">
+                  <Input
+                    value={batch.name}
+                    onChange={(e) => handleBatchChange(index, "name", e.target.value)}
+                    placeholder="e.g., Morning Batch / Weekend Batch"
+                  />
+                </Form.Item>
+
+                <Form.Item label="Start Time" required>
+                  <TimePicker
+                    style={{ width: "100%" }}
+                    value={batch.start_time}
+                    onChange={(v) => handleBatchChange(index, "start_time", v)}
+                    format="h:mm a"
+                    use12Hours
+                  />
+                </Form.Item>
+                <Form.Item label="End Time" required>
+                  <TimePicker
+                    style={{ width: "100%" }}
+                    value={batch.end_time}
+                    onChange={(v) => handleBatchChange(index, "end_time", v)}
+                    format="h:mm a"
+                    use12Hours
+                  />
+                </Form.Item>
+                <Form.Item label="Capacity" required>
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    min={1}
+                    value={batch.capacity}
+                    onChange={(v) => handleBatchChange(index, "capacity", v)}
+                  />
+                </Form.Item>
+                <h4 className="font-semibold">Pricing</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  <div>
+                    <label>Early Bird Price</label>
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      min={0}
+                      value={batch.pricing.early_bird.price}
+                      onChange={(v) => handleBatchChange(index, "early_bird_price", v)}
+                    />
+                  </div>
+                  <div>
+                    <label>Early Bird Capacity Limit</label>
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      min={0}
+                      value={batch.pricing.early_bird.capacity_limit}
+                      onChange={(v) => handleBatchChange(index, "early_bird_capacity", v)}
+                    />
+                  </div>
+                  <div>
+                    <label>Regular Price</label>
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      min={0}
+                      value={batch.pricing.regular.price}
+                      onChange={(v) => handleBatchChange(index, "regular_price", v)}
+                    />
+                  </div>
+                  <div>
+                    <label>On the Spot Price</label>
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      min={0}
+                      value={batch.pricing.on_the_spot.price}
+                      onChange={(v) => handleBatchChange(index, "on_the_spot_price", v)}
+                    />
+                  </div>
+                </div>
+              </Space>
+            </Card>
+          ))}
+
+          <Button type="dashed" block onClick={addBatch} className="mb-4">
+            + Add Batch
+          </Button>
+
+          <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
-              loading={uploading}
               style={{
                 width: "100%",
                 background: "#26452D",
@@ -315,6 +397,7 @@ const AddWorkshop = () => {
                 fontWeight: 600,
                 fontSize: 16,
               }}
+              loading={uploading}
             >
               Submit
             </Button>

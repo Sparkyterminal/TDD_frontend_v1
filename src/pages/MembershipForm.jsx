@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useMemo, useState, useEffect } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { API_BASE_URL } from "../../config";
 
@@ -11,29 +12,44 @@ const Input = ({ label, children }) => (
   </label>
 );
 
+// replaced DisabledField to allow text-wrap and sizing so full plan name is visible
 const DisabledField = ({ label, value }) => (
   <Input label={label}>
-    <input
-      disabled
-      value={value ?? "-"}
-      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-gray-700 focus:outline-none"
-      readOnly
-    />
+    <div
+      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-gray-700 break-words whitespace-pre-wrap min-h-[56px] max-h-[240px] overflow-auto"
+      title={value}
+      aria-readonly="true"
+    >
+      {value ?? "-"}
+    </div>
   </Input>
 );
 
 const MembershipForm = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const selectedPlan = useMemo(
-    () => ({
+  const { id: routeId } = useParams();
+  const user = useSelector((s) => s.user?.value);
+
+  const [fetchedPlan, setFetchedPlan] = useState(null);
+  const [loadingPlan, setLoadingPlan] = useState(false);
+
+  const selectedPlan = useMemo(() => {
+    if (fetchedPlan) {
+      return {
+        _id: fetchedPlan._id,
+        name: fetchedPlan.name,
+        price: fetchedPlan.prices?.monthly ?? fetchedPlan.price,
+        billing_interval: fetchedPlan.billing_interval,
+      };
+    }
+    return {
       _id: state?._id,
       name: state?.name,
       price: state?.price,
       billing_interval: state?.billing_interval,
-    }),
-    [state]
-  );
+    };
+  }, [state, fetchedPlan]);
 
   const [form, setForm] = useState({
     full_name: "",
@@ -44,25 +60,96 @@ const MembershipForm = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  const [billingOption, setBillingOption] = useState(null);
+  const [selectedBatchId, setSelectedBatchId] = useState(null);
+
+  const priceLabelForKey = (key) => {
+    const map = {
+      monthly: "Monthly",
+      quarterly: "Quarterly",
+      half_yearly: "Half Yearly",
+      yearly: "Yearly",
+    };
+    return map[key] || key;
+  };
+
   const formatInterval = (val) => {
     if (!val) return "-";
+    const key = String(val).toUpperCase().replace(/-/g, "_");
     const map = {
       MONTHLY: "Monthly",
       QUARTERLY: "3 months",
       "3_MONTHS": "3 months",
+      HALF_YEARLY: "6 months",
       "6_MONTHS": "6 months",
-      NINE_MONTHS: "9 months",
       YEARLY: "12 months",
       "12_MONTHS": "12 months",
     };
-    return (
-      map[val] ||
-      val
-        .replaceAll("_", " ")
-        .toLowerCase()
-        .replace(/^./, (c) => c.toUpperCase())
-    );
+    if (map[key]) return map[key];
+    return String(val)
+      .replaceAll("_", " ")
+      .toLowerCase()
+      .replace(/^./, (c) => c.toUpperCase());
   };
+
+  const formatTimeTo12Hour = (time24) => {
+    if (!time24) return "";
+    const [hStr, mStr] = time24.split(":");
+    let h = parseInt(hStr || "0", 10);
+    const m = mStr || "00";
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12;
+    if (h === 0) h = 12;
+    return `${h}:${m} ${ampm} IST`;
+  };
+
+  useEffect(() => {
+    if (!fetchedPlan) return;
+    const prices = fetchedPlan.prices || {};
+    const keys = Object.keys(prices);
+    if (keys.length) {
+      const defaultKey = keys.includes("monthly") ? "monthly" : keys[0];
+      setBillingOption(defaultKey);
+    } else {
+      setBillingOption(null);
+    }
+
+    // Filter batches with capacity > 0
+    const batches = Array.isArray(fetchedPlan.batches)
+      ? fetchedPlan.batches.filter((batch) => batch.capacity > 0)
+      : [];
+
+    if (batches.length) {
+      setSelectedBatchId(batches[0]._id);
+    } else {
+      setSelectedBatchId(null);
+    }
+  }, [fetchedPlan]);
+
+  useEffect(() => {
+    if (!routeId) return;
+    const config = user ? { headers: { Authorization: user.access_token } } : {};
+    let cancelled = false;
+    const fetchById = async () => {
+      setLoadingPlan(true);
+      try {
+        const res = await axios.get(`${API_BASE_URL}membership-plan/${routeId}`, config);
+        const data = res.data?.data || res.data || null;
+        console.log("Fetched membership by id:", data);
+        if (!cancelled) {
+          setFetchedPlan(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch membership plan:", err);
+      } finally {
+        if (!cancelled) setLoadingPlan(false);
+      }
+    };
+    fetchById();
+    return () => {
+      cancelled = true;
+    };
+  }, [routeId, user]);
 
   const onChange = (key) => (e) => {
     const value = e?.target ? e.target.value : e;
@@ -71,54 +158,108 @@ const MembershipForm = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedPlan?._id) {
-      // If user navigated directly without selecting a plan
+    const planId = selectedPlan?._id;
+    if (!planId) {
       navigate("/get-membership");
       return;
     }
     setSubmitting(true);
     try {
       const payload = {
-        planId: selectedPlan._id,
+        planId,
         name: form.full_name,
         gender: form.gender,
         age: Number(form.age) || undefined,
         email: form.email,
         mobile_number: form.mobile,
+        billing_interval: billingOption || undefined,
+        batch_id: selectedBatchId || undefined,
       };
       const res = await axios.post(`${API_BASE_URL}membership-plan/booking`, payload);
-    //   navigate("/", { state: { success: true } });
-    window.location.href=res.data.checkoutPageUrl;
+      window.location.href = res.data.checkoutPageUrl;
     } catch (err) {
-      // You can integrate toast here if available
+      console.error("Booking error:", err);
       setSubmitting(false);
     }
   };
 
   return (
-    <section className="min-h-screen max-w-3xl mx-auto px-6 py-12 text-gray-900">
-      <h1 className="text-3xl mb-8 font-[glancyr]">Membership Details</h1>
-      <form
-        onSubmit={onSubmit}
-        className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm"
-      >
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
+    <section className="min-h-screen max-w-md sm:max-w-xl md:max-w-3xl mx-auto px-4 sm:px-6 md:px-12 py-10 text-gray-900">
+      <h1 className="text-2xl sm:text-3xl mb-8 font-[glancyr] text-center sm:text-left">Membership Details</h1>
+      <form onSubmit={onSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <DisabledField label="Plan Name" value={selectedPlan?.name} />
-          <DisabledField
-            label="Price"
-            value={
-              selectedPlan?.price || selectedPlan?.price === 0
-                ? `₹${Number(selectedPlan.price).toLocaleString("en-IN")}`
-                : "-"
-            }
-          />
-          <DisabledField
-            label="Billing Interval"
-            value={formatInterval(selectedPlan?.billing_interval)}
-          />
+          {/* Price and Billing Interval fields left commented as before */}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        {fetchedPlan && (
+          <>
+            <div className="mb-6">
+              <label className="block text-sm text-gray-700 mb-1 font-[glancyr]">Choose Price / Interval</label>
+              <select
+                value={billingOption || ""}
+                onChange={(e) => setBillingOption(e.target.value || null)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#D2663B]"
+              >
+                {Object.keys(fetchedPlan.prices || {}).length === 0 && (
+                  <option value="">No price options</option>
+                )}
+                {Object.entries(fetchedPlan.prices || {}).map(([key, amount]) => (
+                  <option key={key} value={key}>
+                    {priceLabelForKey(key)} — ₹{Number(amount).toLocaleString("en-IN")}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm text-gray-700 mb-2 font-[glancyr]">Choose Batch</label>
+              <div className="space-y-4 border border-gray-300 rounded-lg p-4 bg-white max-w-md mx-auto">
+                {Array.isArray(fetchedPlan.batches) && fetchedPlan.batches.length ? (
+                  // Filter the batches displayed to only those with capacity > 0
+                  fetchedPlan.batches.filter(batch => batch.capacity > 0).length > 0 ? (
+                    fetchedPlan.batches
+                      .filter((batch) => batch.capacity > 0)
+                      .map((batch) => {
+                        const scheduleStr = batch.schedule
+                          .map(
+                            (s) =>
+                              `${s.day}(${formatTimeTo12Hour(s.start_time)} - ${formatTimeTo12Hour(
+                                s.end_time
+                              )})`
+                          )
+                          .join(" - ");
+                        return (
+                          <label
+                            key={batch._id}
+                            className="flex items-center gap-3 cursor-pointer text-gray-900 font-medium"
+                          >
+                            <input
+                              type="radio"
+                              name="batch"
+                              value={batch._id}
+                              checked={selectedBatchId === batch._id}
+                              onChange={() => setSelectedBatchId(batch._id)}
+                              className="form-radio rounded border-gray-300 h-5 w-5"
+                            />
+                            <span>
+                              {scheduleStr} (Capacity: {batch.capacity ?? "-"})
+                            </span>
+                          </label>
+                        );
+                      })
+                  ) : (
+                    <p className="text-gray-500">No batches available</p>
+                  )
+                ) : (
+                  <p className="text-gray-500">No batches available</p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input label="Full name">
             <input
               required
@@ -168,7 +309,7 @@ const MembershipForm = () => {
             />
           </Input>
 
-          <Input label="Mobile number">
+          <Input label="Mobile number" className="sm:col-span-2">
             <input
               required
               type="tel"
@@ -180,18 +321,18 @@ const MembershipForm = () => {
           </Input>
         </div>
 
-        <div className="mt-6 flex items-center gap-3">
+        <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
           <button
             type="submit"
             disabled={submitting}
-            className="px-5 py-2 rounded-full bg-[#D2663B] text-white font-medium hover:opacity-90 disabled:opacity-60"
+            className="w-full sm:w-auto px-5 py-2 rounded-full bg-[#D2663B] text-white font-medium hover:opacity-90 disabled:opacity-60 transition"
           >
             {submitting ? "Submitting..." : "Submit"}
           </button>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-5 py-2 rounded-full border border-gray-300 text-gray-800 hover:bg-gray-50"
+            className="w-full sm:w-auto px-5 py-2 rounded-full border border-gray-300 text-gray-800 hover:bg-gray-50 transition"
           >
             Cancel
           </button>

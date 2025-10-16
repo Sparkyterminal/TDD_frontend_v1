@@ -116,28 +116,28 @@ const LayoutFixed = () => {
         },
       ],
     },
-    {
-      key: "AddClasses",
-      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
-      label: <span style={{ color: TEXT_DARK }}>Classes</span>,
-      children: [
-        {
-          key: "/dashboard/addclasses",
-          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
-          label: <span style={{ color: TEXT_DARK }}>Add Classes</span>,
-        },
-        {
-          key: "/dashboard/viewclasses",
-          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
-          label: <span style={{ color: TEXT_DARK }}>View Classes</span>,
-        },
-        {
-          key: "/dashboard/viewclassusers",
-          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
-          label: <span style={{ color: TEXT_DARK }}>Class Users</span>,
-        }
-      ],
-    },
+    // {
+    //   key: "AddClasses",
+    //   icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
+    //   label: <span style={{ color: TEXT_DARK }}>Classes</span>,
+    //   children: [
+    //     {
+    //       key: "/dashboard/addclasses",
+    //       icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
+    //       label: <span style={{ color: TEXT_DARK }}>Add Classes</span>,
+    //     },
+    //     {
+    //       key: "/dashboard/viewclasses",
+    //       icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+    //       label: <span style={{ color: TEXT_DARK }}>View Classes</span>,
+    //     },
+    //     {
+    //       key: "/dashboard/viewclassusers",
+    //       icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+    //       label: <span style={{ color: TEXT_DARK }}>Class Users</span>,
+    //     }
+    //   ],
+    // },
   ];
 
   // Sidebar menu items for USER

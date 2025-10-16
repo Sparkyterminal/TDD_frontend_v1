@@ -57,6 +57,7 @@ import {
   useTransform,
 } from "motion/react";
 import { useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 import Header from "../components/Header";
 import Hero from "../sections/Hero";
@@ -66,10 +67,13 @@ import TestimonialsSection from "../sections/TestimonialsSection";
 import Footer from "../components/Footer";
 import WorkshopSection from "../sections/WorkshopSection";
 import ContactFollowSection from "../sections/ContactFollowSection";
+import InstagramFeed from "../sections/InstagramFeed";
 
 const Homepage = () => {
   const containerRef = useRef(null);
   const workshopRef = useRef(null);
+  const tabRef = useRef(null); // <- ref for TabSection
+  const location = useLocation(); // read navigation state
   const isInView = useInView(workshopRef, { margin: "-90% 0px -10% 0px" });
   const controls = useAnimation();
 
@@ -125,6 +129,34 @@ const Homepage = () => {
     };
   }, []);
 
+  // scrollToSection function passed to Header for same-page clicks
+  const scrollToSection = (payload) => {
+    // payload may be string route or object { target, tab }
+    const target = typeof payload === "string" ? payload : payload?.target;
+    if (target === "tab-section" && tabRef.current) {
+      tabRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  // if navigated to homepage with location.state.scrollTo -> perform scroll once
+  useEffect(() => {
+    if (location?.state?.scrollTo === "tab-section") {
+      // small timeout to allow content to layout
+      setTimeout(() => {
+        if (tabRef.current) {
+          tabRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+          // clear the navigation state so it doesn't re-trigger on back/forward
+          try {
+            const url = window.location.pathname + window.location.search;
+            window.history.replaceState({}, document.title, url);
+          } catch (e) {
+            // ignore
+          }
+        }
+      }, 120);
+    }
+  }, [location]);
+
   useEffect(() => {
     if (isInView) {
       controls.start({ backgroundColor: "#adc290" });
@@ -147,7 +179,7 @@ const Homepage = () => {
         style={{ scaleX: scrollYProgress }}
       />
 
-      <Header />
+      <Header scrollToSection={scrollToSection} />
 
       {/* Wrap sections in motion containers for better scroll performance */}
       <motion.div
@@ -173,10 +205,13 @@ const Homepage = () => {
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
       >
-        <TabSection />
+        {/* TabSection wrapped with ref for scrolling */}
+        <div ref={tabRef}>
+          <TabSection />
+        </div>
       </motion.div>
 
-      {/* <div ref={workshopRef}>
+      <div ref={workshopRef}>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -185,16 +220,24 @@ const Homepage = () => {
         >
           <WorkshopSection />
         </motion.div>
-      </div> */}
+      </div>
 
-      {/* <motion.div
+      <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <TestimonialsSection />
-      </motion.div> */}
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <InstagramFeed />
+      </motion.div>
       <ContactFollowSection />
 
       <motion.div

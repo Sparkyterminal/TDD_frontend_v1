@@ -5,11 +5,11 @@ const Content = () => {
   const navigate = useNavigate();
 
   const navItems = [
-    // { number: "01", text: "Home", route: "/" },
+    { number: "01", text: "Home", route: "/" },
     // { number: "02", text: "Instructors", route: "/instructors" },
-    // { number: "03", text: "Rent our space", route: "/rent" },
-    // { number: "04", text: "Workshops", route: "/workshops" },
-    // { number: "05", text: "Contact us", route: "/contact" },
+    { number: "02", text: "Workshops", route: "/workshops" },
+    { number: "03", text: "Rent our space", route: "/rent" },
+    { number: "04", text: "Contact us", route: "/contact" },
   ];
 
   return (
@@ -17,8 +17,7 @@ const Content = () => {
       className="px-4 sm:px-6 md:px-8 py-8 md:py-12 text-white h-full flex flex-col justify-between font-[glancyr]"
       style={{ backgroundColor: "#26452D" }}
     >
-      {/* Uncomment and use this nav menu if needed */}
-      {/* <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center">
+      <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center">
         <nav className="mb-6 md:mb-8">
           {navItems.map((item, index) => (
             <div
@@ -36,7 +35,7 @@ const Content = () => {
             </div>
           ))}
         </nav>
-      </div> */}
+      </div>
 
       <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-3 sm:gap-4 pt-4 md:pt-6 border-t border-white border-opacity-20 text-xs sm:text-sm text-white text-opacity-80 text-center sm:text-left mt-auto">
         <div className="flex gap-6">
