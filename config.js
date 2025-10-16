@@ -2,9 +2,9 @@
 // export const API_BASE_URL = "http://localhost:4044/";
 // export const BASE_URL = "/";
 // export const SOCKET_URL = "http://localhost:4044";
-export const API_BASE_URL = "https://thedancedistrict.in/api/";
+export const API_BASE_URL = "https://www.thedancedistrict.in/api/";
 export const BASE_URL = "/";
-export const SOCKET_URL = "http://thedancedistrict.in/api/";
+export const SOCKET_URL = "http://www.thedancedistrict.in/api/";
 export const BASE_LINK = "/";
 export const SOCKET_PATH = "/";
 export const DEFAULT_IP_ADDRESS = "127.0.0.1";
