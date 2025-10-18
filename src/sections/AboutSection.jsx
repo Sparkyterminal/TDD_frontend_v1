@@ -22,8 +22,9 @@ const AboutSection = () => {
           </h2>
           <p className="mb-2 text-2xl font-bold leading-relaxed font-[cormoreg]">
             At our studio, dance is more than movement — it's expression,
-            passion, and joy. Founded by Sahitya, our space is dedicated to
-            nurturing creativity, confidence, and rhythm in every dancer.
+            passion, and joy. Founded by Sahitya and Yogesh, our space is
+            dedicated to nurturing creativity, confidence, and rhythm in every
+            dancer.
           </p>
           <p className="mb-2 text-2xl font-bold leading-relaxed font-[cormoreg]">
             Whether you're a beginner discovering your first steps or an

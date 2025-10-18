@@ -57,6 +57,8 @@ import RefundPolicy from "./pages/RefundPolicy";
 import WorkshopDetails from "./pages/WorkshopDetails";
 import MembershipPage from "./pages/MembershipPage";
 import PublicLayout from "./components/PublicLayout";
+import ViewEnquiry from "./Dashboard/Admin/Forms/ViewEnquiry";
+import ViewContactus from "./Dashboard/Admin/Forms/ViewContactus";
 // import LoadingPage from "./components/LoadingPage"; // Import your custom LoadingPage
 
 const App = () => {
@@ -177,6 +179,9 @@ const App = () => {
               <Route path="editclasses/:id" element={<EditClasses />} />
               <Route path="viewclasses" element={<ViewClasses />} />
               <Route path="viewclassusers" element={<UsersClasses />} />
+              <Route path="viewcontactform" element={<ViewContactus />} />
+              <Route path="viewenquireform" element={<ViewEnquiry />} />
+              
               <Route
                 path="*"
                 element={<Navigate to="workshopusers" replace />}

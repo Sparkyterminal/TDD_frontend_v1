@@ -116,28 +116,23 @@ const LayoutFixed = () => {
         },
       ],
     },
-    // {
-    //   key: "AddClasses",
-    //   icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
-    //   label: <span style={{ color: TEXT_DARK }}>Classes</span>,
-    //   children: [
-    //     {
-    //       key: "/dashboard/addclasses",
-    //       icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
-    //       label: <span style={{ color: TEXT_DARK }}>Add Classes</span>,
-    //     },
-    //     {
-    //       key: "/dashboard/viewclasses",
-    //       icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
-    //       label: <span style={{ color: TEXT_DARK }}>View Classes</span>,
-    //     },
-    //     {
-    //       key: "/dashboard/viewclassusers",
-    //       icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
-    //       label: <span style={{ color: TEXT_DARK }}>Class Users</span>,
-    //     }
-    //   ],
-    // },
+    {
+      key: "ViewForms",
+      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
+      label: <span style={{ color: TEXT_DARK }}>Forms</span>,
+      children: [
+        {
+          key: "/dashboard/viewcontactform",
+          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Contact Us Form</span>,
+        },
+        {
+          key: "/dashboard/viewenquireform",
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Enquiry Form</span>,
+        },
+      ],
+    },
   ];
 
   // Sidebar menu items for USER
