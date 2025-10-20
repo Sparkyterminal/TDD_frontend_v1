@@ -150,11 +150,10 @@
 // //     if (!validate()) return;
 // //     setSubmitting(true);
 // //     console.log("outside try");
-    
 
 // //     try {
 // //         console.log("inside try");
-        
+
 // //       const selectedBatchIds = Object.entries(tickets)
 // //         .filter(([_, qty]) => qty > 0)
 // //         .map(([batchId]) => batchId);
@@ -230,7 +229,6 @@
 //     setSubmitting(false);
 //   }
 // };
-
 
 //   if (loading) {
 //     return (
@@ -706,19 +704,21 @@ const WorkshopDetails = () => {
   const seatsFull = totalSeatsLeft === 0;
 
   // Total price + service fee (only if tickets selected)
-  const totalTicketsPrice = Object.entries(tickets).reduce((acc, [batchId, qty]) => {
-    if (qty > 0 && workshop) {
-      const batch = workshop.batches.find((b) => b._id === batchId);
-      if (batch) {
-        const { price } = getBatchPrice(batch);
-        return acc + price * qty;
+  const totalTicketsPrice = Object.entries(tickets).reduce(
+    (acc, [batchId, qty]) => {
+      if (qty > 0 && workshop) {
+        const batch = workshop.batches.find((b) => b._id === batchId);
+        if (batch) {
+          const { price } = getBatchPrice(batch);
+          return acc + price * qty;
+        }
       }
-    }
-    return acc;
-  }, 0);
+      return acc;
+    },
+    0
+  );
   const totalPrice = totalTicketsPrice; //+ SERVICE_FEE : 0
-  console.log("total price",totalPrice);
-  
+  console.log("total price", totalPrice);
 
   // Validation before submit
   const validate = () => {
@@ -818,14 +818,14 @@ const WorkshopDetails = () => {
       {/* Back button */}
       <button
         onClick={() => navigate(-1)}
-        className="mb-4 text-[#26442C] font-semibold hover:underline"
+        className="mb-4 text-[#26442C] font-semibold hover:underline cursor-pointer"
         aria-label="Go back"
       >
         &larr; Back
       </button>
       <h1 className="text-4xl mb-8 text-center text-[#26442C] font-semibold">
-       Workshop Details
-       </h1>
+        Workshop Details
+      </h1>
 
       <div className="flex flex-col md:flex-row gap-10">
         {/* Left side: image, title, batch details */}
@@ -857,7 +857,7 @@ const WorkshopDetails = () => {
           </h3>
 
           {/* Batch details list */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             {workshop.batches.map((batch) => {
               const { price, label } = getBatchPrice(batch);
               const seatsLeft = batch.capacity > 0;
@@ -890,32 +890,116 @@ const WorkshopDetails = () => {
                 </div>
               );
             })}
+          </div> */}
+          {/* Batch details list */}
+          <div className="space-y-4">
+            {workshop.batches.map((batch) => {
+              const seatsLeft = batch.capacity > 0;
+              const earlyBirdCapacity =
+                batch.pricing?.early_bird?.capacity_limit ?? 0;
+              const earlyBirdPrice = batch.pricing?.early_bird?.price ?? null;
+              const regularPrice = batch.pricing?.regular?.price ?? null;
+              const showBothPrices =
+                earlyBirdCapacity > 0 &&
+                earlyBirdPrice !== null &&
+                regularPrice !== null;
+
+              return (
+                <div
+                  key={batch._id}
+                  className={`border rounded p-4 flex justify-between items-center ${
+                    seatsLeft ? "border-gray-300" : "border-red-400 bg-red-50"
+                  }`}
+                >
+                  <div className="flex flex-col max-w-[60%] text-[#26442C] font-semibold">
+                    <span className="truncate">{batch.name || "Batch"}</span>
+                    <span className="text-sm font-normal">
+                      {formatTime(batch.start_time)} -{" "}
+                      {formatTime(batch.end_time)}
+                    </span>
+                  </div>
+                  <div className="text-[#D16539] font-bold flex flex-col items-end min-w-[100px]">
+                    {showBothPrices ? (
+                      <>
+                        <span className="text-sm">
+                          ₹{earlyBirdPrice}{" "}
+                          <span className="text-xs font-normal">
+                            (Early Bird)
+                          </span>
+                        </span>
+                        <span className="text-sm">
+                          ₹{regularPrice}{" "}
+                          <span className="text-xs font-normal">(Regular)</span>
+                        </span>
+                      </>
+                    ) : earlyBirdCapacity === 0 && regularPrice !== null ? (
+                      <span>
+                        ₹{regularPrice}{" "}
+                        <span className="text-xs font-normal">(Regular)</span>
+                      </span>
+                    ) : earlyBirdPrice !== null ? (
+                      <span>
+                        ₹{earlyBirdPrice}{" "}
+                        <span className="text-xs font-normal">
+                          (Early Bird)
+                        </span>
+                      </span>
+                    ) : regularPrice !== null ? (
+                      <span>₹{regularPrice}</span>
+                    ) : (
+                      <span>₹0</span>
+                    )}
+                    {hasOnTheSpot(batch) && (
+                      <span className="text-xs font-normal text-gray-600 mt-1">
+                        On Spot: ₹{batch.pricing.on_the_spot.price}
+                      </span>
+                    )}
+                    {!seatsLeft && (
+                      <span className="text-xs text-red-600 font-semibold mt-1">
+                        Seats Full
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Terms and Conditions */}
           <div className="mt-6">
-            <h3 className="font-semibold text-[#26442C] text-xl mb-3">Terms and Conditions</h3>
+            <h3 className="font-semibold text-[#26442C] text-xl mb-3">
+              Terms and Conditions
+            </h3>
             <ol className="list-decimal list-inside space-y-2 text-sm leading-relaxed text-gray-700 font-normal">
               <li>
-                No cancellation / refund / transmission after payment is completed. Interchange of sessions is not permitted.
+                No cancellation / refund / transmission after payment is
+                completed. Interchange of sessions is not permitted.
               </li>
               <li>
-                If you like to wear dance shoes during the session, you must change into clean shoes after you arrive at the studio.
+                If you like to wear dance shoes during the session, you must
+                change into clean shoes after you arrive at the studio.
               </li>
               <li>
-                Admission is only for the registered person during the booking. No swap to any other person is allowed.
+                Admission is only for the registered person during the booking.
+                No swap to any other person is allowed.
               </li>
               <li>
-                Please bring your photo ID for verification (Soft or hard copy) for admission.
+                Please bring your photo ID for verification (Soft or hard copy)
+                for admission.
               </li>
               <li>
-                Your booking is not confirmed unless until you receive the email receipt for your payment. So please ensure you enter a valid email ID properly without any spelling mistakes.
+                Your booking is not confirmed unless until you receive the email
+                receipt for your payment. So please ensure you enter a valid
+                email ID properly without any spelling mistakes.
               </li>
               <li>
-                Your booking is not confirmed even though money is deducted from your bank. We can confirm your booking only when the fund is credited to our bank account.
+                Your booking is not confirmed even though money is deducted from
+                your bank. We can confirm your booking only when the fund is
+                credited to our bank account.
               </li>
               <li>
-                Your act of booking the tickets by making the payment means that you agree with all terms and conditions.
+                Your act of booking the tickets by making the payment means that
+                you agree with all terms and conditions.
               </li>
             </ol>
           </div>
@@ -936,7 +1020,10 @@ const WorkshopDetails = () => {
                 name="full_name"
                 rules={[{ required: true, message: "Please enter full name" }]}
               >
-                <Input placeholder="Enter your full name" disabled={submitting} />
+                <Input
+                  placeholder="Enter your full name"
+                  disabled={submitting}
+                />
               </Form.Item>
 
               <Form.Item
@@ -1023,19 +1110,27 @@ const WorkshopDetails = () => {
                     <div
                       key={batch._id}
                       className={`flex justify-between items-center border rounded p-4 mb-4 ${
-                        seatsLeft ? "border-gray-300" : "border-red-400 bg-red-50"
+                        seatsLeft
+                          ? "border-gray-300"
+                          : "border-red-400 bg-red-50"
                       }`}
                     >
                       <div className="flex flex-col text-[#26442C] font-semibold max-w-[60%]">
                         <span>{batch.name || "Batch"}</span>
                         <span className="text-sm font-normal">
-                          {formatTime(batch.start_time)} - {formatTime(batch.end_time)}
+                          {formatTime(batch.start_time)} -{" "}
+                          {formatTime(batch.end_time)}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-3 text-[#D16539] font-bold min-w-[150px] justify-end">
                         <span>
-                          ₹{price} {label && <span className="text-xs font-normal">({label})</span>}
+                          ₹{price}{" "}
+                          {label && (
+                            <span className="text-xs font-normal">
+                              ({label})
+                            </span>
+                          )}
                         </span>
                         <button
                           type="button"
@@ -1076,7 +1171,11 @@ const WorkshopDetails = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  disabled={seatsFull || Object.values(tickets).reduce((a, b) => a + b, 0) === 0 || submitting}
+                  disabled={
+                    seatsFull ||
+                    Object.values(tickets).reduce((a, b) => a + b, 0) === 0 ||
+                    submitting
+                  }
                   block
                   size="large"
                   className="font-semibold text-lg"
