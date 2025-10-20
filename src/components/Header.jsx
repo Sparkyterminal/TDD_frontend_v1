@@ -262,8 +262,10 @@ const Header = ({ scrollToSection }) => {
       <div className="px-6 mx-auto sm:px-8 lg:px-12 max-w-7xl">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div 
-          className="flex flex-shrink-0 items-center h-12">
+          <div
+            className="flex flex-shrink-0 items-center h-12 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
             <img
               src={logoSrc}
               alt="The Dance District Logo"
@@ -281,7 +283,11 @@ const Header = ({ scrollToSection }) => {
               className="text-current cursor-pointer"
               style={{ color: defaultTextColor }}
             >
-              <img src="assets/instagram.png" alt="Instagram" className="w-8 h-8" />
+              <img
+                src="assets/instagram.png"
+                alt="Instagram"
+                className="w-8 h-8"
+              />
             </div>
 
             <button
@@ -341,13 +347,18 @@ const Header = ({ scrollToSection }) => {
                       route === "/kids-classes"
                     ) {
                       // if already on home, call scrollToSection directly (if provided)
-                      if (location.pathname === "/" && typeof scrollToSection === "function") {
+                      if (
+                        location.pathname === "/" &&
+                        typeof scrollToSection === "function"
+                      ) {
                         // pass optional tab key (route) for future use
                         scrollToSection({ target: "tab-section", tab: route });
                         return;
                       }
                       // otherwise navigate to home and provide state so Homepage can scroll after mount
-                      navigate("/", { state: { scrollTo: "tab-section", tab: route } });
+                      navigate("/", {
+                        state: { scrollTo: "tab-section", tab: route },
+                      });
                       return;
                     }
 
@@ -370,7 +381,11 @@ const Header = ({ scrollToSection }) => {
               className="ml-4 inline-flex items-center justify-center cursor-pointer"
             >
               <div className="w-10 h-10">
-                <img src="assets/instagram.png" alt="Instagram" className="w-full h-full object-contain" />
+                <img
+                  src="assets/instagram.png"
+                  alt="Instagram"
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
           </nav>
@@ -415,8 +430,14 @@ const Header = ({ scrollToSection }) => {
                   style={{ color: "#000" }}
                   onClick={() => setMenuOpen(false)}
                 >
-                  <img src="assets/instagram.png" alt="Instagram" className="w-6 h-6" />
-                  <span className="ml-2 font-[glancyr] text-base">Instagram</span>
+                  <img
+                    src="assets/instagram.png"
+                    alt="Instagram"
+                    className="w-6 h-6"
+                  />
+                  <span className="ml-2 font-[glancyr] text-base">
+                    Instagram
+                  </span>
                 </a>
               </nav>
             </div>

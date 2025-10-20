@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 
 const NoRefundPolicy = () => {
   return (
-    <div className="min-h-screen font-[glancyr] antialiased bg-[#EBE5DB] text-gray-900">
+    <div className="min-h-[100vh] font-[glancyr] antialiased bg-[#EBE5DB] text-gray-900">
       <Header />
       <main className="max-w-4xl mt-24 mx-auto px-4 sm:px-6 md:px-8 py-8">
         <article className="prose max-w-none prose-indigo sm:prose-lg lg:prose-xl">
@@ -13,18 +13,18 @@ const NoRefundPolicy = () => {
           </h1>
 
           <p>
-            At <strong>The Dance District</strong>, all fees paid for memberships,
-            workshops, and other services are <strong>strictly non-refundable</strong>.
-            By enrolling or registering, you acknowledge and agree to this policy.
+            At <strong>The Dance District</strong>, all fees paid for
+            memberships, workshops, and other services are{" "}
+            <strong>strictly non-refundable</strong>. By enrolling or
+            registering, you acknowledge and agree to this policy.
           </p>
 
           <h2>1. No Refunds on Memberships</h2>
           <p>
-            Membership fees are non-refundable under all circumstances. Commitment resources
-            are allocated upon enrollment, making refunds impossible.
+            Membership fees are non-refundable under all circumstances.
+            Commitment resources are allocated upon enrollment, making refunds
+            impossible.
           </p>
-
-          
 
           <h2>2. Contact Us</h2>
           <p>

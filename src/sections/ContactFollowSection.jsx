@@ -12,10 +12,10 @@ const ContactFollowSection = () => {
     <section className="bg-black text-white px-4 sm:px-6 py-6 font-[glancyr]">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
         <a
-          href="mailto:sangeetha.yogesh@thedancedistrict.in"
+          href="mailto:thedancedistrictbysahitya@gmail.com"
           className="underline hover:text-[#D16539] transition-colors duration-200 break-all"
         >
-          sahityayogesh@thedancedistrict.in
+          thedancedistrictbysahitya@gmail.com
         </a>
         <button
           onClick={handleInstagramClick}
