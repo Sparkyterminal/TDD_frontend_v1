@@ -852,7 +852,7 @@ const WorkshopDetails = () => {
           <h3 className="text-2xl font-semibold text-[#26442C] flex items-center justify-center gap-2 mb-4">
             Batch Details
             <span className="px-2 py-0.5 text-sm font-medium text-white bg-[#D16539] rounded">
-              {totalSeatsLeft} seats left
+              {totalSeatsLeft} spots left
             </span>
           </h3>
 
