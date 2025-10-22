@@ -15,6 +15,8 @@ import {
 } from "antd";
 import { SearchOutlined, CloseOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const { Title } = Typography;
 
@@ -176,6 +178,46 @@ const MembershipUsers = () => {
     message.info(
       `Renew functionality not implemented yet for user ${record.name}`
     );
+  };
+
+  const exportBatchUsersToExcel = () => {
+    if (!batchUsers || batchUsers.length === 0) {
+      message.warning("No users to export");
+      return;
+    }
+
+    const dataToExport = batchUsers.map((user, index) => ({
+      "Sl No": index + 1,
+      Name: user.name || "N/A",
+      Email: user.email || "N/A",
+      Mobile: user.mobile_number || "N/A",
+      Age: user.age || "N/A",
+      "Payment Status": user.paymentResult?.status || "N/A",
+      "Billing Interval": user.billing_interval
+        ? user.billing_interval
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase())
+        : "N/A",
+      "Start Date": user.start_date
+        ? dayjs(user.start_date).format("DD MMM YYYY")
+        : "-",
+      "End Date": calculateEndDate(user.start_date, user.billing_interval),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      currentBatchName || "Batch"
+    );
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const file = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(file, `${currentBatchName || "Batch"}_Users.xlsx`);
   };
 
   // Columns for drawer table showing user details
@@ -481,12 +523,17 @@ const MembershipUsers = () => {
             <span style={{ fontSize: 18, fontWeight: 600 }}>
               {currentBatchName} - User Details
             </span>
-            <Button
-              type="text"
-              icon={<CloseOutlined />}
-              onClick={closeDrawer}
-              style={{ marginRight: -8 }}
-            />
+            <Space>
+              <Button type="primary" onClick={exportBatchUsersToExcel}>
+                Export to Excel
+              </Button>
+              <Button
+                type="text"
+                icon={<CloseOutlined />}
+                onClick={closeDrawer}
+                style={{ marginRight: -8 }}
+              />
+            </Space>
           </Space>
         }
         placement="left"
