@@ -74,7 +74,7 @@ export default function EnquiryButton() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsModalOpen(true)}
-        className=" cursor-pointer fixed bottom-24 right-6 z-50 bg-gradient-to-r from-gray-600 to-indigo-600 hover:from-gray-800 to-indigo-800 text-white rounded-full px-6 py-4 flex items-center gap-2 shadow-2xl transition-all duration-300"
+        className=" cursor-pointer fixed bottom-36 right-6 z-50 bg-gradient-to-r from-gray-600 to-indigo-600 hover:from-gray-800 to-indigo-800 text-white rounded-full px-6 py-4 flex items-center gap-2 shadow-2xl transition-all duration-300"
       >
         <MessageCircle size={24} />
         <span className="font-[glancyr] font-medium hidden sm:inline">
