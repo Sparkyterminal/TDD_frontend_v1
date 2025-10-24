@@ -1,10 +1,19 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Table, message, Card, Tag, Space, Tooltip } from "antd";
-import { UserOutlined, PhoneOutlined, MailOutlined, FileTextOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  PhoneOutlined,
+  MailOutlined,
+  FileTextOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
 import { API_BASE_URL } from "../../../../config";
 import { useSelector } from "react-redux";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import { Button } from "antd";
 
 const ViewEnquiry = () => {
   const [data, setData] = useState([]);
@@ -29,7 +38,7 @@ const ViewEnquiry = () => {
         `${API_BASE_URL}enquire?page=${page}&limit=${pageSize}`,
         config
       );
-      
+
       const arr = Array.isArray(res.data) ? res.data : [];
       setData(arr);
 
@@ -57,9 +66,43 @@ const ViewEnquiry = () => {
     fetchEnquiryData(pag.current, pag.pageSize);
   };
 
+  const exportToExcel = () => {
+    // Map full data to match the columns shown in your table
+    const exportData = data.map((item) => {
+      const createdAt = new Date(item.createdAt).toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      return {
+        Name: item.name,
+        Phone: item.phone_number,
+        Email: item.email_id,
+        Purpose: item.purpose,
+        "Created At": createdAt,
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Enquiries");
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "Enquiries.xlsx");
+  };
+
   const columns = [
     {
-      title: <Space><UserOutlined /> Name</Space>,
+      title: (
+        <Space>
+          <UserOutlined /> Name
+        </Space>
+      ),
       dataIndex: "name",
       key: "name",
       render: (text) => (
@@ -67,7 +110,11 @@ const ViewEnquiry = () => {
       ),
     },
     {
-      title: <Space><PhoneOutlined /> Phone</Space>,
+      title: (
+        <Space>
+          <PhoneOutlined /> Phone
+        </Space>
+      ),
       dataIndex: "phone_number",
       key: "phone_number",
       render: (text) => (
@@ -77,7 +124,11 @@ const ViewEnquiry = () => {
       ),
     },
     {
-      title: <Space><MailOutlined /> Email</Space>,
+      title: (
+        <Space>
+          <MailOutlined /> Email
+        </Space>
+      ),
       dataIndex: "email_id",
       key: "email_id",
       render: (text) => (
@@ -89,7 +140,11 @@ const ViewEnquiry = () => {
       ),
     },
     {
-      title: <Space><FileTextOutlined /> Purpose</Space>,
+      title: (
+        <Space>
+          <FileTextOutlined /> Purpose
+        </Space>
+      ),
       dataIndex: "purpose",
       key: "purpose",
       render: (text) => (
@@ -99,7 +154,11 @@ const ViewEnquiry = () => {
       ),
     },
     {
-      title: <Space><ClockCircleOutlined /> Created At</Space>,
+      title: (
+        <Space>
+          <ClockCircleOutlined /> Created At
+        </Space>
+      ),
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text) => (
@@ -118,7 +177,7 @@ const ViewEnquiry = () => {
 
   return (
     <div
-    className="font-[glancyr]"
+      className="font-[glancyr]"
       style={{
         minHeight: "100vh",
         // background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -151,6 +210,18 @@ const ViewEnquiry = () => {
               View and manage all customer enquiries
             </p>
           </div>
+          <Button
+            type="primary"
+            style={{
+              marginBottom: 16,
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              border: "none",
+              fontFamily: "glancyr, sans-serif",
+            }}
+            onClick={exportToExcel}
+          >
+            Export to Excel
+          </Button>
 
           <Table
             columns={columns}

@@ -449,70 +449,118 @@ const MembershipForm = () => {
     return `${h}:${m} ${ampm}`;
   };
 
-  // const formatDayName = (day) => {
-  //   const dayMap = {
-  //     MONDAY: "Mon",
-  //     TUESDAY: "Tue",
-  //     WEDNESDAY: "Wed",
-  //     THURSDAY: "Thu",
-  //     FRIDAY: "Fri",
-  //     SATURDAY: "Sat",
-  //     SUNDAY: "Sun",
-  //   };
-  //   return dayMap[day] || day;
-  // };
   const formatDayName = (day) => {
-    return day; // Already uppercase from API
-  };
-
-  const groupScheduleByTime = (schedule) => {
-    if (!schedule || !schedule.length) return [];
-
-    const groups = [];
-    let currentGroup = {
-      days: [schedule[0].day],
-      start_time: schedule[0].start_time,
-      end_time: schedule[0].end_time,
+    const dayMap = {
+      MONDAY: "MONDAY",
+      TUESDAY: "TUESDAY",
+      WEDNESDAY: "WEDNESDAY",
+      THURSDAY: "THURSDAY",
+      FRIDAY: "FRIDAY",
+      SATURDAY: "SATURDAY",
+      SUNDAY: "SUNDAY",
     };
-
-    for (let i = 1; i < schedule.length; i++) {
-      const current = schedule[i];
-      if (
-        current.start_time === currentGroup.start_time &&
-        current.end_time === currentGroup.end_time
-      ) {
-        currentGroup.days.push(current.day);
-      } else {
-        groups.push({ ...currentGroup });
-        currentGroup = {
-          days: [current.day],
-          start_time: current.start_time,
-          end_time: current.end_time,
-        };
-      }
-    }
-    groups.push(currentGroup);
-
-    return groups
-      .map((group) => {
-        const formattedDays = group.days.map(formatDayName);
-        let dayRange;
-        if (formattedDays.length === 1) {
-          dayRange = formattedDays[0];
-        } else if (formattedDays.length === 2) {
-          dayRange = formattedDays.join(" & ");
-        } else {
-          dayRange = `${formattedDays[0]} - ${
-            formattedDays[formattedDays.length - 1]
-          }`;
-        }
-
-        return `${dayRange} (${formatTimeTo12Hour(
-          group.start_time
-        )} - ${formatTimeTo12Hour(group.end_time)})`;
-      })
-      .join(" | ");
+    return dayMap[day] || day;
   };
+  // const formatDayName = (day) => {
+  //   return day; // Already uppercase from API
+  // };
+
+  // const groupScheduleByTime = (schedule) => {
+  //   if (!schedule || !schedule.length) return [];
+
+  //   const groups = [];
+  //   let currentGroup = {
+  //     days: [schedule[0].day],
+  //     start_time: schedule[0].start_time,
+  //     end_time: schedule[0].end_time,
+  //   };
+
+  //   for (let i = 1; i < schedule.length; i++) {
+  //     const current = schedule[i];
+  //     if (
+  //       current.start_time === currentGroup.start_time &&
+  //       current.end_time === currentGroup.end_time
+  //     ) {
+  //       currentGroup.days.push(current.day);
+  //     } else {
+  //       groups.push({ ...currentGroup });
+  //       currentGroup = {
+  //         days: [current.day],
+  //         start_time: current.start_time,
+  //         end_time: current.end_time,
+  //       };
+  //     }
+  //   }
+  //   groups.push(currentGroup);
+
+  //   return groups
+  //     .map((group) => {
+  //       const formattedDays = group.days.map(formatDayName);
+  //       let dayRange;
+  //       if (formattedDays.length === 1) {
+  //         dayRange = formattedDays[0];
+  //       } else if (formattedDays.length === 2) {
+  //         dayRange = formattedDays.join(" & ");
+  //       } else {
+  //         dayRange = `${formattedDays[0]} - ${
+  //           formattedDays[formattedDays.length - 1]
+  //         }`;
+  //       }
+
+  //       return `${dayRange} (${formatTimeTo12Hour(
+  //         group.start_time
+  //       )} - ${formatTimeTo12Hour(group.end_time)})`;
+  //     })
+  //     .join(" | ");
+  // };
+  const groupScheduleByTime = (schedule) => {
+  if (!schedule || !schedule.length) return [];
+
+  const groups = [];
+  let currentGroup = {
+    days: [schedule[0].day],
+    start_time: schedule[0].start_time,
+    end_time: schedule[0].end_time,
+  };
+
+  for (let i = 1; i < schedule.length; i++) {
+    const current = schedule[i];
+    if (
+      current.start_time === currentGroup.start_time &&
+      current.end_time === currentGroup.end_time
+    ) {
+      currentGroup.days.push(current.day);
+    } else {
+      groups.push({ ...currentGroup });
+      currentGroup = {
+        days: [current.day],
+        start_time: current.start_time,
+        end_time: current.end_time,
+      };
+    }
+  }
+  groups.push(currentGroup);
+
+  return groups
+    .map((group) => {
+      const formattedDays = group.days.map(formatDayName);
+      let dayRange;
+      
+      if (formattedDays.length === 1) {
+        dayRange = formattedDays[0];
+      } else if (formattedDays.length === 2) {
+        dayRange = formattedDays.join(" & ");
+      } else {
+        // For 3 or more days, list them with commas
+        dayRange = formattedDays.join(", ");
+      }
+
+      return `${dayRange} (${formatTimeTo12Hour(
+        group.start_time
+      )} - ${formatTimeTo12Hour(group.end_time)})`;
+    })
+    .join(" | ");
+};
 
   useEffect(() => {
     if (!fetchedPlan) return;

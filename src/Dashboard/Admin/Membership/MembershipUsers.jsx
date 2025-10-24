@@ -174,11 +174,11 @@ const MembershipUsers = () => {
   };
 
   // Renew button handler
-  const handleRenew = (record) => {
-    message.info(
-      `Renew functionality not implemented yet for user ${record.name}`
-    );
-  };
+  // const handleRenew = (record) => {
+  //   message.info(
+  //     `Renew functionality not implemented yet for user ${record.name}`
+  //   );
+  // };
 
   const exportBatchUsersToExcel = () => {
     if (!batchUsers || batchUsers.length === 0) {
@@ -312,18 +312,18 @@ const MembershipUsers = () => {
         return endDate !== "-" ? dayjs(endDate).format("DD MMM YYYY") : "-";
       },
     },
-    {
-      title: "Action",
-      key: "renew",
-      width: 100,
-      fixed: "right",
-      align: "center",
-      render: (_, record) => (
-        <Button type="primary" size="small" onClick={() => handleRenew(record)}>
-          Renew
-        </Button>
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   key: "renew",
+    //   width: 100,
+    //   fixed: "right",
+    //   align: "center",
+    //   render: (_, record) => (
+    //     <Button type="primary" size="small" onClick={() => handleRenew(record)}>
+    //       Renew
+    //     </Button>
+    //   ),
+    // },
   ];
 
   // Columns for the main table (Memberships and batches)

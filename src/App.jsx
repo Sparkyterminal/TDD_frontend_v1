@@ -1,6 +1,5 @@
 import { useLocation } from "react-router-dom";
-import '@ant-design/v5-patch-for-react-19';
-
+import "@ant-design/v5-patch-for-react-19";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -59,6 +58,10 @@ import MembershipPage from "./pages/MembershipPage";
 import PublicLayout from "./components/PublicLayout";
 import ViewEnquiry from "./Dashboard/Admin/Forms/ViewEnquiry";
 import ViewContactus from "./Dashboard/Admin/Forms/ViewContactus";
+import BookaDemo from "./pages/BookaDemo";
+import DemoUserDetails from "./Dashboard/Admin/DemoClasses/DemoUserDetails";
+import AllUserDetails from "./Dashboard/Admin/AllUsers/AllUserDetails";
+import RenewalForm from "./Dashboard/Admin/RenewalForm/RenewalForm";
 // import LoadingPage from "./components/LoadingPage"; // Import your custom LoadingPage
 
 const App = () => {
@@ -139,20 +142,85 @@ const App = () => {
           //   <Route path="*" element={<Navigate to="/" replace />} />
           // </>
           <>
-            <Route path="/" element={<PublicLayout><Homepage /></PublicLayout>} />
-            <Route path="/instructors" element={<PublicLayout><Instructors /></PublicLayout>} />
-            <Route path="/rent" element={<PublicLayout><Rentals /></PublicLayout>} />
-            <Route path="/workshops" element={<PublicLayout><Workshops /></PublicLayout>} />
+            <Route
+              path="/"
+              element={
+                <PublicLayout>
+                  <Homepage />
+                </PublicLayout>
+              }
+            />
+            <Route
+              path="/instructors"
+              element={
+                <PublicLayout>
+                  <Instructors />
+                </PublicLayout>
+              }
+            />
+            <Route
+              path="/rent"
+              element={
+                <PublicLayout>
+                  <Rentals />
+                </PublicLayout>
+              }
+            />
+            <Route
+              path="/workshops"
+              element={
+                <PublicLayout>
+                  <Workshops />
+                </PublicLayout>
+              }
+            />
             {/* <Route path="/book-workshop/:id" element={<PublicLayout><UserInfoWorkshop /></PublicLayout>} /> */}
-            <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
-            <Route path="/getmembership" element={<PublicLayout><MembershipPage /></PublicLayout>} />
+            <Route
+              path="/contact"
+              element={
+                <PublicLayout>
+                  <Contact />
+                </PublicLayout>
+              }
+            />
+            <Route
+              path="/getmembership"
+              element={
+                <PublicLayout>
+                  <MembershipPage />
+                </PublicLayout>
+              }
+            />
             <Route path="membershipform/:id" element={<MembershipForm />} />
+            <Route path="demoform/:id" element={<BookaDemo />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/payment-success" element={<PublicLayout><Success /></PublicLayout>} />
-            <Route path="/payment-failure" element={<PublicLayout><Failure /></PublicLayout>} />
-            <Route path="/termsandconditions" element={<PublicLayout><TermsandConditions /></PublicLayout>} />
-            <Route path="/privacy" element={<PublicLayout><PrivacyPolicy /></PublicLayout>} />
-            <Route path="/refund" element={<PublicLayout><RefundPolicy /></PublicLayout>} />
+            <Route path="/payment-success" element={<Success />} />
+            <Route path="/payment-failure" element={<Failure />} />
+
+            <Route
+              path="/termsandconditions"
+              element={
+                <PublicLayout>
+                  <TermsandConditions />
+                </PublicLayout>
+              }
+            />
+            <Route
+              path="/privacy"
+              element={
+                <PublicLayout>
+                  <PrivacyPolicy />
+                </PublicLayout>
+              }
+            />
+            <Route
+              path="/refund"
+              element={
+                <PublicLayout>
+                  <RefundPolicy />
+                </PublicLayout>
+              }
+            />
             <Route path="/workshopdetails/:id" element={<WorkshopDetails />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
@@ -181,31 +249,34 @@ const App = () => {
               <Route path="viewclassusers" element={<UsersClasses />} />
               <Route path="viewcontactform" element={<ViewContactus />} />
               <Route path="viewenquireform" element={<ViewEnquiry />} />
-              
+              <Route path="viewdemousers" element={<DemoUserDetails />} />
+              <Route path="viewallusers" element={<AllUserDetails />} />
+              <Route path="renewalform/:id" element={<RenewalForm />} />
+              <Route path="payment-success" element={<Success />} />
+              <Route path="payment-failure" element={<Failure />} />
               <Route
                 path="*"
                 element={<Navigate to="workshopusers" replace />}
               />
             </Route>
           </>
-        ):
-        // ) : isUser ? (
-        //   /* If logged in & admin → allow dashboard */
-        //   <>
-        //     <Route path="/userdashboard" element={<UserDashboard />}>
-        //       <Route index element={<Navigate to="home" replace />} />
+        ) : (
+          // ) : isUser ? (
+          //   /* If logged in & admin → allow dashboard */
+          //   <>
+          //     <Route path="/userdashboard" element={<UserDashboard />}>
+          //       <Route index element={<Navigate to="home" replace />} />
 
-        //       <Route path="home" element={<UserHomePage />} />
+          //       <Route path="home" element={<UserHomePage />} />
 
-        //       <Route path="bookclass" element={<Bookclasses />} />
+          //       <Route path="bookclass" element={<Bookclasses />} />
 
-        //       <Route path="enrolled" element={<EnrolledClasses />} />
+          //       <Route path="enrolled" element={<EnrolledClasses />} />
 
-        //       <Route path="changepassword" element={<ChangePassword />} />
-        //     </Route>
-        //   </>
-        // ) : 
-        (
+          //       <Route path="changepassword" element={<ChangePassword />} />
+          //     </Route>
+          //   </>
+          // ) :
           /* If logged in but NOT admin → redirect to home or logout */
           <>
             <Route path="/" element={<Homepage />} />

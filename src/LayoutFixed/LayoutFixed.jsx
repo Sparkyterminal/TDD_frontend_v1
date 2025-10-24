@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu, Button } from "antd";
 import {
   MenuUnfoldOutlined,
@@ -11,7 +11,7 @@ import {
   EyeOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../reducers/users";
 
@@ -24,12 +24,36 @@ const TEXT_DARK = DARK_FOREST_GREEN;
 
 const LayoutFixed = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [openKeys, setOpenKeys] = useState([]);
   const borderRadiusLG = 8;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   // Get user role from redux (adjust according to your state shape)
   const role = useSelector((state) => state.user.value.role || "USER");
+
+  useEffect(() => {
+    // Set selected menu item based on current route
+    const currentPath = location.pathname;
+    setSelectedKeys([currentPath]);
+
+    // Auto-open parent menu based on route
+    if (currentPath.includes('/addmembership') || currentPath.includes('/viewmembership') || currentPath.includes('/membershipusers')) {
+      setOpenKeys(['Membership']);
+    } else if (currentPath.includes('/workshop')) {
+      setOpenKeys(['workshops']);
+    } else if (currentPath.includes('/classtype')) {
+      setOpenKeys(['ClassTypes']);
+    } else if (currentPath.includes('/coach')) {
+      setOpenKeys(['AddCoach']);
+    } else if (currentPath.includes('/contactform') || currentPath.includes('/enquireform')) {
+      setOpenKeys(['ViewForms']);
+    } else if (currentPath.includes('/viewdemousers') || currentPath.includes('/viewallusers')) {
+      setOpenKeys(['ViewUsers']);
+    }
+  }, [location.pathname]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -99,23 +123,23 @@ const LayoutFixed = () => {
         },
       ],
     },
-    {
-      key: "AddCoach",
-      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
-      label: <span style={{ color: TEXT_DARK }}>Instructors</span>,
-      children: [
-        {
-          key: "/dashboard/addcoach",
-          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
-          label: <span style={{ color: TEXT_DARK }}>Add Instructors</span>,
-        },
-        {
-          key: "/dashboard/viewcoach",
-          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
-          label: <span style={{ color: TEXT_DARK }}>View Instructors</span>,
-        },
-      ],
-    },
+    // {
+    //   key: "AddCoach",
+    //   icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
+    //   label: <span style={{ color: TEXT_DARK }}>Instructors</span>,
+    //   children: [
+    //     {
+    //       key: "/dashboard/addcoach",
+    //       icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
+    //       label: <span style={{ color: TEXT_DARK }}>Add Instructors</span>,
+    //     },
+    //     {
+    //       key: "/dashboard/viewcoach",
+    //       icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+    //       label: <span style={{ color: TEXT_DARK }}>View Instructors</span>,
+    //     },
+    //   ],
+    // },
     {
       key: "ViewForms",
       icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
@@ -130,6 +154,23 @@ const LayoutFixed = () => {
           key: "/dashboard/viewenquireform",
           icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>Enquiry Form</span>,
+        },
+      ],
+    },
+    {
+      key: "ViewUsers",
+      icon: <AppstoreOutlined style={{ color: DARK_FOREST_GREEN }} />,
+      label: <span style={{ color: TEXT_DARK }}>View Users</span>,
+      children: [
+        {
+          key: "/dashboard/viewdemousers",
+          icon: <PlusCircleOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Demo Class Users</span>,
+        },
+        {
+          key: "/dashboard/viewallusers",
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>All Users</span>,
         },
       ],
     },
@@ -161,6 +202,10 @@ const LayoutFixed = () => {
           }
     );
 
+  const handleOpenChange = (keys) => {
+    setOpenKeys(keys);
+  };
+
   return (
     <Layout
       style={{ minHeight: "100vh", background: WHITE, fontFamily: "glancyr" }}
@@ -171,6 +216,7 @@ const LayoutFixed = () => {
         collapsed={collapsed}
         style={{
           background: WHITE,
+          // background: 'linear-gradient(to bottom right, #f5f3ff, #fce7f3, #dbeafe)',
           boxShadow: "2px 0 8px rgba(11, 61, 11, 0.08)",
         }}
       >
@@ -206,6 +252,9 @@ const LayoutFixed = () => {
           theme="light"
           mode="inline"
           inlineIndent={12}
+          selectedKeys={selectedKeys}
+          openKeys={openKeys}
+          onOpenChange={handleOpenChange}
           style={{
             background: WHITE,
             color: TEXT_DARK,
@@ -220,11 +269,32 @@ const LayoutFixed = () => {
             }
           }}
         />
+        
+        {/* Add custom CSS for text wrapping */}
+        <style>{`
+          .ant-menu-title-content {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .ant-menu-item, .ant-menu-submenu-title {
+            overflow: hidden;
+          }
+          .ant-menu-submenu .ant-menu-item .ant-menu-title-content {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .ant-menu-inline .ant-menu-item {
+            overflow: hidden;
+          }
+        `}</style>
       </Sider>
       <Layout>
         <Header
           style={{
             padding: 0,
+            // background: 'linear-gradient(to bottom right, #f5f3ff, #fce7f3, #dbeafe)',
             background: WHITE,
             boxShadow: "0 2px 8px rgba(11, 61, 11, 0.07)",
             display: "flex",
@@ -295,6 +365,7 @@ const LayoutFixed = () => {
             margin: "32px 16px",
             padding: 32,
             minHeight: 320,
+            // background: 'linear-gradient(to bottom right, #f5f3ff, #fce7f3, #dbeafe)',
             background: WHITE,
             borderRadius: borderRadiusLG,
             boxShadow: "0 2px 16px rgba(11, 61, 11, 0.06)",
