@@ -62,6 +62,7 @@ import BookaDemo from "./pages/BookaDemo";
 import DemoUserDetails from "./Dashboard/Admin/DemoClasses/DemoUserDetails";
 import AllUserDetails from "./Dashboard/Admin/AllUsers/AllUserDetails";
 import RenewalForm from "./Dashboard/Admin/RenewalForm/RenewalForm";
+import AddUserMember from "./Dashboard/Admin/UserForm/AddUserMember";
 // import LoadingPage from "./components/LoadingPage"; // Import your custom LoadingPage
 
 const App = () => {
@@ -117,175 +118,312 @@ const App = () => {
     return <LoadingPage />;
   }
 
-  return (
-    <>
-      <ScrollToTop />
-      <Routes>
-        {/* If NOT logged in → show public pages */}
-        {!auth ? (
-          // <>
-          //   <Route path="/" element={<Homepage />} />
-          //   <Route path="/instructors" element={<Instructors />} />
-          //   <Route path="/rent" element={<Rentals />} />
-          //   <Route path="/workshops" element={<Workshops />} />
-          //   <Route path="/book-workshop/:id" element={<UserInfoWorkshop />} />
-          //   <Route path="/contact" element={<Contact />} />
-          //   <Route path="/getmembership" element={<MembershipPage />} />
-          //   <Route path="membershipform/:id" element={<MembershipForm />} />
-          //   <Route path="/login" element={<Login />} />
-          //   <Route path="/payment-success" element={<Success />} />
-          //   <Route path="/payment-failure" element={<Failure />} />
-          //   <Route path="/termsandconditions" element={<TermsandConditions />} />
-          //   <Route path="/privacy" element={<PrivacyPolicy />} />
-          //   <Route path="/refund" element={<RefundPolicy />} />
-          //   <Route path="/workshopdetails/:id" element={<WorkshopDetails />} />
-          //   <Route path="*" element={<Navigate to="/" replace />} />
-          // </>
-          <>
-            <Route
-              path="/"
-              element={
-                <PublicLayout>
-                  <Homepage />
-                </PublicLayout>
-              }
-            />
-            <Route
-              path="/instructors"
-              element={
-                <PublicLayout>
-                  <Instructors />
-                </PublicLayout>
-              }
-            />
-            <Route
-              path="/rent"
-              element={
-                <PublicLayout>
-                  <Rentals />
-                </PublicLayout>
-              }
-            />
-            <Route
-              path="/workshops"
-              element={
-                <PublicLayout>
-                  <Workshops />
-                </PublicLayout>
-              }
-            />
-            {/* <Route path="/book-workshop/:id" element={<PublicLayout><UserInfoWorkshop /></PublicLayout>} /> */}
-            <Route
-              path="/contact"
-              element={
-                <PublicLayout>
-                  <Contact />
-                </PublicLayout>
-              }
-            />
-            <Route
-              path="/getmembership"
-              element={
-                <PublicLayout>
-                  <MembershipPage />
-                </PublicLayout>
-              }
-            />
-            <Route path="membershipform/:id" element={<MembershipForm />} />
-            <Route path="demoform/:id" element={<BookaDemo />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/payment-success" element={<Success />} />
-            <Route path="/payment-failure" element={<Failure />} />
+  // return (
+  //   <>
+  //     <ScrollToTop />
+  //     <Routes>
+  //       {/* If NOT logged in → show public pages */}
+  //       {!auth ? (
+  //         // <>
+  //         //   <Route path="/" element={<Homepage />} />
+  //         //   <Route path="/instructors" element={<Instructors />} />
+  //         //   <Route path="/rent" element={<Rentals />} />
+  //         //   <Route path="/workshops" element={<Workshops />} />
+  //         //   <Route path="/book-workshop/:id" element={<UserInfoWorkshop />} />
+  //         //   <Route path="/contact" element={<Contact />} />
+  //         //   <Route path="/getmembership" element={<MembershipPage />} />
+  //         //   <Route path="membershipform/:id" element={<MembershipForm />} />
+  //         //   <Route path="/login" element={<Login />} />
+  //         //   <Route path="/payment-success" element={<Success />} />
+  //         //   <Route path="/payment-failure" element={<Failure />} />
+  //         //   <Route path="/termsandconditions" element={<TermsandConditions />} />
+  //         //   <Route path="/privacy" element={<PrivacyPolicy />} />
+  //         //   <Route path="/refund" element={<RefundPolicy />} />
+  //         //   <Route path="/workshopdetails/:id" element={<WorkshopDetails />} />
+  //         //   <Route path="*" element={<Navigate to="/" replace />} />
+  //         // </>
+  //         <>
+  //           <Route
+  //             path="/"
+  //             element={
+  //               <PublicLayout>
+  //                 <Homepage />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           <Route
+  //             path="/instructors"
+  //             element={
+  //               <PublicLayout>
+  //                 <Instructors />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           <Route
+  //             path="/rent"
+  //             element={
+  //               <PublicLayout>
+  //                 <Rentals />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           <Route
+  //             path="/workshops"
+  //             element={
+  //               <PublicLayout>
+  //                 <Workshops />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           {/* <Route path="/book-workshop/:id" element={<PublicLayout><UserInfoWorkshop /></PublicLayout>} /> */}
+  //           <Route
+  //             path="/contact"
+  //             element={
+  //               <PublicLayout>
+  //                 <Contact />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           <Route
+  //             path="/getmembership"
+  //             element={
+  //               <PublicLayout>
+  //                 <MembershipPage />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           <Route path="membershipform/:id" element={<MembershipForm />} />
+  //           <Route path="demoform/:id" element={<BookaDemo />} />
+  //           <Route path="/login" element={<Login />} />
+  //           <Route path="/payment-success" element={<Success />} />
+  //           <Route path="/payment-failure" element={<Failure />} />
 
+  //           <Route
+  //             path="/termsandconditions"
+  //             element={
+  //               <PublicLayout>
+  //                 <TermsandConditions />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           <Route
+  //             path="/privacy"
+  //             element={
+  //               <PublicLayout>
+  //                 <PrivacyPolicy />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           <Route
+  //             path="/refund"
+  //             element={
+  //               <PublicLayout>
+  //                 <RefundPolicy />
+  //               </PublicLayout>
+  //             }
+  //           />
+  //           <Route path="/workshopdetails/:id" element={<WorkshopDetails />} />
+  //           <Route path="*" element={<Navigate to="/" replace />} />
+  //         </>
+  //       ) : isAdmin ? (
+  //         /* If logged in & admin → allow dashboard */
+  //         <>
+  //           <Route path="/dashboard" element={<LayoutFixed />}>
+  //             <Route index element={<Navigate to="workshopusers" replace />} />
+  //             <Route path="workshopusers" element={<ViewUsersInWorkshop />} />
+  //             <Route path="addworkshop" element={<AddWorkshop />} />
+  //             <Route path="editworkshop/:id" element={<EditWorkshop />} />
+  //             <Route path="viewworkshop" element={<ViewWorkshop />} />
+  //             <Route path="addclasstypes" element={<AddClassType />} />
+  //             <Route path="editclasstypes/:id" element={<EditClassTypes />} />
+  //             <Route path="viewclasstypes" element={<ViewClassTypes />} />
+  //             <Route path="addcoach" element={<AddCoach />} />
+  //             <Route path="editcoach/:id" element={<EditCoach />} />
+  //             <Route path="viewcoach" element={<ViewCoach />} />
+  //             <Route path="addmembership" element={<AddMembership />} />
+  //             <Route path="editmembership/:id" element={<EditMembership />} />
+  //             <Route path="viewmembership" element={<ViewMembership />} />
+  //             <Route path="membershipusers" element={<MembershipUsers />} />
+  //             <Route path="addclasses" element={<AddClasses />} />
+  //             <Route path="editclasses/:id" element={<EditClasses />} />
+  //             <Route path="viewclasses" element={<ViewClasses />} />
+  //             <Route path="viewclassusers" element={<UsersClasses />} />
+  //             <Route path="viewcontactform" element={<ViewContactus />} />
+  //             <Route path="viewenquireform" element={<ViewEnquiry />} />
+  //             <Route path="viewdemousers" element={<DemoUserDetails />} />
+  //             <Route path="viewallusers" element={<AllUserDetails />} />
+  //             <Route path="renewalform/:id" element={<RenewalForm />} />
+  //             <Route path="payment-success" element={<Success />} />
+  //             <Route path="payment-failure" element={<Failure />} />
+  //             <Route
+  //               path="*"
+  //               element={<Navigate to="workshopusers" replace />}
+  //             />
+  //           </Route>
+  //         </>
+  //       ) : (
+  //         // ) : isUser ? (
+  //         //   /* If logged in & admin → allow dashboard */
+  //         //   <>
+  //         //     <Route path="/userdashboard" element={<UserDashboard />}>
+  //         //       <Route index element={<Navigate to="home" replace />} />
+
+  //         //       <Route path="home" element={<UserHomePage />} />
+
+  //         //       <Route path="bookclass" element={<Bookclasses />} />
+
+  //         //       <Route path="enrolled" element={<EnrolledClasses />} />
+
+  //         //       <Route path="changepassword" element={<ChangePassword />} />
+  //         //     </Route>
+  //         //   </>
+  //         // ) :
+  //         /* If logged in but NOT admin → redirect to home or logout */
+  //         <>
+  //           <Route path="/" element={<Homepage />} />
+  //           <Route path="*" element={<Navigate to="/" replace />} />
+  //         </>
+  //       )}
+  //     </Routes>
+  //   </>
+  // );
+return (
+  <>
+    <ScrollToTop />
+    <Routes>
+      {/* SHARED ROUTES - Available to everyone regardless of auth status */}
+      <Route path="/payment-success" element={<Success />} />
+      <Route path="/payment-failure" element={<Failure />} />
+
+      {/* If NOT logged in → show public pages */}
+      {!auth ? (
+        <>
+          <Route
+            path="/"
+            element={
+              <PublicLayout>
+                <Homepage />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/instructors"
+            element={
+              <PublicLayout>
+                <Instructors />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/rent"
+            element={
+              <PublicLayout>
+                <Rentals />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/workshops"
+            element={
+              <PublicLayout>
+                <Workshops />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/contact"
+            element={
+              <PublicLayout>
+                <Contact />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/getmembership"
+            element={
+              <PublicLayout>
+                <MembershipPage />
+              </PublicLayout>
+            }
+          />
+          <Route path="membershipform/:id" element={<MembershipForm />} />
+          <Route path="demoform/:id" element={<BookaDemo />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/termsandconditions"
+            element={
+              <PublicLayout>
+                <TermsandConditions />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/privacy"
+            element={
+              <PublicLayout>
+                <PrivacyPolicy />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/refund"
+            element={
+              <PublicLayout>
+                <RefundPolicy />
+              </PublicLayout>
+            }
+          />
+          <Route path="/workshopdetails/:id" element={<WorkshopDetails />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </>
+      ) : isAdmin ? (
+        /* If logged in & admin → allow dashboard */
+        <>
+          <Route path="/dashboard" element={<LayoutFixed />}>
+            <Route index element={<Navigate to="workshopusers" replace />} />
+            <Route path="workshopusers" element={<ViewUsersInWorkshop />} />
+            <Route path="addworkshop" element={<AddWorkshop />} />
+            <Route path="editworkshop/:id" element={<EditWorkshop />} />
+            <Route path="viewworkshop" element={<ViewWorkshop />} />
+            <Route path="addclasstypes" element={<AddClassType />} />
+            <Route path="editclasstypes/:id" element={<EditClassTypes />} />
+            <Route path="viewclasstypes" element={<ViewClassTypes />} />
+            <Route path="addcoach" element={<AddCoach />} />
+            <Route path="editcoach/:id" element={<EditCoach />} />
+            <Route path="viewcoach" element={<ViewCoach />} />
+            <Route path="addmembership" element={<AddMembership />} />
+            <Route path="editmembership/:id" element={<EditMembership />} />
+            <Route path="viewmembership" element={<ViewMembership />} />
+            <Route path="membershipusers" element={<MembershipUsers />} />
+            <Route path="addclasses" element={<AddClasses />} />
+            <Route path="editclasses/:id" element={<EditClasses />} />
+            <Route path="viewclasses" element={<ViewClasses />} />
+            <Route path="viewclassusers" element={<UsersClasses />} />
+            <Route path="viewcontactform" element={<ViewContactus />} />
+            <Route path="viewenquireform" element={<ViewEnquiry />} />
+            <Route path="viewdemousers" element={<DemoUserDetails />} />
+            <Route path="viewallusers" element={<AllUserDetails />} />
+            <Route path="renewalform/:id" element={<RenewalForm />} />
+            <Route path="addmembermanual" element={<AddUserMember />} />
             <Route
-              path="/termsandconditions"
-              element={
-                <PublicLayout>
-                  <TermsandConditions />
-                </PublicLayout>
-              }
+              path="*"
+              element={<Navigate to="workshopusers" replace />}
             />
-            <Route
-              path="/privacy"
-              element={
-                <PublicLayout>
-                  <PrivacyPolicy />
-                </PublicLayout>
-              }
-            />
-            <Route
-              path="/refund"
-              element={
-                <PublicLayout>
-                  <RefundPolicy />
-                </PublicLayout>
-              }
-            />
-            <Route path="/workshopdetails/:id" element={<WorkshopDetails />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </>
-        ) : isAdmin ? (
-          /* If logged in & admin → allow dashboard */
-          <>
-            <Route path="/dashboard" element={<LayoutFixed />}>
-              <Route index element={<Navigate to="workshopusers" replace />} />
-              <Route path="workshopusers" element={<ViewUsersInWorkshop />} />
-              <Route path="addworkshop" element={<AddWorkshop />} />
-              <Route path="editworkshop/:id" element={<EditWorkshop />} />
-              <Route path="viewworkshop" element={<ViewWorkshop />} />
-              <Route path="addclasstypes" element={<AddClassType />} />
-              <Route path="editclasstypes/:id" element={<EditClassTypes />} />
-              <Route path="viewclasstypes" element={<ViewClassTypes />} />
-              <Route path="addcoach" element={<AddCoach />} />
-              <Route path="editcoach/:id" element={<EditCoach />} />
-              <Route path="viewcoach" element={<ViewCoach />} />
-              <Route path="addmembership" element={<AddMembership />} />
-              <Route path="editmembership/:id" element={<EditMembership />} />
-              <Route path="viewmembership" element={<ViewMembership />} />
-              <Route path="membershipusers" element={<MembershipUsers />} />
-              <Route path="addclasses" element={<AddClasses />} />
-              <Route path="editclasses/:id" element={<EditClasses />} />
-              <Route path="viewclasses" element={<ViewClasses />} />
-              <Route path="viewclassusers" element={<UsersClasses />} />
-              <Route path="viewcontactform" element={<ViewContactus />} />
-              <Route path="viewenquireform" element={<ViewEnquiry />} />
-              <Route path="viewdemousers" element={<DemoUserDetails />} />
-              <Route path="viewallusers" element={<AllUserDetails />} />
-              <Route path="renewalform/:id" element={<RenewalForm />} />
-              <Route path="payment-success" element={<Success />} />
-              <Route path="payment-failure" element={<Failure />} />
-              <Route
-                path="*"
-                element={<Navigate to="workshopusers" replace />}
-              />
-            </Route>
-          </>
-        ) : (
-          // ) : isUser ? (
-          //   /* If logged in & admin → allow dashboard */
-          //   <>
-          //     <Route path="/userdashboard" element={<UserDashboard />}>
-          //       <Route index element={<Navigate to="home" replace />} />
+          </Route>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </>
+      ) : (
+        /* If logged in but NOT admin → redirect to home */
+        <>
+          <Route path="/" element={<Homepage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </>
+      )}
+    </Routes>
+  </>
+);
 
-          //       <Route path="home" element={<UserHomePage />} />
-
-          //       <Route path="bookclass" element={<Bookclasses />} />
-
-          //       <Route path="enrolled" element={<EnrolledClasses />} />
-
-          //       <Route path="changepassword" element={<ChangePassword />} />
-          //     </Route>
-          //   </>
-          // ) :
-          /* If logged in but NOT admin → redirect to home or logout */
-          <>
-            <Route path="/" element={<Homepage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </>
-        )}
-      </Routes>
-    </>
-  );
 };
 
 export default App;

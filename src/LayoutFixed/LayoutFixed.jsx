@@ -172,6 +172,11 @@ const LayoutFixed = () => {
           icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>All Users</span>,
         },
+        {
+          key: "/dashboard/addmembermanual",
+          icon: <EyeOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Add User Manually</span>,
+        },
       ],
     },
   ];
@@ -214,6 +219,8 @@ const LayoutFixed = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        width={280}
+        collapsedWidth={130}
         style={{
           background: WHITE,
           // background: 'linear-gradient(to bottom right, #f5f3ff, #fce7f3, #dbeafe)',

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { API_BASE_URL } from "../../../../config";
 import { message, Select, Form, Button, Card, Space, Typography } from "antd";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -12,6 +12,7 @@ const { Title, Text } = Typography;
 const RenewalForm = () => {
   const user = useSelector((state) => state.user.value);
   const [form] = Form.useForm();
+  const location = useLocation();
   
   const [memberships, setMemberships] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -21,6 +22,9 @@ const RenewalForm = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const { id: membershipBookingId } = useParams();
+  
+  // Get userId from location state
+  const renewalUserId = location.state?.userId;
 
   const config = {
     headers: {
@@ -47,6 +51,14 @@ const RenewalForm = () => {
 
   useEffect(() => {
     fetchMemberships();
+    
+    // Check if userId is passed
+    if (!renewalUserId) {
+      console.warn("No userId found in navigation state");
+      message.warning("User information not found. Please go back and try again.");
+    } else {
+      console.log("Renewal for user ID:", renewalUserId);
+    }
     // eslint-disable-next-line
   }, []);
 
@@ -115,13 +127,19 @@ const RenewalForm = () => {
     console.log("Form values:", values);
     console.log("Selected price:", getSelectedPrice());
     
+    // Validate userId is available
+    if (!renewalUserId) {
+      message.error("User information is missing. Please go back and try again.");
+      return;
+    }
+    
     setSubmitting(true);
 
     try {
       const payload = {
         membershipBookingId: membershipBookingId,
         planId: values.membershipPlan,
-        userId: user._id || user.id,
+        userId: renewalUserId, // Use the userId from location state
         batchId: values.batch,
         billing_interval: values.billingInterval,
       };
@@ -133,14 +151,15 @@ const RenewalForm = () => {
         payload,
         config
       );
-      window.location.href = response.data.checkoutPageUrl;
-
-    //   console.log("Renewal response:", response.data);
-      message.success("Membership renewed successfully!");
       
-      // Optional: Reset form or redirect after success
-      // form.resetFields();
-      // navigate('/success-page');
+      console.log("Renewal response:", response.data);
+      
+      // Redirect to checkout page
+      if (response.data.checkoutPageUrl) {
+        window.location.href = response.data.checkoutPageUrl;
+      } else {
+        message.success("Membership renewed successfully!");
+      }
       
     } catch (error) {
       console.error("Renewal error:", error);
@@ -153,6 +172,13 @@ const RenewalForm = () => {
 
   return (
     <Card title="Membership Renewal" style={{ maxWidth: 600, margin: '0 auto' }}>
+      {renewalUserId && (
+        <div style={{ marginBottom: 16, padding: '12px', background: '#f0f2f5', borderRadius: '8px' }}>
+          <Text strong>Renewing for User ID: </Text>
+          <Text code>{renewalUserId}</Text>
+        </div>
+      )}
+      
       <Form
         form={form}
         layout="vertical"
@@ -244,7 +270,7 @@ const RenewalForm = () => {
             htmlType="submit"
             block
             size="large"
-            disabled={!selectedPlan || batches.length === 0}
+            disabled={!selectedPlan || batches.length === 0 || !renewalUserId}
             loading={submitting}
           >
             {submitting ? "Processing..." : "Proceed to Payment"}
