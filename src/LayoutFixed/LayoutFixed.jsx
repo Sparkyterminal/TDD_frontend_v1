@@ -40,18 +40,28 @@ const LayoutFixed = () => {
     setSelectedKeys([currentPath]);
 
     // Auto-open parent menu based on route
-    if (currentPath.includes('/addmembership') || currentPath.includes('/viewmembership') || currentPath.includes('/membershipusers')) {
-      setOpenKeys(['Membership']);
-    } else if (currentPath.includes('/workshop')) {
-      setOpenKeys(['workshops']);
-    } else if (currentPath.includes('/classtype')) {
-      setOpenKeys(['ClassTypes']);
-    } else if (currentPath.includes('/coach')) {
-      setOpenKeys(['AddCoach']);
-    } else if (currentPath.includes('/contactform') || currentPath.includes('/enquireform')) {
-      setOpenKeys(['ViewForms']);
-    } else if (currentPath.includes('/viewdemousers') || currentPath.includes('/viewallusers')) {
-      setOpenKeys(['ViewUsers']);
+    if (
+      currentPath.includes("/addmembership") ||
+      currentPath.includes("/viewmembership") ||
+      currentPath.includes("/membershipusers")
+    ) {
+      setOpenKeys(["Membership"]);
+    } else if (currentPath.includes("/workshop")) {
+      setOpenKeys(["workshops"]);
+    } else if (currentPath.includes("/classtype")) {
+      setOpenKeys(["ClassTypes"]);
+    } else if (currentPath.includes("/coach")) {
+      setOpenKeys(["AddCoach"]);
+    } else if (
+      currentPath.includes("/contactform") ||
+      currentPath.includes("/enquireform")
+    ) {
+      setOpenKeys(["ViewForms"]);
+    } else if (
+      currentPath.includes("/viewdemousers") ||
+      currentPath.includes("/viewallusers")
+    ) {
+      setOpenKeys(["ViewUsers"]);
     }
   }, [location.pathname]);
 
@@ -103,6 +113,11 @@ const LayoutFixed = () => {
           key: "/dashboard/workshopusers",
           icon: <TeamOutlined style={{ color: DARK_FOREST_GREEN }} />,
           label: <span style={{ color: TEXT_DARK }}>View Attendees</span>,
+        },
+        {
+          key: "/dashboard/addworkshopuser",
+          icon: <TeamOutlined style={{ color: DARK_FOREST_GREEN }} />,
+          label: <span style={{ color: TEXT_DARK }}>Add Attendees</span>,
         },
       ],
     },
@@ -269,14 +284,16 @@ const LayoutFixed = () => {
             fontSize: 16,
             fontFamily: "glancyr",
           }}
-          items={getMenuItems(role === "ADMIN" ? adminMenuItems : userMenuItems)}
+          items={getMenuItems(
+            role === "ADMIN" ? adminMenuItems : userMenuItems
+          )}
           onClick={({ key }) => {
             if (key.startsWith("/dashboard")) {
               navigate(key);
             }
           }}
         />
-        
+
         {/* Add custom CSS for text wrapping */}
         <style>{`
           .ant-menu-title-content {
@@ -351,7 +368,7 @@ const LayoutFixed = () => {
 
           {/* Logout on Right */}
           <Button
-            type="danger"  // Change the logout button to Danger type
+            type="danger" // Change the logout button to Danger type
             onClick={handleLogout}
             icon={<LogoutOutlined />}
             style={{
