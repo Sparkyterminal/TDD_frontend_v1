@@ -849,12 +849,12 @@ const WorkshopDetails = () => {
           </h1>
 
           {/* Batch Details Header */}
-          <h3 className="text-2xl font-semibold text-[#26442C] flex items-center justify-center gap-2 mb-4">
+          {/* <h3 className="text-2xl font-semibold text-[#26442C] flex items-center justify-center gap-2 mb-4">
             Batch Details
             <span className="px-2 py-0.5 text-sm font-medium text-white bg-[#D16539] rounded">
               {totalSeatsLeft} spots left
             </span>
-          </h3>
+          </h3> */}
 
           {/* Batch details list */}
           {/* <div className="space-y-4">
