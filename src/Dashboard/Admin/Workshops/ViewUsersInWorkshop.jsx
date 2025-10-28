@@ -8,6 +8,7 @@ import moment from "moment-timezone";
 import { EyeOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { PrinterCheck } from "lucide-react";
 
 // Destructuring for convenience
 const { Title } = Typography;
@@ -104,6 +105,7 @@ const ViewUsersInWorkshop = () => {
         media: booking.media || [],
         bookedAt: booking.bookedAt || "N/A", // Ensure bookedAt is mapped
         paymentStatus: booking.status || "N/A",
+        pricecharged: booking.price_charged || "N/A",
       }));
 
       setBookings(mappedBookings);
@@ -133,6 +135,7 @@ const ViewUsersInWorkshop = () => {
             .format("DD-MM-YYYY hh:mm A")
         : "N/A",
       "Payment Status": booking.paymentStatus,
+      "Price Charged": booking.pricecharged,
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
@@ -305,6 +308,12 @@ const ViewUsersInWorkshop = () => {
           </Tag>
         );
       },
+    },
+    {
+      title: "Price Charged",
+      dataIndex: "pricecharged",
+      key: "pricecharged",
+      width: 150,
     },
   ];
 
