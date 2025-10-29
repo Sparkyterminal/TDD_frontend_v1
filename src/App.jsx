@@ -125,6 +125,8 @@ const App = () => {
         {/* SHARED ROUTES - Available to everyone regardless of auth status */}
         <Route path="/payment-success" element={<Success />} />
         <Route path="/payment-failure" element={<Failure />} />
+        <Route path="/renewalform/:id" element={<RenewalForm />} />
+
 
         {/* If NOT logged in → show public pages */}
         {!auth ? (
@@ -208,7 +210,7 @@ const App = () => {
             <Route path="*" element={<Navigate to="/" replace />} />
           </>
         ) : isAdmin ? (
-          /* If logged in & admin → allow dashboard */
+          
           <>
             <Route path="/dashboard" element={<LayoutFixed />}>
               <Route index element={<Navigate to="workshopusers" replace />} />

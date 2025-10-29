@@ -123,12 +123,18 @@
 //           </motion.div>
 //         )}
 
-//         <div className="mt-auto">
+//         <div className="mt-auto flex gap-2">
 //           <button
 //             onClick={() => navigate(`/membershipform/${item._id}`)}
-//             className="bg-[#D2663A] text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
+//             className="flex-1 bg-[#D2663A] text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
 //           >
 //             Get Membership
+//           </button>
+//           <button
+//             onClick={() => navigate(`/demoform/${item._id}`)}
+//             className="flex-1 bg-gray-900 text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
+//           >
+//             Book a Demo
 //           </button>
 //         </div>
 //       </div>
@@ -268,7 +274,7 @@
 //           </div>
 //         ))}
 //       </div>
-//       <div className="flex justify-center mt-6">
+//       <div className="flex justify-center gap-4 mt-6">
 //         <button
 //           onClick={() => {
 //             if (groupClassId) {
@@ -279,6 +285,17 @@
 //           disabled={!groupClassId}
 //         >
 //           Get Membership
+//         </button>
+//         <button
+//           onClick={() => {
+//             if (groupClassId) {
+//               navigate(`/demoform/${groupClassId}`);
+//             }
+//           }}
+//           className="bg-gray-900 text-white px-6 py-3 rounded-full text-lg font-semibold hover:opacity-95"
+//           disabled={!groupClassId}
+//         >
+//           Book a Demo
 //         </button>
 //       </div>
 //     </>
@@ -484,8 +501,7 @@ const MembershipCard = ({ item }) => {
 
   const thumb =
     item.image?.image_url?.full?.high_res ||
-    item.image?.image_url?.full?.high_res ||
-    item.image?.image_url?.full?.high_res ||
+    item.image?.image_url?.thumbnail?.high_res ||
     "";
 
   return (
@@ -643,7 +659,7 @@ const staticGroupClasses = [
 
 const TabSection = () => {
   const [activeTab, setActiveTab] = useState("dance_classes");
-  const [kidsTab, setKidsTab] = useState("JUNIOR");
+  const [danceSubTab, setDanceSubTab] = useState("KIDS");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const fontClass = "font-[glancyr]";
@@ -680,22 +696,18 @@ const TabSection = () => {
     };
   }, []);
 
-  const danceClasses = items.filter(
-    (i) => i.dance_type?.category === "dance classes" && i.is_active
+  // Filter dance classes by plan_for
+  const danceClassesKids = items.filter(
+    (i) => i.dance_type?.category === "dance classes" && i.plan_for === "KID" && i.is_active
   );
+  
+  const danceClassesAdults = items.filter(
+    (i) => i.dance_type?.category === "dance classes" && i.plan_for === "ADULT" && i.is_active
+  );
+
   const groupClassesDynamic = items.filter(
     (i) => i.dance_type?.category === "group classes" && i.is_active
   );
-  const kidsJunior = items.filter(
-    (i) => i.plan_for === "KID" && i.kids_category === "JUNIOR" && i.is_active
-  );
-  const kidsAdvanced = items.filter(
-    (i) => i.plan_for === "KID" && i.kids_category === "ADVANCED" && i.is_active
-  );
-const adultsItems = items.filter(
-  (i) => i.dance_type?.title?.toLowerCase() === "adults" && i.is_active
-);
-
 
   const renderStaticGroupCards = () => (
     <>
@@ -765,6 +777,7 @@ const adultsItems = items.filter(
         Learn A Variety of Dance Styles
       </h2>
 
+      {/* Main Tabs */}
       <div className="flex justify-center gap-3 mb-6 flex-wrap">
         <button
           onClick={() => setActiveTab("dance_classes")}
@@ -786,26 +799,6 @@ const adultsItems = items.filter(
         >
           Group Classes
         </button>
-        <button
-          onClick={() => setActiveTab("kids")}
-          className={`px-4 py-2 rounded-full ${
-            activeTab === "kids"
-              ? "bg-gray-900 text-white"
-              : "bg-gray-200 text-gray-800"
-          }`}
-        >
-          Kids
-        </button>
-        <button
-          onClick={() => setActiveTab("adults")}
-          className={`px-4 py-2 rounded-full ${
-            activeTab === "adults"
-              ? "bg-gray-900 text-white"
-              : "bg-gray-200 text-gray-800"
-          }`}
-        >
-          Adults
-        </button>
       </div>
 
       <div>
@@ -819,10 +812,44 @@ const adultsItems = items.filter(
               exit="exit"
               transition={fadeSlideVariants.transition}
             >
+              {/* Sub Tabs for Dance Classes */}
+              <div className="flex justify-center gap-3 mb-6">
+                <button
+                  onClick={() => setDanceSubTab("KIDS")}
+                  className={`px-4 py-2 rounded-full ${
+                    danceSubTab === "KIDS"
+                      ? "bg-gray-900 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                >
+                  Kids
+                </button>
+                <button
+                  onClick={() => setDanceSubTab("ADULTS")}
+                  className={`px-4 py-2 rounded-full ${
+                    danceSubTab === "ADULTS"
+                      ? "bg-gray-900 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                >
+                  Adults
+                </button>
+              </div>
+
               {loading ? (
                 <p className="text-center">Loading...</p>
+              ) : danceSubTab === "KIDS" ? (
+                danceClassesKids.length > 0 ? (
+                  renderGrid(danceClassesKids)
+                ) : (
+                  <p className="text-center">No kids dance classes available.</p>
+                )
               ) : (
-                renderGrid(danceClasses)
+                danceClassesAdults.length > 0 ? (
+                  renderGrid(danceClassesAdults)
+                ) : (
+                  <p className="text-center">No adult dance classes available.</p>
+                )
               )}
             </motion.div>
           )}
@@ -840,67 +867,6 @@ const adultsItems = items.filter(
                 <p className="text-center">Loading...</p>
               ) : (
                 renderStaticGroupCards()
-              )}
-            </motion.div>
-          )}
-
-          {activeTab === "kids" && (
-            <motion.div
-              key="kids"
-              variants={fadeSlideVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={fadeSlideVariants.transition}
-            >
-              <div className="flex justify-center gap-3 mb-6">
-                <button
-                  onClick={() => setKidsTab("JUNIOR")}
-                  className={`px-3 py-2 rounded-full ${
-                    kidsTab === "JUNIOR"
-                      ? "bg-gray-900 text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  Junior
-                </button>
-                <button
-                  onClick={() => setKidsTab("ADVANCED")}
-                  className={`px-3 py-2 rounded-full ${
-                    kidsTab === "ADVANCED"
-                      ? "bg-gray-900 text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  Advanced
-                </button>
-              </div>
-
-              {loading ? (
-                <p className="text-center">Loading...</p>
-              ) : kidsTab === "JUNIOR" ? (
-                renderGrid(kidsJunior)
-              ) : (
-                renderGrid(kidsAdvanced)
-              )}
-            </motion.div>
-          )}
-
-          {activeTab === "adults" && (
-            <motion.div
-              key="adults"
-              variants={fadeSlideVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={fadeSlideVariants.transition}
-            >
-              {loading ? (
-                <p className="text-center">Loading...</p>
-              ) : adultsItems.length > 0 ? (
-                renderGrid(adultsItems)
-              ) : (
-                <p className="text-center">No adult classes available.</p>
               )}
             </motion.div>
           )}
