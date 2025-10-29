@@ -797,7 +797,7 @@ const TabSection = () => {
               : "bg-gray-200 text-gray-800"
           }`}
         >
-          Group Classes
+          Group Fitness Classes
         </button>
       </div>
 
