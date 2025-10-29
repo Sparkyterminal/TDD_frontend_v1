@@ -242,7 +242,7 @@ const Header = ({ scrollToSection }) => {
   const menuItems = [
     { label: "Home", route: "/" },
     { label: "Dance Classes", route: "/dance-classes" },
-    { label: "Group Classes", route: "/group-classes" },
+    { label: "Group Fitness Classes", route: "/group-classes" },
     { label: "Kids Classes", route: "/kids-classes" },
     { label: "Workshops", route: "/workshops" },
     { label: "Rent our space", route: "/rent" },

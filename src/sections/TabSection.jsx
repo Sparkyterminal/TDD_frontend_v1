@@ -216,7 +216,7 @@
 //           setItems(Array.isArray(data.items) ? data.items : []);
 //           // Extract first group class ID for static group cards' Get Membership button
 //           const firstGroupClass = (Array.isArray(data.items) ? data.items : []).find(
-//             (item) => item.dance_type?.category === "group classes" && item.is_active
+//             (item) => item.dance_type?.category === "group fitness classes" && item.is_active
 //           );
 //           if (firstGroupClass) setGroupClassId(firstGroupClass._id);
 //         }
@@ -236,7 +236,7 @@
 //     (i) => i.dance_type?.category === "dance classes" && i.is_active
 //   );
 //   const groupClassesDynamic = items.filter(
-//     (i) => i.dance_type?.category === "group classes" && i.is_active
+//     (i) => i.dance_type?.category === "group fitness classes" && i.is_active
 //   );
 //   const kidsJunior = items.filter(
 //     (i) => i.plan_for === "KID" && i.kids_category === "JUNIOR" && i.is_active
@@ -590,13 +590,13 @@ const MembershipCard = ({ item }) => {
         <div className="mt-auto flex gap-2">
           <button
             onClick={() => navigate(`/membershipform/${item._id}`)}
-            className="flex-1 bg-[#D2663A] text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
+            className="flex-1 bg-[#D2663A] cursor-pointer text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
           >
             Get Membership
           </button>
           <button
             onClick={() => navigate(`/demoform/${item._id}`)}
-            className="flex-1 bg-gray-900 text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
+            className="flex-1 bg-gray-900 cursor-pointer text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
           >
             Book a Demo
           </button>
@@ -680,7 +680,7 @@ const TabSection = () => {
           setItems(Array.isArray(data.items) ? data.items : []);
           // Extract first group class ID for static group cards' Get Membership button
           const firstGroupClass = (Array.isArray(data.items) ? data.items : []).find(
-            (item) => item.dance_type?.category === "group classes" && item.is_active
+            (item) => item.dance_type?.category === "group fitness classes" && item.is_active
           );
           if (firstGroupClass) setGroupClassId(firstGroupClass._id);
         }
@@ -706,7 +706,7 @@ const TabSection = () => {
   );
 
   const groupClassesDynamic = items.filter(
-    (i) => i.dance_type?.category === "group classes" && i.is_active
+    (i) => i.dance_type?.category === "group fitness classes" && i.is_active
   );
 
   const renderStaticGroupCards = () => (
@@ -741,7 +741,7 @@ const TabSection = () => {
               navigate(`/membershipform/${groupClassId}`);
             }
           }}
-          className="bg-[#D2663A] text-white px-6 py-3 rounded-full text-lg font-semibold hover:opacity-95"
+          className="bg-[#D2663A] cursor-pointer text-white px-6 py-3 rounded-full text-lg font-semibold hover:opacity-95"
           disabled={!groupClassId}
         >
           Get Membership
@@ -752,7 +752,7 @@ const TabSection = () => {
               navigate(`/demoform/${groupClassId}`);
             }
           }}
-          className="bg-gray-900 text-white px-6 py-3 rounded-full text-lg font-semibold hover:opacity-95"
+          className="bg-gray-900 cursor-pointer text-white px-6 py-3 rounded-full text-lg font-semibold hover:opacity-95"
           disabled={!groupClassId}
         >
           Book a Demo
