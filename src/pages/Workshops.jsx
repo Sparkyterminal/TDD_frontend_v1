@@ -200,20 +200,27 @@ const Workshops = () => {
 
         const today = moment().tz("Asia/Kolkata").startOf("day");
 
-        // Filter active, upcoming workshops
-        const filtered = list
-          .filter(
-            (w) =>
-              !w.is_cancelled &&
-              moment(w.date)
-                .tz("Asia/Kolkata")
-                .startOf("day")
-                .isSameOrAfter(today)
-          )
-          // Sort by earliest date first
-          .sort((a, b) => moment(a.date).diff(moment(b.date)));
+        // Split into upcoming & completed
+        const upcoming = [];
+        const completed = [];
 
-        setWorkshops(filtered);
+        list.forEach((w) => {
+          const workshopDate = moment(w.date).tz("Asia/Kolkata").startOf("day");
+          if (!w.is_cancelled && workshopDate.isSameOrAfter(today)) {
+            upcoming.push(w);
+          } else {
+            completed.push(w);
+          }
+        });
+
+        // Sort both
+        upcoming.sort((a, b) => moment(a.date).diff(moment(b.date)));
+        completed.sort((a, b) => moment(b.date).diff(moment(a.date))); // recent completed first
+
+        setWorkshops({
+          upcoming,
+          completed,
+        });
       } catch (e) {
         console.error("Workshop fetch error:", e);
         setError("Failed to load workshops. Please try again.");
@@ -225,7 +232,7 @@ const Workshops = () => {
     fetchWorkshops();
   }, []);
 
-  const WorkshopCard = React.memo(({ w }) => {
+  const WorkshopCard = React.memo(({ w, expired }) => {
     const instructorImageUrl =
       Array.isArray(w.media) && w.media.length > 0
         ? getImageUrl(w.media[0].image_url.full.high_res)
@@ -253,18 +260,15 @@ const Workshops = () => {
             No Image
           </div>
         )}
-
         {/* Title */}
         <h2 className="text-center text-2xl font-bold text-[#26442C] break-words">
           {w.title}
         </h2>
-
         {/* Date */}
         <div className="flex justify-between text-[#26442C] font-semibold">
           <span>Date:</span>
           <span>{dateStr}</span>
         </div>
-
         {/* Batches */}
         <div className="text-[#26442C] break-words">
           {Array.isArray(w.batches) &&
@@ -282,15 +286,19 @@ const Workshops = () => {
               );
             })}
         </div>
-
-        {/* Book now */}
+        {/* Book now or Expired */}
         <button
-          className="mt-auto font-bold py-3 rounded bg-[#26442C] text-white hover:scale-[1.02] active:scale-[0.98] cursor-pointer transition duration-300 transform"
-          onClick={() => navigate(`/workshopdetails/${w.id}`)}
+          className={`mt-auto font-bold py-3 rounded ${
+            expired
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#26442C] cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+          } text-white transition duration-300 transform`}
+          onClick={() => !expired && navigate(`/workshopdetails/${w.id}`)}
           type="button"
           aria-label="Book Now"
+          disabled={expired}
         >
-          Book Now
+          {expired ? "Completed" : "Book Now"}
         </button>
       </div>
     );
@@ -308,31 +316,37 @@ const Workshops = () => {
         >
           Workshops
         </motion.h1>
-
         {error && (
           <div className="text-center text-[#D16539] mb-6 font-semibold">
             {error}
           </div>
         )}
 
+        {/* Upcoming Workshops Section */}
+        <h2 className="text-2xl text-[#26442C] font-bold mb-5 text-center">
+          Upcoming Workshops
+        </h2>
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 mb-12"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
         >
           {!loading &&
-            workshops.length > 0 &&
-            workshops.map((w) => <WorkshopCard key={w.id} w={w} />)}
-
-          {!loading && workshops.length === 0 && !error && (
-            <div className="col-span-full text-center py-10 text-gray-600 text-xl">
-              No workshops currently available. Check back soon!
-            </div>
-          )}
-
+            workshops.upcoming &&
+            workshops.upcoming.length > 0 &&
+            workshops.upcoming.map((w) => (
+              <WorkshopCard key={w.id} w={w} expired={false} />
+            ))}
+          {!loading &&
+            workshops.upcoming &&
+            workshops.upcoming.length === 0 && !error && (
+              <div className="col-span-full text-center py-10 text-gray-600 text-xl">
+                No upcoming workshops. Check back soon!
+              </div>
+            )}
           {loading &&
-            Array.from({ length: 6 }).map((_, idx) => (
+            Array.from({ length: 3 }).map((_, idx) => (
               <div key={idx} className="border rounded-lg p-4 animate-pulse">
                 <div className="w-full h-44 bg-gray-200 rounded mb-4" />
                 <div className="h-4 bg-gray-200 rounded mb-3 w-3/4" />
@@ -344,6 +358,31 @@ const Workshops = () => {
                 <div className="h-10 bg-gray-200 rounded mt-auto" />
               </div>
             ))}
+        </motion.div>
+
+        {/* Completed Workshops Section */}
+        <h2 className="text-2xl text-[#26442C] font-bold mb-5 text-center">
+          Past Workshops
+        </h2>
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
+        >
+          {!loading &&
+            workshops.completed &&
+            workshops.completed.length > 0 &&
+            workshops.completed.map((w) => (
+              <WorkshopCard key={w.id} w={w} expired={true} />
+            ))}
+          {!loading &&
+            workshops.completed &&
+            workshops.completed.length === 0 && !error && (
+              <div className="col-span-full text-center py-10 text-gray-600 text-xl">
+                No completed workshops found.
+              </div>
+            )}
         </motion.div>
       </main>
       <Footer />

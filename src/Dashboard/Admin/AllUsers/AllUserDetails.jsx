@@ -1094,12 +1094,12 @@ const AllUserDetails = () => {
     try {
       const allData = [];
       let currentPage = 1;
-      const pageSize = 100;
+      const pageSize = 10000000000;
       let totalItems = 0;
 
       do {
         const res = await axios.get(
-          `${API_BASE_URL}membership-plan/bookings/all?page=${currentPage}&pageSize=${pageSize}`,
+          `${API_BASE_URL}membership-plan/bookings/all?page=${currentPage}&limit=${pageSize}`,
           config
         );
         const batchData = res.data.data.bookings.filter(booking => booking.user !== null);

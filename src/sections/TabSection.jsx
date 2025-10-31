@@ -506,7 +506,6 @@ const MembershipCard = ({ item }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-md p-4 flex flex-col h-full">
-      {/* Bigger image on top */}
       <div className="w-full overflow-hidden rounded-md mb-4">
         <img
           src={getImageUrl(thumb)}
@@ -517,15 +516,12 @@ const MembershipCard = ({ item }) => {
           }}
         />
       </div>
-
-      {/* Content side below the image */}
+      
       <div className="flex-1 flex flex-col">
         <h3 className="text-lg font-semibold text-gray-900 mb-1">
           {item.name.toUpperCase()}
         </h3>
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-          {item.description}
-        </p>
+        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
 
         <button
           onClick={() => setOpen((s) => !s)}
@@ -547,8 +543,7 @@ const MembershipCard = ({ item }) => {
             </div>
 
             <div>
-              <strong className="text-gray-800">One Time Registration Fee:</strong>{" "}
-              ₹500/-
+              <strong className="text-gray-800">One Time Registration Fee:</strong> ₹500/-
             </div>
 
             <div>
@@ -573,7 +568,20 @@ const MembershipCard = ({ item }) => {
                 <p>No batches available.</p>
               )}
             </div>
-
+            <div className="mt-auto flex gap-2">
+          <button
+            onClick={() => navigate(`/membershipform/${item._id}`)}
+            className="flex-1 bg-[#D2663A] cursor-pointer text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
+          >
+            Get Membership
+          </button>
+          <button
+            onClick={() => navigate(`/demoform/${item._id}`)}
+            className="flex-1 bg-gray-900 cursor-pointer text-white px-3 py-2 rounded-full text-sm font-medium hover:opacity-95 mt-4"
+          >
+            Book a Demo
+          </button>
+        </div>
             {item.benefits?.length > 0 && (
               <div>
                 <strong className="text-gray-800 block mb-1">Rules:</strong>
@@ -653,20 +661,41 @@ const staticGroupClasses = [
   },
   {
     name: "Outdooor & Fun Activities",
-    image: { image_url: { full: { high_res: "assets/dance/outdoor.webp" } } },
+    image: { image_url: { full: "assets/dance/outdoor.webp" } },
   },
 ];
 
-const TabSection = () => {
-  const [activeTab, setActiveTab] = useState("dance_classes");
-  const [danceSubTab, setDanceSubTab] = useState("KIDS");
+
+const TabSection = ({ activeTabKey, shouldScrollToTab }) => {
+  const [activeTab, setActiveTab] = useState("");
+  const [danceSubTab, setDanceSubTab] = useState("");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
-  const fontClass = "font-[glancyr]";
   const navigate = useNavigate();
 
-  const [groupClassId, setGroupClassId] = useState(null);
+  // Initialize tabs as empty on component mount
+  useEffect(() => {
+    setActiveTab("");
+    setDanceSubTab("");
+  }, []);
 
+  // Handle activeTabKey changes from parent
+  useEffect(() => {
+    if (!activeTabKey) return;
+    
+    if (activeTabKey === "group_classes") {
+      setActiveTab("group_classes");
+      setDanceSubTab("");
+    } else if (activeTabKey === "kids_classes") {
+      setActiveTab("dance_classes");
+      setDanceSubTab("KIDS");
+    } else if (activeTabKey === "dance_classes") {
+      setActiveTab("dance_classes");
+      setDanceSubTab("KIDS");
+    }
+  }, [activeTabKey]);
+
+  // Fetch membership data
   useEffect(() => {
     let cancelled = false;
     const fetch = async () => {
@@ -678,9 +707,9 @@ const TabSection = () => {
         const data = res.data || {};
         if (!cancelled) {
           setItems(Array.isArray(data.items) ? data.items : []);
-          // Extract first group class ID for static group cards' Get Membership button
           const firstGroupClass = (Array.isArray(data.items) ? data.items : []).find(
-            (item) => item.dance_type?.category === "group fitness classes" && item.is_active
+            (item) => item.dance_type?.category === "group fitness classes" &&
+              item.is_active
           );
           if (firstGroupClass) setGroupClassId(firstGroupClass._id);
         }
@@ -696,45 +725,34 @@ const TabSection = () => {
     };
   }, []);
 
-  // Filter dance classes by plan_for
+  // ONLY scroll to tab container when explicitly requested (shouldScrollToTab is true)
+  useEffect(() => {
+    if (shouldScrollToTab && activeTab) {
+      setTimeout(() => {
+        const el = document.getElementById("tab-container");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
+    }
+  }, [shouldScrollToTab, activeTab]);
+
+  // Filter data
   const danceClassesKids = items.filter(
-    (i) => i.dance_type?.category === "dance classes" && i.plan_for === "KID" && i.is_active
-  );
-  
-  const danceClassesAdults = items.filter(
-    (i) => i.dance_type?.category === "dance classes" && i.plan_for === "ADULT" && i.is_active
+    (i) => i.dance_type?.category === "dance classes" &&
+      i.plan_for === "KID" && i.is_active
   );
 
-  const groupClassesDynamic = items.filter(
-    (i) => i.dance_type?.category === "group fitness classes" && i.is_active
+  const danceClassesAdults = items.filter(
+    (i) => i.dance_type?.category === "dance classes" &&
+      i.plan_for === "ADULT" && i.is_active
   );
+
+  const [groupClassId, setGroupClassId] = useState(null);
 
   const renderStaticGroupCards = () => (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {staticGroupClasses.map(({ name, image }, idx) => (
-          <div
-            key={idx}
-            className="bg-white rounded-xl shadow-md p-4 flex flex-col h-full"
-          >
-            <div className="w-full overflow-hidden rounded-md mb-4">
-              <img
-                src={image.image_url.full.high_res}
-                alt={name}
-                className="w-full h-64 object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            </div>
-            <div className="flex-1 flex flex-col">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">{name.toUpperCase()}</h3>
-              <p className="text-sm text-gray-600 mb-3">For Ages 12 & Above</p>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="flex justify-center gap-4 mt-6">
+      <div className="flex justify-center gap-4 mt-6 mb-10">
         <button
           onClick={() => {
             if (groupClassId) {
@@ -758,6 +776,29 @@ const TabSection = () => {
           Book a Demo
         </button>
       </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {staticGroupClasses.map(({ name, image }, idx) => (
+          <div
+            key={idx}
+            className="bg-white rounded-xl shadow-md p-4 flex flex-col h-full"
+          >
+            <div className="w-full overflow-hidden rounded-md mb-4">
+              <img
+                src={image.image_url.full.high_res}
+                alt={name}
+                className="w-full h-64 object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+            <div className="flex-1 flex flex-col">
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">{name.toUpperCase()}</h3>
+              <p className="text-sm text-gray-600 mb-3">For Ages 12 & Above</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   );
 
@@ -771,7 +812,8 @@ const TabSection = () => {
 
   return (
     <section
-      className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 ${fontClass}`}
+      id="tab-container"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-[glancyr]"
     >
       <h2 className="text-3xl md:text-4xl font-semibold text-center mb-6">
         Learn A Variety of Dance Styles
@@ -804,54 +846,54 @@ const TabSection = () => {
       <div>
         <AnimatePresence mode="wait">
           {activeTab === "dance_classes" && (
-            <motion.div
-              key="dance"
-              variants={fadeSlideVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={fadeSlideVariants.transition}
-            >
-              {/* Sub Tabs for Dance Classes */}
-              <div className="flex justify-center gap-3 mb-6">
-                <button
-                  onClick={() => setDanceSubTab("KIDS")}
-                  className={`px-4 py-2 rounded-full ${
-                    danceSubTab === "KIDS"
-                      ? "bg-gray-900 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  Kids
-                </button>
-                <button
-                  onClick={() => setDanceSubTab("ADULTS")}
-                  className={`px-4 py-2 rounded-full ${
-                    danceSubTab === "ADULTS"
-                      ? "bg-gray-900 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  Adults
-                </button>
-              </div>
+            <>
+              <motion.div
+                key="dance"
+                variants={fadeSlideVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={fadeSlideVariants.transition}
+              >
+                {/* Sub Tabs */}
+                <div className="flex justify-center gap-3 mb-6">
+                  <button
+                    onClick={() => setDanceSubTab("KIDS")}
+                    className={`px-4 py-2 rounded-full ${
+                      danceSubTab === "KIDS"
+                        ? "bg-gray-900 text-white"
+                        : "bg-gray-200 text-gray-800"
+                    }`}
+                  >
+                    Kids
+                  </button>
+                  <button
+                    onClick={() => setDanceSubTab("ADULTS")}
+                    className={`px-4 py-2 rounded-full ${
+                      danceSubTab === "ADULTS"
+                        ? "bg-gray-900 text-white"
+                        : "bg-gray-200 text-gray-800"
+                    }`}
+                  >
+                    Adults
+                  </button>
+                </div>
 
-              {loading ? (
-                <p className="text-center">Loading...</p>
-              ) : danceSubTab === "KIDS" ? (
-                danceClassesKids.length > 0 ? (
-                  renderGrid(danceClassesKids)
-                ) : (
-                  <p className="text-center">No kids dance classes available.</p>
-                )
-              ) : (
-                danceClassesAdults.length > 0 ? (
+                {loading ? (
+                  <p className="text-center">Loading...</p>
+                ) : danceSubTab === "KIDS" ? (
+                  danceClassesKids.length > 0 ? (
+                    renderGrid(danceClassesKids)
+                  ) : (
+                    <p className="text-center">No kids dance classes available.</p>
+                  )
+                ) : danceClassesAdults.length > 0 ? (
                   renderGrid(danceClassesAdults)
                 ) : (
                   <p className="text-center">No adult dance classes available.</p>
-                )
-              )}
-            </motion.div>
+                )}
+              </motion.div>
+            </>
           )}
 
           {activeTab === "group_classes" && (
