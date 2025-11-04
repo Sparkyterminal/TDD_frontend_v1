@@ -1124,7 +1124,7 @@ const AllUserDetails = () => {
           "Payment Status": booking.paymentResult?.status || "PENDING",
           "Start Date": new Date(booking.start_date).toLocaleDateString("en-GB"),
           "End Date": endDate || "N/A",
-          Status: booking.planInfo?.discontinued === "true" || booking.planInfo?.discontinued === true ? "Discontinued" : "Active",
+          Status: booking.discontinued === "true" || booking.discontinued === true ? "Discontinued" : "Active",
         };
       });
 
