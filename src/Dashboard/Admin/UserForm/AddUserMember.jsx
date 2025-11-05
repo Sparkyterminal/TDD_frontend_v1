@@ -138,7 +138,7 @@ const AddUserMember = () => {
       setSelectedPlan(null);
       setBatches([]);
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Failed to add member";
+      const errorMessage = error.response?.data?.error || "Failed to add member";
       setMessage({ type: "error", text: errorMessage });
     } finally {
       setSubmitting(false);
