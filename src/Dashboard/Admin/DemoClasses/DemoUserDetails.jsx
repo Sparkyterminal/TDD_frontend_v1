@@ -379,7 +379,7 @@ const DemoUserDetails = () => {
       
       const res = await axios.get(url, config);
       console.log("demo users", res.data);
-      setData(res.data);
+      setData(res.data.reverse());
     } catch (e) {
       console.error("Error fetching demo users:", e);
       message.error("Failed to load demo users");

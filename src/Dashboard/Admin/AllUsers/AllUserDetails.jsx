@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Table, Input, Card, Row, Col, Tag, Space, message, Button, Tooltip, Popconfirm, Modal, Form, DatePicker, Select } from "antd";
-import { SearchOutlined, UserOutlined, ReloadOutlined, StopOutlined, EditOutlined } from "@ant-design/icons";
+import { SearchOutlined, UserOutlined, ReloadOutlined, StopOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -244,6 +244,22 @@ const AllUserDetails = () => {
       fetchBookings(pagination.current, searchText);
     } catch (err) {
       message.error(err.response?.data?.message || "Failed to reactivate membership");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      setLoading(true);
+      await axios.delete(
+        `${API_BASE_URL}membership-plan/user/${userId}`,
+        config
+      );
+      message.success("User and all associated memberships deleted successfully!");
+      fetchBookings(pagination.current, searchText);
+    } catch (err) {
+      message.error(err.response?.data?.error || err.response?.data?.message || "Failed to delete user");
     } finally {
       setLoading(false);
     }
@@ -652,6 +668,26 @@ const AllUserDetails = () => {
               >
                 Rejoined
               </Button>
+              <Popconfirm
+                title="Delete user and all memberships?"
+                description="This will permanently delete the user and all their membership bookings. This action cannot be undone."
+                onConfirm={() => handleDeleteUser(record.userId)}
+                okText="Yes, Delete"
+                cancelText="Cancel"
+                okButtonProps={{ danger: true }}
+              >
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  size="small"
+                  style={{
+                    borderRadius: "6px",
+                    fontWeight: "500",
+                  }}
+                >
+                  Delete
+                </Button>
+              </Popconfirm>
             </Space>
           );
         }
@@ -700,6 +736,26 @@ const AllUserDetails = () => {
                   Edit User
                 </Button>
               </Tooltip>
+              <Popconfirm
+                title="Delete user and all memberships?"
+                description="This will permanently delete the user and all their membership bookings. This action cannot be undone."
+                onConfirm={() => handleDeleteUser(record.userId)}
+                okText="Yes, Delete"
+                cancelText="Cancel"
+                okButtonProps={{ danger: true }}
+              >
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  size="small"
+                  style={{
+                    borderRadius: "6px",
+                    fontWeight: "500",
+                  }}
+                >
+                  Delete
+                </Button>
+              </Popconfirm>
             </Space>
           );
         }
@@ -771,6 +827,26 @@ const AllUserDetails = () => {
                   }}
                 >
                   Discontinue
+                </Button>
+              </Popconfirm>
+              <Popconfirm
+                title="Delete user and all memberships?"
+                description="This will permanently delete the user and all their membership bookings. This action cannot be undone."
+                onConfirm={() => handleDeleteUser(record.userId)}
+                okText="Yes, Delete"
+                cancelText="Cancel"
+                okButtonProps={{ danger: true }}
+              >
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  size="small"
+                  style={{
+                    borderRadius: "6px",
+                    fontWeight: "500",
+                  }}
+                >
+                  Delete
                 </Button>
               </Popconfirm>
             </Space>
