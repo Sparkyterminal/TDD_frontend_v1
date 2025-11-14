@@ -645,7 +645,7 @@ const AllUserDetails = () => {
     {
       title: "Actions",
       key: "action",
-      width: 340, // increased width to fit extra button
+      width: 420, // increased width to fit delete button
       align: "center",
       render: (_, record) => {
         // If discontinued, show Discontinued tag and Rejoined button
@@ -937,6 +937,26 @@ const AllUserDetails = () => {
                 }}
               >
                 Discontinue
+              </Button>
+            </Popconfirm>
+            <Popconfirm
+              title="Delete user and all memberships?"
+              description="This will permanently delete the user and all their membership bookings. This action cannot be undone."
+              onConfirm={() => handleDeleteUser(record.userId)}
+              okText="Yes, Delete"
+              cancelText="Cancel"
+              okButtonProps={{ danger: true }}
+            >
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                size="small"
+                style={{
+                  borderRadius: "6px",
+                  fontWeight: "500",
+                }}
+              >
+                Delete
               </Button>
             </Popconfirm>
           </Space>
