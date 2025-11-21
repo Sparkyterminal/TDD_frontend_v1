@@ -65,11 +65,13 @@ const WorkshopUserForm = () => {
           config
         );
         console.log("workshop details", res.data);
-        setBatches(res.data.batches || []);
+        const fetchedBatches = res.data.batches || [];
+        setBatches(fetchedBatches);
+        const defaultBatchId = fetchedBatches.length > 0 ? (fetchedBatches[0]?._id || fetchedBatches[0]?.id || "") : "";
         setFormData((prev) => ({
           ...prev,
           workshopId: selectedWorkshop,
-          batchIds: [],
+          batchIds: defaultBatchId ? [defaultBatchId] : [],
         }));
       } catch (error) {
         message.error("Failed to load workshop details");
@@ -88,13 +90,7 @@ const WorkshopUserForm = () => {
   };
 
   const handleBatchChange = (e) => {
-    const options = e.target.options;
-    const selectedBatches = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selectedBatches.push(options[i].value);
-      }
-    }
+    const selectedBatches = Array.from(e.target.selectedOptions, (option) => option.value).filter(Boolean);
     setFormData((prev) => ({ ...prev, batchIds: selectedBatches }));
   };
 
@@ -111,6 +107,7 @@ const WorkshopUserForm = () => {
       message.error("Please select a workshop");
       return;
     }
+    console.log("formData.batchIds", formData);
     if (formData.batchIds.length === 0) {
       message.error("Please select at least one batch");
       return;
@@ -215,12 +212,15 @@ const WorkshopUserForm = () => {
             {batches.length === 0 && selectedWorkshop && !loading && (
               <option disabled>No batches available</option>
             )}
-            {batches.map((batch) => (
-              <option key={batch._id} value={batch._id}>
-                {batch.name} - {new Date(batch.start_time).toLocaleString()} (₹
-                {batch.pricing.regular.price})
-              </option>
-            ))}
+            {batches.map((batch) => {
+              const batchId = batch?._id || batch?.id || "";
+              return (
+                <option key={batchId} value={batchId}>
+                  {batch.name} - {new Date(batch.start_time).toLocaleString()} (₹
+                  {batch.pricing?.regular?.price ?? batch.pricing?.price ?? 0})
+                </option>
+              );
+            })}
           </select>
           <p className="text-xs text-gray-500 mt-1">
             Hold Ctrl/Cmd to select multiple batches
