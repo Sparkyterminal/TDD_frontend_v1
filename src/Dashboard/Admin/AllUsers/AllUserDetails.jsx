@@ -509,6 +509,7 @@ const AllUserDetails = () => {
       key: "slNo",
       width: 80,
       align: "center",
+      fixed: "left",
       render: (text) => <span style={{ fontWeight: "600", color: "#8c8c8c" }}>{text}</span>,
     },
     {
@@ -516,6 +517,7 @@ const AllUserDetails = () => {
       dataIndex: "name",
       key: "name",
       width: 180,
+      fixed: "left",
       render: (text) => <span style={{ fontWeight: "600", color: "#262626" }}>{text}</span>,
     },
     {
@@ -1474,11 +1476,44 @@ const AllUserDetails = () => {
         .ant-table-tbody > tr:hover > td {
           background: #f5f5f5 !important;
         }
+        .ant-table-tbody > tr:hover > td.ant-table-cell-fix-left {
+          background: #f5f5f5 !important;
+        }
         .table-row-discontinued:hover > td {
+          background-color: #fff1f0 !important;
+        }
+        .table-row-discontinued:hover > td.ant-table-cell-fix-left {
           background-color: #fff1f0 !important;
         }
         .ant-table {
           border-radius: 12px;
+        }
+        /* Fixed columns styling */
+        .ant-table-cell-fix-left {
+          position: sticky !important;
+          left: 0;
+          z-index: 2;
+          background: #fff;
+        }
+        .ant-table-thead > tr > th.ant-table-cell-fix-left {
+          background: #fafafa !important;
+          z-index: 3;
+        }
+        .ant-table-tbody > tr > td.ant-table-cell-fix-left {
+          background: #fff;
+        }
+        .table-row-light > td.ant-table-cell-fix-left {
+          background-color: #ffffff !important;
+        }
+        .table-row-dark > td.ant-table-cell-fix-left {
+          background-color: #fafafa !important;
+        }
+        .table-row-discontinued > td.ant-table-cell-fix-left {
+          background-color: #fff1f0 !important;
+        }
+        /* Shadow effect for fixed columns */
+        .ant-table-cell-fix-left:last-child::after {
+          box-shadow: inset 10px 0 8px -8px rgba(0, 0, 0, 0.15);
         }
       `}</style>
     </div>
