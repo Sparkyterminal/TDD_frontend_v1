@@ -16,6 +16,8 @@ const AllUserDetails = () => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
+  const [discontinuedFilter, setDiscontinuedFilter] = useState(null);
+  const [renewalEligibleFilter, setRenewalEligibleFilter] = useState(null);
 
   const [manualRenewalModal, setManualRenewalModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -206,7 +208,7 @@ const AllUserDetails = () => {
       manualForm.resetFields();
       setSelectedPlan(null);
       setBatches([]);
-      fetchBookings(pagination.current, searchText);
+      fetchBookings(pagination.current, searchText, discontinuedFilter, renewalEligibleFilter);
     } catch (err) {
       message.error(err.response?.data?.message || "Failed to renew membership manually");
     } finally {
@@ -224,7 +226,7 @@ const AllUserDetails = () => {
       );
 
       message.success("Membership discontinued successfully!");
-      fetchBookings(pagination.current, searchText);
+      fetchBookings(pagination.current, searchText, discontinuedFilter, renewalEligibleFilter);
     } catch (err) {
       message.error(err.response?.data?.message || "Failed to discontinue membership");
     } finally {
@@ -241,7 +243,7 @@ const AllUserDetails = () => {
         config
       );
       message.success("Membership reactivated successfully!");
-      fetchBookings(pagination.current, searchText);
+      fetchBookings(pagination.current, searchText, discontinuedFilter, renewalEligibleFilter);
     } catch (err) {
       message.error(err.response?.data?.message || "Failed to reactivate membership");
     } finally {
@@ -257,7 +259,7 @@ const AllUserDetails = () => {
         config
       );
       message.success("User and all associated memberships deleted successfully!");
-      fetchBookings(pagination.current, searchText);
+      fetchBookings(pagination.current, searchText, discontinuedFilter, renewalEligibleFilter);
     } catch (err) {
       message.error(err.response?.data?.error || err.response?.data?.message || "Failed to delete user");
     } finally {
@@ -266,13 +268,15 @@ const AllUserDetails = () => {
   };
 
   // ------------ Fetch bookings data ----------------
-  const fetchBookings = async (page = 1, search = "") => {
+  const fetchBookings = async (page = 1, search = "", discontinued = null, renewalEligible = null) => {
     setLoading(true);
     try {
       const queryParams = new URLSearchParams({
         page: page.toString(),
         limit: pagination.pageSize.toString(),
         ...(search && { search }),
+        ...(discontinued !== null && discontinued !== undefined && discontinued !== '' && { discontinued: discontinued.toString() }),
+        ...(renewalEligible !== null && renewalEligible !== undefined && renewalEligible !== '' && { renewalEligible: renewalEligible.toString() }),
       }).toString();
 
       const res = await axios.get(
@@ -325,16 +329,32 @@ const AllUserDetails = () => {
   };
 
   useEffect(() => {
-    fetchBookings();
+    fetchBookings(1, searchText, discontinuedFilter, renewalEligibleFilter);
   }, []);
 
   const handleSearch = (value) => {
     setSearchText(value);
-    fetchBookings(1, value);
+    fetchBookings(1, value, discontinuedFilter, renewalEligibleFilter);
+  };
+
+  const handleDiscontinuedFilterChange = (value) => {
+    setDiscontinuedFilter(value);
+    fetchBookings(1, searchText, value, renewalEligibleFilter);
+  };
+
+  const handleRenewalEligibleFilterChange = (value) => {
+    setRenewalEligibleFilter(value);
+    fetchBookings(1, searchText, discontinuedFilter, value);
+  };
+
+  const handleClearFilters = () => {
+    setDiscontinuedFilter(null);
+    setRenewalEligibleFilter(null);
+    fetchBookings(1, searchText, null, null);
   };
 
   const handleTableChange = (newPagination) => {
-    fetchBookings(newPagination.current, searchText);
+    fetchBookings(newPagination.current, searchText, discontinuedFilter, renewalEligibleFilter);
   };
 
   // ------------- Export data to Excel ----------------
@@ -473,7 +493,7 @@ const AllUserDetails = () => {
       message.success("Booking updated successfully!");
       setEditUserModal(false);
       editUserForm.resetFields();
-      fetchBookings(pagination.current, searchText);
+      fetchBookings(pagination.current, searchText, discontinuedFilter, renewalEligibleFilter);
     } catch (err) {
       message.error(err.response?.data?.message || "Failed to update booking");
     } finally {
@@ -985,7 +1005,7 @@ const AllUserDetails = () => {
       </div>
 
       <Row gutter={[16, 24]} style={{ marginBottom: "32px" }}>
-        <Col xs={24} md={12}>
+        <Col xs={24} md={8}>
           <Card
             style={{
               background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -1010,7 +1030,7 @@ const AllUserDetails = () => {
           </Card>
         </Col>
 
-        <Col xs={24} md={12}>
+        <Col xs={24} md={16}>
           <Card
             style={{
               borderRadius: "16px",
@@ -1020,21 +1040,63 @@ const AllUserDetails = () => {
               padding: "24px"
             }}
           >
-            <div style={{ marginBottom: "8px", color: "#8c8c8c", fontSize: "13px", fontWeight: "500" }}>
-              SEARCH BOOKINGS
+            <div style={{ marginBottom: "16px", color: "#8c8c8c", fontSize: "13px", fontWeight: "500" }}>
+              SEARCH & FILTER BOOKINGS
             </div>
-            <Input
-              placeholder="Search by name, email, or mobile..."
-              prefix={<SearchOutlined style={{ color: "#bfbfbf", fontSize: "16px" }} />}
-              onChange={(e) => handleSearch(e.target.value)}
-              size="large"
-              style={{
-                borderRadius: "10px",
-                border: "2px solid #f0f0f0",
-                fontSize: "15px",
-              }}
-              allowClear
-            />
+            <Space direction="vertical" size={12} style={{ width: "100%" }}>
+              <Input
+                placeholder="Search by name, email, or mobile..."
+                prefix={<SearchOutlined style={{ color: "#bfbfbf", fontSize: "16px" }} />}
+                onChange={(e) => handleSearch(e.target.value)}
+                size="large"
+                style={{
+                  borderRadius: "10px",
+                  border: "2px solid #f0f0f0",
+                  fontSize: "15px",
+                }}
+                allowClear
+              />
+              <Row gutter={[12, 12]}>
+                <Col xs={24} sm={12} md={8}>
+                  <Select
+                    placeholder="Discontinued Status"
+                    value={discontinuedFilter}
+                    onChange={handleDiscontinuedFilterChange}
+                    allowClear
+                    style={{ width: "100%", borderRadius: "8px" }}
+                    size="large"
+                  >
+                    <Option value="false">Active</Option>
+                    <Option value="true">Discontinued</Option>
+                  </Select>
+                </Col>
+                <Col xs={24} sm={12} md={8}>
+                  <Select
+                    placeholder="Renewal Status"
+                    value={renewalEligibleFilter}
+                    onChange={handleRenewalEligibleFilterChange}
+                    allowClear
+                    style={{ width: "100%", borderRadius: "8px" }}
+                    size="large"
+                  >
+                    <Option value="true">Renewal Eligible</Option>
+                    <Option value="false">Not Eligible</Option>
+                  </Select>
+                </Col>
+                <Col xs={24} sm={24} md={8}>
+                  <Button
+                    onClick={handleClearFilters}
+                    size="large"
+                    style={{
+                      width: "100%",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                </Col>
+              </Row>
+            </Space>
           </Card>
         </Col>
       </Row>
