@@ -24,16 +24,23 @@ const formatTimeToIST12Hour = (time24) => {
   return `${h}:${m} ${ampm} IST`;
 };
 
+// Match backend URL patterns used elsewhere in the app (see Admin/ViewMembership.jsx)
+const getImageUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
+  return `${API_BASE_URL}api/${url}`;
+};
+
 const MembershipCard = ({ item, onGetMembership, onBookDemo }) => {
   const [open, setOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
-console.log('item', item)
   return (
     <div className="bg-white rounded-xl shadow-md p-4 flex flex-col h-full">
-      {item.images?.image_url?.full?.high_res && (
+      {item.image?.image_url?.full?.high_res && (
         <div className="w-full overflow-hidden rounded-md mb-4">
           <img
-            src={item.images.image_url.full.high_res}
+            src={getImageUrl(item.image.image_url.full.high_res)}
             alt={item.name}
             className="w-full h-64 object-cover"
             onError={(e) => {
