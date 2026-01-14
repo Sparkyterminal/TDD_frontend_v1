@@ -189,9 +189,9 @@ const MembershipPage = () => {
         {list.map((item) => {
           // prefer thumbnail low_res, fallback to thumbnail high_res, then full high_res
           const thumb =
-            item.image?.image_url?.thumbnail?.low_res ||
-            item.image?.image_url?.thumbnail?.high_res ||
-            item.image?.image_url?.full?.high_res ||
+            item.images?.image_url?.thumbnail?.low_res ||
+            item.images?.image_url?.thumbnail?.high_res ||
+            item.images?.image_url?.full?.high_res ||
             "";
           const imgUrl = getImageUrl(thumb);
           return (
