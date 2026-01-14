@@ -27,7 +27,7 @@ const formatTimeToIST12Hour = (time24) => {
 const MembershipCard = ({ item, onGetMembership, onBookDemo }) => {
   const [open, setOpen] = useState(false);
   const [showFullDesc, setShowFullDesc] = useState(false);
-
+console.log('item', item)
   return (
     <div className="bg-white rounded-xl shadow-md p-4 flex flex-col h-full">
       {item.images?.image_url?.full?.high_res && (
