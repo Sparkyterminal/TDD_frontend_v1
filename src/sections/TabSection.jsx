@@ -30,10 +30,10 @@ const MembershipCard = ({ item, onGetMembership, onBookDemo }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-md p-4 flex flex-col h-full">
-      {item.image?.image_url?.full?.high_res && (
+      {item.images?.image_url?.full?.high_res && (
         <div className="w-full overflow-hidden rounded-md mb-4">
           <img
-            src={item.image.image_url.full.high_res}
+            src={item.images.image_url.full.high_res}
             alt={item.name}
             className="w-full h-64 object-cover"
             onError={(e) => {
