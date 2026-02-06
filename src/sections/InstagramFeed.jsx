@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const InstagramFeed = () => {
+  useEffect(() => {
+    if (document.querySelector('script[src="https://elfsightcdn.com/platform.js"]'))
+      return;
+    const script = document.createElement("script");
+    script.src = "https://elfsightcdn.com/platform.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
   return (
     <div>
-      <iframe
-        src="https://widgets.sociablekit.com/instagram-reels/iframe/25610772"
-        frameborder="0"
-        width="100%"
-        height="1000"
-      ></iframe>
+      <div
+        className="elfsight-app-11af1f1d-d682-4f37-af19-df08584ea6d2"
+        data-elfsight-app-lazy
+      />
     </div>
   );
 };
