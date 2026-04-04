@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Table, Input, Card, Row, Col, Tag, Space, message, Button, Tooltip, Popconfirm, Modal, Form, DatePicker, Select } from "antd";
+
+const { TextArea } = Input;
 import { SearchOutlined, UserOutlined, ReloadOutlined, StopOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -309,6 +311,7 @@ const AllUserDetails = () => {
           endDate: endDate,
           userId: booking.userInfo?._id || booking.user,
           discontinued: booking.discontinued === "true" || booking.discontinued === true,
+          adminRemarks: booking.userInfo?.admin_remarks || "",
           rawBooking: booking,
         };
       });
@@ -388,6 +391,7 @@ const AllUserDetails = () => {
           Age: booking.age,
           Email: booking.email,
           "Mobile Number": booking.mobile_number,
+          "Admin remarks": booking.userInfo?.admin_remarks || "",
           "Plan Name": booking.planInfo?.name || booking.plan?.name || "N/A",
           "Billing Interval": booking.billing_interval,
           "Payment Status": booking.paymentResult?.status || "PENDING",
@@ -433,7 +437,7 @@ const AllUserDetails = () => {
         start_date: booking.start_date ? dayjs(booking.start_date) : null,
         renewal_date: booking.renewal_date ? dayjs(booking.renewal_date) : null,
         end_date: booking.end_date ? dayjs(booking.end_date) : null,
-        // Any other fields you want to edit...
+        admin_remarks: booking.user?.admin_remarks || "",
       });
     } catch (err) {
       setEditUserModal(false);
@@ -487,6 +491,12 @@ const AllUserDetails = () => {
       await axios.put(
         `${API_BASE_URL}membership-plan/user-and-booking/${editBookingData.user._id}/${editBookingData._id}`,
         payload,
+        config
+      );
+
+      await axios.patch(
+        `${API_BASE_URL}user/${editBookingData.user._id}/admin-remarks`,
+        { admin_remarks: values.admin_remarks ?? "" },
         config
       );
 
@@ -562,6 +572,21 @@ const AllUserDetails = () => {
       key: "mobile",
       width: 140,
       render: (text) => <span style={{ color: "#595959", fontFamily: "monospace" }}>{text}</span>,
+    },
+    {
+      title: "Admin remarks",
+      dataIndex: "adminRemarks",
+      key: "adminRemarks",
+      width: 200,
+      ellipsis: true,
+      render: (text) =>
+        text ? (
+          <Tooltip title={text}>
+            <span style={{ color: "#595959" }}>{text}</span>
+          </Tooltip>
+        ) : (
+          <span style={{ color: "#bfbfbf" }}>—</span>
+        ),
     },
     {
       title: "Plan Name",
@@ -1432,6 +1457,19 @@ const AllUserDetails = () => {
             name="end_date"
           >
             <DatePicker size="large" format="DD/MM/YYYY" />
+          </Form.Item>
+
+          <Form.Item
+            label="Admin remarks (internal)"
+            name="admin_remarks"
+            extra="Visible only to admins. Shown in this table for quick reference."
+          >
+            <TextArea
+              rows={4}
+              maxLength={5000}
+              showCount
+              placeholder="Notes about this member (payment issues, preferences, follow-ups…)"
+            />
           </Form.Item>
 
           <Form.Item style={{ marginTop: "16px", textAlign: "right" }}>
