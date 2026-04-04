@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Input, Card, Row, Col, Tag, Space, message, Button, Tooltip, Popconfirm, Modal, Form, DatePicker, Select } from "antd";
 
 const { TextArea } = Input;
-import { SearchOutlined, UserOutlined, ReloadOutlined, StopOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { SearchOutlined, UserOutlined, ReloadOutlined, StopOutlined, EditOutlined, DeleteOutlined, CommentOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -32,8 +32,13 @@ const AllUserDetails = () => {
   const [editBookingData, setEditBookingData] = useState(null);
   const [editUserLoading, setEditUserLoading] = useState(false);
 
+  const [remarksModalOpen, setRemarksModalOpen] = useState(false);
+  const [remarksRecord, setRemarksRecord] = useState(null);
+  const [remarksSaving, setRemarksSaving] = useState(false);
+
   const [manualForm] = Form.useForm(); // for manual renewal form
   const [editUserForm] = Form.useForm(); // for edit user modal form
+  const [remarksForm] = Form.useForm();
 
   const user = useSelector((state) => state.user.value);
   const navigate = useNavigate();
@@ -437,7 +442,6 @@ const AllUserDetails = () => {
         start_date: booking.start_date ? dayjs(booking.start_date) : null,
         renewal_date: booking.renewal_date ? dayjs(booking.renewal_date) : null,
         end_date: booking.end_date ? dayjs(booking.end_date) : null,
-        admin_remarks: booking.user?.admin_remarks || "",
       });
     } catch (err) {
       setEditUserModal(false);
@@ -494,12 +498,6 @@ const AllUserDetails = () => {
         config
       );
 
-      await axios.patch(
-        `${API_BASE_URL}user/${editBookingData.user._id}/admin-remarks`,
-        { admin_remarks: values.admin_remarks ?? "" },
-        config
-      );
-
       message.success("Booking updated successfully!");
       setEditUserModal(false);
       editUserForm.resetFields();
@@ -508,6 +506,46 @@ const AllUserDetails = () => {
       message.error(err.response?.data?.message || "Failed to update booking");
     } finally {
       setEditUserLoading(false);
+    }
+  };
+
+  const openRemarksModal = (record) => {
+    if (!record.userId) {
+      message.warning("This row has no linked user account — remarks cannot be saved.");
+      return;
+    }
+    setRemarksRecord(record);
+    remarksForm.setFieldsValue({ admin_remarks: record.adminRemarks || "" });
+    setRemarksModalOpen(true);
+  };
+
+  const closeRemarksModal = () => {
+    setRemarksModalOpen(false);
+    setRemarksRecord(null);
+    remarksForm.resetFields();
+  };
+
+  const handleRemarksSubmit = async (values) => {
+    if (!remarksRecord?.userId) return;
+    setRemarksSaving(true);
+    try {
+      const text = values.admin_remarks ?? "";
+      await axios.patch(
+        `${API_BASE_URL}user/${remarksRecord.userId}/admin-remarks`,
+        { admin_remarks: text },
+        config
+      );
+      setData((prev) =>
+        prev.map((r) =>
+          r.userId === remarksRecord.userId ? { ...r, adminRemarks: text } : r
+        )
+      );
+      message.success("Notes saved");
+      closeRemarksModal();
+    } catch (err) {
+      message.error(err.response?.data?.message || "Failed to save notes");
+    } finally {
+      setRemarksSaving(false);
     }
   };
 
@@ -574,19 +612,57 @@ const AllUserDetails = () => {
       render: (text) => <span style={{ color: "#595959", fontFamily: "monospace" }}>{text}</span>,
     },
     {
-      title: "Admin remarks",
-      dataIndex: "adminRemarks",
+      title: "Admin notes",
       key: "adminRemarks",
-      width: 200,
-      ellipsis: true,
-      render: (text) =>
-        text ? (
-          <Tooltip title={text}>
-            <span style={{ color: "#595959" }}>{text}</span>
+      width: 240,
+      render: (_, record) => (
+        <Space direction="vertical" size={6} style={{ width: "100%" }}>
+          <Tooltip
+            title={!record.userId ? "No user linked to this booking" : "Add or edit internal notes for this member"}
+          >
+            <Button
+              type={record.adminRemarks ? "default" : "primary"}
+              size="small"
+              icon={<CommentOutlined />}
+              onClick={() => openRemarksModal(record)}
+              disabled={!record.userId}
+              style={{
+                borderRadius: "6px",
+                fontWeight: 500,
+                ...(record.adminRemarks
+                  ? { borderColor: "#9254de", color: "#722ed1" }
+                  : {
+                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      border: "none",
+                    }),
+              }}
+            >
+              {record.adminRemarks ? "Edit notes" : "Add notes"}
+            </Button>
           </Tooltip>
-        ) : (
-          <span style={{ color: "#bfbfbf" }}>—</span>
-        ),
+          {record.adminRemarks ? (
+            <Tooltip title={record.adminRemarks}>
+              <div
+                style={{
+                  color: "#595959",
+                  fontSize: 12,
+                  lineHeight: 1.4,
+                  maxWidth: 220,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                }}
+              >
+                {record.adminRemarks}
+              </div>
+            </Tooltip>
+          ) : (
+            <span style={{ color: "#bfbfbf", fontSize: 12 }}>No notes yet</span>
+          )}
+        </Space>
+      ),
     },
     {
       title: "Plan Name",
@@ -1459,19 +1535,6 @@ const AllUserDetails = () => {
             <DatePicker size="large" format="DD/MM/YYYY" />
           </Form.Item>
 
-          <Form.Item
-            label="Admin remarks (internal)"
-            name="admin_remarks"
-            extra="Visible only to admins. Shown in this table for quick reference."
-          >
-            <TextArea
-              rows={4}
-              maxLength={5000}
-              showCount
-              placeholder="Notes about this member (payment issues, preferences, follow-ups…)"
-            />
-          </Form.Item>
-
           <Form.Item style={{ marginTop: "16px", textAlign: "right" }}>
             <Space>
               <Button onClick={() => {
@@ -1483,6 +1546,50 @@ const AllUserDetails = () => {
               </Button>
               <Button type="primary" htmlType="submit" loading={editUserLoading} size="large">
                 Save Changes
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Admin notes (per user) — opened from table button */}
+      <Modal
+        title={
+          <Space>
+            <CommentOutlined style={{ color: "#722ed1" }} />
+            <span>Admin notes</span>
+            {remarksRecord?.name ? (
+              <span style={{ fontWeight: 400, color: "#8c8c8c", fontSize: 14 }}>
+                — {remarksRecord.name}
+              </span>
+            ) : null}
+          </Space>
+        }
+        open={remarksModalOpen}
+        onCancel={closeRemarksModal}
+        footer={null}
+        width={520}
+        destroyOnClose
+      >
+        <p style={{ marginBottom: 12, color: "#8c8c8c", fontSize: 13 }}>
+          These notes are saved on the member&apos;s account and stay the same for all their bookings. Only admins can see them.
+        </p>
+        <Form form={remarksForm} layout="vertical" onFinish={handleRemarksSubmit}>
+          <Form.Item name="admin_remarks" label="Notes">
+            <TextArea
+              rows={6}
+              maxLength={5000}
+              showCount
+              placeholder="e.g. payment follow-up, class preferences, medical notes, VIP…"
+            />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
+            <Space>
+              <Button onClick={closeRemarksModal} size="large">
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit" loading={remarksSaving} size="large">
+                Save notes
               </Button>
             </Space>
           </Form.Item>
