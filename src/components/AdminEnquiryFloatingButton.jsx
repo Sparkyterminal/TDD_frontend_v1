@@ -35,6 +35,7 @@ const AdminEnquiryFloatingButton = () => {
         },
         config
       );
+      window.dispatchEvent(new CustomEvent("admin-enquiry-added"));
       message.success("Admin enquiry saved");
       closeModal();
     } catch (err) {

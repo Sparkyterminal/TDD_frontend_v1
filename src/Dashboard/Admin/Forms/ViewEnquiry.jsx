@@ -73,6 +73,20 @@ const ViewEnquiry = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
+  useEffect(() => {
+    const handleAdminEnquiryAdded = () => {
+      if (activeTab === "ADMIN") {
+        fetchEnquiryData(1, pagination.pageSize, "ADMIN");
+      }
+    };
+
+    window.addEventListener("admin-enquiry-added", handleAdminEnquiryAdded);
+    return () => {
+      window.removeEventListener("admin-enquiry-added", handleAdminEnquiryAdded);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, pagination.pageSize]);
+
   const handleTableChange = (pag) => {
     fetchEnquiryData(pag.current, pag.pageSize, activeTab);
   };
