@@ -205,10 +205,23 @@ const ViewEnquiry = () => {
       ),
       dataIndex: "purpose",
       key: "purpose",
+      width: 320,
       render: (text) => (
-        <Tag color="green" style={{ fontSize: "13px", maxWidth: "200px" }}>
-          {text}
-        </Tag>
+        <div
+          style={{
+            whiteSpace: "normal",
+            wordBreak: "break-word",
+            lineHeight: 1.45,
+            color: "#1a1a1a",
+            fontSize: "13px",
+            maxWidth: 300,
+          }}
+        >
+          <Tag color="green" style={{ marginBottom: 6 }}>
+            Purpose
+          </Tag>
+          <div>{text}</div>
+        </div>
       ),
     },
     {
@@ -219,6 +232,7 @@ const ViewEnquiry = () => {
       ),
       dataIndex: "createdAt",
       key: "createdAt",
+      width: 170,
       render: (text) => (
         <span style={{ fontSize: "12px", color: "#666" }}>
           {new Date(text).toLocaleString("en-US", {
@@ -309,6 +323,7 @@ const ViewEnquiry = () => {
             columns={columns}
             dataSource={data}
             rowKey={(record) => record.id}
+            scroll={{ x: 1050 }}
             pagination={{
               current: pagination.current,
               pageSize: pagination.pageSize,
