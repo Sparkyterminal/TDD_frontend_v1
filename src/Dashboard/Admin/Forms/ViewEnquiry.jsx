@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Table, message, Card, Tag, Space, Tooltip } from "antd";
+import { Table, message, Card, Tag, Space, Tooltip, Tabs, Modal, Form, Input } from "antd";
 import {
   UserOutlined,
   PhoneOutlined,
@@ -23,6 +23,10 @@ const ViewEnquiry = () => {
     total: 0,
   });
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("PUBLIC");
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [submittingAdminEnquiry, setSubmittingAdminEnquiry] = useState(false);
+  const [adminEnquiryForm] = Form.useForm();
 
   const user = useSelector((state) => state.user.value);
   const config = {
@@ -31,22 +35,29 @@ const ViewEnquiry = () => {
     },
   };
 
-  const fetchEnquiryData = async (page = 1, pageSize = 10) => {
+  const fetchEnquiryData = async (page = 1, pageSize = 10, source = "PUBLIC") => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${API_BASE_URL}enquire?page=${page}&limit=${pageSize}`,
+        `${API_BASE_URL}enquire?page=${page}&limit=${pageSize}&source=${source}`,
         config
       );
 
       const arr = Array.isArray(res.data) ? res.data : [];
-      setData(arr);
+      const normalizedSource = String(source || "PUBLIC").toUpperCase();
+      const filteredArr =
+        normalizedSource === "ADMIN"
+          ? arr.filter((item) => String(item?.source || "").toUpperCase() === "ADMIN")
+          : arr.filter(
+              (item) => String(item?.source || "PUBLIC").toUpperCase() !== "ADMIN"
+            );
+      setData(filteredArr);
 
       const pag = res.data.data?.pagination || {};
       setPagination({
         current: pag.currentPage || page,
         pageSize: pag.itemsPerPage || pageSize,
-        total: pag.totalItems || arr.length,
+        total: pag.totalItems || filteredArr.length,
       });
     } catch (err) {
       message.error("Failed to fetch enquiries");
@@ -58,12 +69,45 @@ const ViewEnquiry = () => {
   };
 
   useEffect(() => {
-    fetchEnquiryData(pagination.current, pagination.pageSize);
+    fetchEnquiryData(pagination.current, pagination.pageSize, activeTab);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [activeTab]);
 
   const handleTableChange = (pag) => {
-    fetchEnquiryData(pag.current, pag.pageSize);
+    fetchEnquiryData(pag.current, pag.pageSize, activeTab);
+  };
+
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  };
+
+  const handleSubmitAdminEnquiry = async (values) => {
+    setSubmittingAdminEnquiry(true);
+    try {
+      await axios.post(
+        `${API_BASE_URL}enquire/admin`,
+        {
+          name: values.name,
+          phone_number: values.phone_number,
+          email_id: values.email_id,
+          purpose: values.purpose,
+        },
+        config
+      );
+      message.success("Admin enquiry added successfully");
+      setIsAdminModalOpen(false);
+      adminEnquiryForm.resetFields();
+      if (activeTab === "ADMIN") {
+        fetchEnquiryData(1, pagination.pageSize, "ADMIN");
+      } else {
+        setActiveTab("ADMIN");
+      }
+    } catch (err) {
+      message.error(err.response?.data?.message || "Failed to add admin enquiry");
+    } finally {
+      setSubmittingAdminEnquiry(false);
+    }
   };
 
   const exportToExcel = () => {
@@ -207,9 +251,18 @@ const ViewEnquiry = () => {
               Enquiry Management
             </h1>
             <p style={{ color: "#666", fontSize: "16px" }}>
-              View and manage all customer enquiries
+              View and manage enquiries in separate tabs
             </p>
           </div>
+          <Tabs
+            activeKey={activeTab}
+            onChange={handleTabChange}
+            items={[
+              { key: "PUBLIC", label: "Public Enquiry" },
+              { key: "ADMIN", label: "Admin Enquiry" },
+            ]}
+            style={{ marginBottom: 12 }}
+          />
           <Button
             type="primary"
             style={{
@@ -222,6 +275,21 @@ const ViewEnquiry = () => {
           >
             Export to Excel
           </Button>
+          {activeTab === "ADMIN" && (
+            <Button
+              type="primary"
+              style={{
+                marginBottom: 16,
+                marginLeft: 10,
+                background: "linear-gradient(135deg, #16a34a 0%, #15803d 100%)",
+                border: "none",
+                fontFamily: "glancyr, sans-serif",
+              }}
+              onClick={() => setIsAdminModalOpen(true)}
+            >
+              Add Admin Enquiry
+            </Button>
+          )}
 
           <Table
             columns={columns}
@@ -270,6 +338,65 @@ const ViewEnquiry = () => {
           `}</style>
         </Card>
       </div>
+      <Modal
+        title="Add Admin Enquiry"
+        open={isAdminModalOpen}
+        onCancel={() => {
+          setIsAdminModalOpen(false);
+          adminEnquiryForm.resetFields();
+        }}
+        footer={null}
+        destroyOnClose
+      >
+        <Form form={adminEnquiryForm} layout="vertical" onFinish={handleSubmitAdminEnquiry}>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: "Please enter name" }]}
+          >
+            <Input placeholder="Enter name" />
+          </Form.Item>
+          <Form.Item
+            name="phone_number"
+            label="Phone Number"
+            rules={[
+              { required: true, message: "Please enter phone number" },
+              { pattern: /^\d{10,15}$/, message: "Enter a valid phone number" },
+            ]}
+          >
+            <Input placeholder="Enter phone number" />
+          </Form.Item>
+          <Form.Item
+            name="email_id"
+            label="Email"
+            rules={[{ type: "email", message: "Please enter valid email" }]}
+          >
+            <Input placeholder="Enter email (optional)" />
+          </Form.Item>
+          <Form.Item
+            name="purpose"
+            label="Purpose"
+            rules={[{ required: true, message: "Please enter purpose" }]}
+          >
+            <Input.TextArea rows={4} placeholder="Enter purpose/details" />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
+            <Space>
+              <Button
+                onClick={() => {
+                  setIsAdminModalOpen(false);
+                  adminEnquiryForm.resetFields();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit" loading={submittingAdminEnquiry}>
+                Save
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

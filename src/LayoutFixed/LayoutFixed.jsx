@@ -14,6 +14,7 @@ import {
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../reducers/users";
+import AdminEnquiryFloatingButton from "../components/AdminEnquiryFloatingButton";
 
 const { Header, Sider, Content } = Layout;
 
@@ -400,6 +401,7 @@ const LayoutFixed = () => {
             <Outlet />
           </div>
         </Content>
+        {role === "ADMIN" && <AdminEnquiryFloatingButton />}
       </Layout>
     </Layout>
   );
