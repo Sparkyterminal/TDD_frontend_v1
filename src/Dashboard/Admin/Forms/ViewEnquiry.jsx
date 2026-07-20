@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
-import { Table, message, Card, Tag, Space, Tooltip, Tabs, Modal, Form, Input } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import { Table, message, Card, Tag, Space, Tabs, Modal, Form, Input } from "antd";
 import {
   UserOutlined,
   PhoneOutlined,
-  MailOutlined,
   FileTextOutlined,
   ClockCircleOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import { API_BASE_URL } from "../../../../config";
@@ -25,6 +25,7 @@ const ViewEnquiry = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("PUBLIC");
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [editingEnquiry, setEditingEnquiry] = useState(null);
   const [submittingAdminEnquiry, setSubmittingAdminEnquiry] = useState(false);
   const [adminEnquiryForm] = Form.useForm();
 
@@ -96,29 +97,61 @@ const ViewEnquiry = () => {
     setPagination((prev) => ({ ...prev, current: 1 }));
   };
 
+  const openAddAdminModal = () => {
+    setEditingEnquiry(null);
+    adminEnquiryForm.resetFields();
+    setIsAdminModalOpen(true);
+  };
+
+  const openEditAdminModal = (record) => {
+    setEditingEnquiry(record);
+    adminEnquiryForm.setFieldsValue({
+      name: record.name,
+      phone_number: String(record.phone_number || ""),
+      purpose: record.purpose,
+    });
+    setIsAdminModalOpen(true);
+  };
+
+  const closeAdminModal = () => {
+    setIsAdminModalOpen(false);
+    setEditingEnquiry(null);
+    adminEnquiryForm.resetFields();
+  };
+
   const handleSubmitAdminEnquiry = async (values) => {
     setSubmittingAdminEnquiry(true);
     try {
-      await axios.post(
-        `${API_BASE_URL}enquire/admin`,
-        {
-          name: values.name,
-          phone_number: values.phone_number,
-          email_id: values.email_id,
-          purpose: values.purpose,
-        },
-        config
-      );
-      message.success("Admin enquiry added successfully");
-      setIsAdminModalOpen(false);
-      adminEnquiryForm.resetFields();
-      if (activeTab === "ADMIN") {
-        fetchEnquiryData(1, pagination.pageSize, "ADMIN");
+      const payload = {
+        name: values.name,
+        phone_number: values.phone_number,
+        purpose: values.purpose,
+      };
+
+      if (editingEnquiry?.id) {
+        await axios.put(
+          `${API_BASE_URL}enquire/admin/${editingEnquiry.id}`,
+          payload,
+          config
+        );
+        message.success("Admin enquiry updated successfully");
       } else {
+        await axios.post(`${API_BASE_URL}enquire/admin`, payload, config);
+        message.success("Admin enquiry added successfully");
+      }
+
+      closeAdminModal();
+      window.dispatchEvent(new CustomEvent("admin-enquiry-added"));
+      if (activeTab !== "ADMIN") {
         setActiveTab("ADMIN");
+      } else {
+        fetchEnquiryData(1, pagination.pageSize, "ADMIN");
       }
     } catch (err) {
-      message.error(err.response?.data?.message || "Failed to add admin enquiry");
+      message.error(
+        err.response?.data?.message ||
+          (editingEnquiry ? "Failed to update admin enquiry" : "Failed to add admin enquiry")
+      );
     } finally {
       setSubmittingAdminEnquiry(false);
     }
@@ -137,7 +170,6 @@ const ViewEnquiry = () => {
       return {
         Name: item.name,
         Phone: item.phone_number,
-        Email: item.email_id,
         Purpose: item.purpose,
         "Created At": createdAt,
       };
@@ -154,98 +186,107 @@ const ViewEnquiry = () => {
     saveAs(blob, "Enquiries.xlsx");
   };
 
-  const columns = [
-    {
-      title: (
-        <Space>
-          <UserOutlined /> Name
-        </Space>
-      ),
-      dataIndex: "name",
-      key: "name",
-      render: (text) => (
-        <span style={{ fontWeight: 500, color: "#1a1a1a" }}>{text}</span>
-      ),
-    },
-    {
-      title: (
-        <Space>
-          <PhoneOutlined /> Phone
-        </Space>
-      ),
-      dataIndex: "phone_number",
-      key: "phone_number",
-      render: (text) => (
-        <Tag color="blue" style={{ fontSize: "13px" }}>
-          {text}
-        </Tag>
-      ),
-    },
-    {
-      title: (
-        <Space>
-          <MailOutlined /> Email
-        </Space>
-      ),
-      dataIndex: "email_id",
-      key: "email_id",
-      render: (text) => (
-        <Tooltip title={text}>
-          <span style={{ color: "#4096ff", cursor: "pointer" }}>
-            {text?.length > 25 ? `${text.substring(0, 25)}...` : text}
-          </span>
-        </Tooltip>
-      ),
-    },
-    {
-      title: (
-        <Space>
-          <FileTextOutlined /> Purpose
-        </Space>
-      ),
-      dataIndex: "purpose",
-      key: "purpose",
-      width: 320,
-      render: (text) => (
-        <div
-          style={{
-            whiteSpace: "normal",
-            wordBreak: "break-word",
-            lineHeight: 1.45,
-            color: "#1a1a1a",
-            fontSize: "13px",
-            maxWidth: 300,
-          }}
-        >
-          <Tag color="green" style={{ marginBottom: 6 }}>
-            Purpose
+  const columns = useMemo(() => {
+    const baseColumns = [
+      {
+        title: (
+          <Space>
+            <UserOutlined /> Name
+          </Space>
+        ),
+        dataIndex: "name",
+        key: "name",
+        width: 180,
+        render: (text) => (
+          <span style={{ fontWeight: 500, color: "#1a1a1a" }}>{text}</span>
+        ),
+      },
+      {
+        title: (
+          <Space>
+            <PhoneOutlined /> Phone
+          </Space>
+        ),
+        dataIndex: "phone_number",
+        key: "phone_number",
+        width: 140,
+        render: (text) => (
+          <Tag color="blue" style={{ fontSize: "13px" }}>
+            {text}
           </Tag>
-          <div>{text}</div>
-        </div>
-      ),
-    },
-    {
-      title: (
-        <Space>
-          <ClockCircleOutlined /> Created At
-        </Space>
-      ),
-      dataIndex: "createdAt",
-      key: "createdAt",
-      width: 170,
-      render: (text) => (
-        <span style={{ fontSize: "12px", color: "#666" }}>
-          {new Date(text).toLocaleString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span>
-      ),
-    },
-  ];
+        ),
+      },
+      {
+        title: (
+          <Space>
+            <FileTextOutlined /> Purpose
+          </Space>
+        ),
+        dataIndex: "purpose",
+        key: "purpose",
+        width: 320,
+        render: (text) => (
+          <div
+            style={{
+              whiteSpace: "normal",
+              wordBreak: "break-word",
+              lineHeight: 1.45,
+              color: "#1a1a1a",
+              fontSize: "13px",
+              maxWidth: 300,
+            }}
+          >
+            {text}
+          </div>
+        ),
+      },
+      {
+        title: (
+          <Space>
+            <ClockCircleOutlined /> Created At
+          </Space>
+        ),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        width: 170,
+        render: (text) => (
+          <span style={{ fontSize: "12px", color: "#666" }}>
+            {new Date(text).toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
+        ),
+      },
+    ];
+
+    if (activeTab !== "ADMIN") {
+      return baseColumns;
+    }
+
+    return [
+      ...baseColumns,
+      {
+        title: "Actions",
+        key: "actions",
+        width: 100,
+        fixed: "right",
+        render: (_, record) => (
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => openEditAdminModal(record)}
+            style={{ padding: 0 }}
+          >
+            Edit
+          </Button>
+        ),
+      },
+    ];
+  }, [activeTab]);
 
   return (
     <div
@@ -313,7 +354,7 @@ const ViewEnquiry = () => {
                 border: "none",
                 fontFamily: "glancyr, sans-serif",
               }}
-              onClick={() => setIsAdminModalOpen(true)}
+              onClick={openAddAdminModal}
             >
               Add Admin Enquiry
             </Button>
@@ -323,7 +364,7 @@ const ViewEnquiry = () => {
             columns={columns}
             dataSource={data}
             rowKey={(record) => record.id}
-            scroll={{ x: 1050 }}
+            scroll={{ x: 900 }}
             pagination={{
               current: pagination.current,
               pageSize: pagination.pageSize,
@@ -368,12 +409,9 @@ const ViewEnquiry = () => {
         </Card>
       </div>
       <Modal
-        title="Add Admin Enquiry"
+        title={editingEnquiry ? "Edit Admin Enquiry" : "Add Admin Enquiry"}
         open={isAdminModalOpen}
-        onCancel={() => {
-          setIsAdminModalOpen(false);
-          adminEnquiryForm.resetFields();
-        }}
+        onCancel={closeAdminModal}
         footer={null}
         destroyOnClose
       >
@@ -396,13 +434,6 @@ const ViewEnquiry = () => {
             <Input placeholder="Enter phone number" />
           </Form.Item>
           <Form.Item
-            name="email_id"
-            label="Email"
-            rules={[{ type: "email", message: "Please enter valid email" }]}
-          >
-            <Input placeholder="Enter email (optional)" />
-          </Form.Item>
-          <Form.Item
             name="purpose"
             label="Purpose"
             rules={[{ required: true, message: "Please enter purpose" }]}
@@ -411,16 +442,9 @@ const ViewEnquiry = () => {
           </Form.Item>
           <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
             <Space>
-              <Button
-                onClick={() => {
-                  setIsAdminModalOpen(false);
-                  adminEnquiryForm.resetFields();
-                }}
-              >
-                Cancel
-              </Button>
+              <Button onClick={closeAdminModal}>Cancel</Button>
               <Button type="primary" htmlType="submit" loading={submittingAdminEnquiry}>
-                Save
+                {editingEnquiry ? "Update" : "Save"}
               </Button>
             </Space>
           </Form.Item>

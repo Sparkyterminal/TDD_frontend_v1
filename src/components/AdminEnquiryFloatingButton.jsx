@@ -30,7 +30,6 @@ const AdminEnquiryFloatingButton = () => {
         {
           name: values.name,
           phone_number: values.phone_number,
-          email_id: values.email_id,
           purpose: values.purpose,
         },
         config
@@ -94,13 +93,6 @@ const AdminEnquiryFloatingButton = () => {
             ]}
           >
             <Input placeholder="Enter phone number" />
-          </Form.Item>
-          <Form.Item
-            name="email_id"
-            label="Email"
-            rules={[{ type: "email", message: "Please enter valid email" }]}
-          >
-            <Input placeholder="Enter email (optional)" />
           </Form.Item>
           <Form.Item
             name="purpose"

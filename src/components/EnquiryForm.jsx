@@ -10,7 +10,6 @@ export default function EnquiryButton() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     phone: "",
     reason: "",
   });
@@ -20,11 +19,6 @@ export default function EnquiryButton() {
     const newErrors = {};
     if (!formData.name.trim()) {
       newErrors.name = "Please enter your name";
-    }
-    if (!formData.email.trim()) {
-      newErrors.email = "Please enter your email";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
     }
     if (!formData.phone.trim()) {
       newErrors.phone = "Please enter your phone number";
@@ -46,11 +40,10 @@ export default function EnquiryButton() {
       await axios.post(`${API_BASE_URL}enquire`, {
         name: formData.name,
         phone_number: formData.phone,
-        email_id: formData.email,
         purpose: formData.reason,
       });
       alert("Thank you! We will get back to you soon.");
-      setFormData({ name: "", email: "", phone: "", reason: "" });
+      setFormData({ name: "", phone: "", reason: "" });
       setIsModalOpen(false);
     } catch (err) {
       alert("There was a problem submitting your enquiry.");
@@ -150,28 +143,6 @@ export default function EnquiryButton() {
                     />
                     {errors.name && (
                       <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-                    )}
-                  </div>
-
-                  {/* Email Field */}
-                  <div className="font-[glancyr]">
-                    <label className="block text-gray-700 font-medium mb-1">
-                      Email <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Enter your email"
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.email ? "border-red-500" : "border-gray-300"
-                      } focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all`}
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.email}
-                      </p>
                     )}
                   </div>
 
