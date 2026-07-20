@@ -735,10 +735,6 @@ const WorkshopDetails = () => {
       message.error("Please enter a valid 10-digit phone number");
       return false;
     }
-    if (!values.email || !/\S+@\S+\.\S+/.test(values.email)) {
-      message.error("Please enter a valid email");
-      return false;
-    }
     const ticketsSelected = Object.values(tickets).some((qty) => qty > 0);
     if (!ticketsSelected) {
       message.error("Please select at least one ticket");
@@ -772,7 +768,6 @@ const WorkshopDetails = () => {
         workshopId: id,
         name: values.full_name,
         age: Number(values.age),
-        email: values.email,
         mobile_number: values.mobile,
         gender: values.gender || "",
         batchIds: selectedBatchIds,
@@ -1058,24 +1053,6 @@ const WorkshopDetails = () => {
                 <Input
                   type="tel"
                   placeholder="Enter your phone number"
-                  disabled={submitting}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[
-                  { required: true, message: "Please enter your email" },
-                  {
-                    type: "email",
-                    message: "Enter a valid email",
-                  },
-                ]}
-              >
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
                   disabled={submitting}
                 />
               </Form.Item>

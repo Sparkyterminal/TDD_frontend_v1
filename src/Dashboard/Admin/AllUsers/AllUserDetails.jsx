@@ -306,7 +306,6 @@ const AllUserDetails = () => {
           name: booking.name,
           gender: booking.gender,
           age: booking.age,
-          email: booking.email,
           mobile: booking.mobile_number,
           planName: booking.planInfo?.name || booking.plan?.name || "N/A",
           billingInterval: booking.billing_interval,
@@ -394,7 +393,6 @@ const AllUserDetails = () => {
           Name: booking.name,
           Gender: booking.gender,
           Age: booking.age,
-          Email: booking.email,
           "Mobile Number": booking.mobile_number,
           "Admin remarks": booking.userInfo?.admin_remarks || "",
           "Plan Name": booking.planInfo?.name || booking.plan?.name || "N/A",
@@ -437,7 +435,6 @@ const AllUserDetails = () => {
         name: booking.name,
         gender: booking.gender,
         age: booking.age,
-        email: booking.email,
         mobile_number: booking.mobile_number,
         start_date: booking.start_date ? dayjs(booking.start_date) : null,
         renewal_date: booking.renewal_date ? dayjs(booking.renewal_date) : null,
@@ -473,9 +470,6 @@ const AllUserDetails = () => {
         user: {
           first_name: firstName || '',
           last_name: lastName || '',
-          email_data: {
-            email_id: values.email || '',
-          },
           phone_data: {
             phone_number: values.mobile_number || '',
           },
@@ -484,7 +478,6 @@ const AllUserDetails = () => {
           name: values.name,
           gender: values.gender,
           age: Number(values.age),
-          email: values.email,
           mobile_number: values.mobile_number,
           start_date: values.start_date ? values.start_date.toISOString() : null,
           renewal_date: values.renewal_date ? values.renewal_date.toISOString() : null,
@@ -594,14 +587,6 @@ const AllUserDetails = () => {
       key: "age",
       width: 80,
       align: "center",
-      render: (text) => <span style={{ color: "#595959" }}>{text}</span>,
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: 220,
-      ellipsis: true,
       render: (text) => <span style={{ color: "#595959" }}>{text}</span>,
     },
     {
@@ -1148,7 +1133,7 @@ const AllUserDetails = () => {
             </div>
             <Space direction="vertical" size={12} style={{ width: "100%" }}>
               <Input
-                placeholder="Search by name, email, or mobile..."
+                placeholder="Search by name or mobile..."
                 prefix={<SearchOutlined style={{ color: "#bfbfbf", fontSize: "16px" }} />}
                 onChange={(e) => handleSearch(e.target.value)}
                 size="large"
@@ -1490,17 +1475,6 @@ const AllUserDetails = () => {
             ]}
           >
             <Input type="number" size="large" />
-          </Form.Item>
-
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Please enter an email" },
-              { type: "email", message: "Please enter a valid email" }
-            ]}
-          >
-            <Input size="large" />
           </Form.Item>
 
           <Form.Item

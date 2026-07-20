@@ -21,7 +21,6 @@ const WorkshopUserForm = () => {
     batchIds: [],
     name: "",
     age: "",
-    email: "",
     mobile_number: "",
     gender: "",
     price_charged: "",
@@ -115,7 +114,6 @@ const WorkshopUserForm = () => {
     if (
       !formData.name ||
       !formData.age ||
-      !formData.email ||
       !formData.mobile_number ||
       !formData.gender ||
       !formData.price_charged
@@ -129,7 +127,6 @@ const WorkshopUserForm = () => {
       batchIds: formData.batchIds,
       name: formData.name,
       age: parseInt(formData.age),
-      email: formData.email,
       mobile_number: formData.mobile_number,
       gender: formData.gender,
       payment_status: "COMPLETED",
@@ -152,7 +149,6 @@ const WorkshopUserForm = () => {
         batchIds: [],
         name: "",
         age: "",
-        email: "",
         mobile_number: "",
         gender: "",
         price_charged: "",
@@ -254,21 +250,6 @@ const WorkshopUserForm = () => {
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             min="1"
-            required
-          />
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email *
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>

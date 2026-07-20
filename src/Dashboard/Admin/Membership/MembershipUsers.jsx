@@ -189,7 +189,6 @@ const MembershipUsers = () => {
     const dataToExport = batchUsers.map((user, index) => ({
       "Sl No": index + 1,
       Name: user.name || "N/A",
-      Email: user.email || "N/A",
       Mobile: user.mobile_number || "N/A",
       Age: user.age || "N/A",
       "Payment Status": user.paymentResult?.status || "N/A",
@@ -235,13 +234,6 @@ const MembershipUsers = () => {
       key: "name",
       width: 180,
       fixed: "left",
-      ellipsis: true,
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: 220,
       ellipsis: true,
     },
     {
@@ -558,7 +550,7 @@ const MembershipUsers = () => {
           }}
         >
           <Input
-            placeholder="Search by name, email, or mobile"
+            placeholder="Search by name or mobile"
             value={searchTerm}
             onChange={onSearchChange}
             allowClear

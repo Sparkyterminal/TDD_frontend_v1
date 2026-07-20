@@ -401,7 +401,6 @@ const MembershipForm = () => {
     full_name: "",
     gender: "",
     age: "",
-    email: "",
     mobile: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -633,7 +632,6 @@ const MembershipForm = () => {
         name: form.full_name,
         gender: form.gender,
         age: Number(form.age) || undefined,
-        email: form.email,
         mobile_number: form.mobile,
         billing_interval: billingOption || undefined,
         batch_id: selectedBatchId || undefined,
@@ -769,17 +767,6 @@ const MembershipForm = () => {
               onChange={onChange("age")}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D2663B]"
               placeholder="Enter your age"
-            />
-          </Input>
-
-          <Input label="Email">
-            <input
-              required
-              type="email"
-              value={form.email}
-              onChange={onChange("email")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D2663B]"
-              placeholder="Enter your email"
             />
           </Input>
 

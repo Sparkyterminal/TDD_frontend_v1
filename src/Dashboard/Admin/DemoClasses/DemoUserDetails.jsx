@@ -431,7 +431,6 @@ const DemoUserDetails = () => {
     
     return data.filter(item => 
       item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.mobile_number?.includes(searchQuery) ||
       item.plan?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -459,7 +458,6 @@ const DemoUserDetails = () => {
       'Age': item.age || 'N/A',
       'Gender': item.gender || 'N/A',
       'Mobile': item.mobile_number || 'N/A',
-      'Email': item.email || 'N/A',
       'Status': item.is_contacted ? 'Attended' : 'Not Attended'
     }));
 
@@ -471,7 +469,7 @@ const DemoUserDetails = () => {
     const maxWidth = exportData.reduce((w, r) => Math.max(w, r['Plan Name']?.length || 0), 10);
     ws['!cols'] = [
       { wch: 8 }, { wch: maxWidth }, { wch: 20 }, { wch: 8 }, 
-      { wch: 10 }, { wch: 15 }, { wch: 25 }, { wch: 15 }
+      { wch: 10 }, { wch: 15 }, { wch: 15 }
     ];
     
     XLSX.writeFile(wb, `demo_attendance_${new Date().toISOString().split('T')[0]}.xlsx`);
@@ -514,13 +512,6 @@ const DemoUserDetails = () => {
       title: 'Mobile',
       dataIndex: 'mobile_number',
       key: 'mobile',
-      render: (text) => text || 'N/A',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      ellipsis: true,
       render: (text) => text || 'N/A',
     },
     {
@@ -605,7 +596,7 @@ const DemoUserDetails = () => {
         <Card className="mb-6 shadow-md">
           <Space className="w-full justify-between" wrap>
             <Search
-              placeholder="Search by name, email, mobile or plan..."
+              placeholder="Search by name, mobile or plan..."
               allowClear
               enterButton={<SearchOutlined />}
               size="large"

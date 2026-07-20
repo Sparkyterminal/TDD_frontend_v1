@@ -16,7 +16,6 @@ import {
 import {
   SearchOutlined,
   PhoneOutlined,
-  MailOutlined,
   UserOutlined,
   ClockCircleOutlined,
 } from "@ant-design/icons";
@@ -65,7 +64,6 @@ const ViewContactus = () => {
   const filteredData = data.filter(
     (item) =>
       item.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.email_id?.toLowerCase().includes(searchText.toLowerCase()) ||
       item.phone_number?.toString().includes(searchText) ||
       item.purpose?.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -87,7 +85,6 @@ const ViewContactus = () => {
       return {
         Name: item.name,
         "Phone Number": item.phone_number,
-        Email: item.email_id,
         Purpose: item.purpose,
         "Created At": d.toLocaleDateString() + " " + d.toLocaleTimeString(),
       };
@@ -131,16 +128,6 @@ const ViewContactus = () => {
       render: (text) => (
         <span style={{ fontFamily: "monospace" }}>{text.toString()}</span>
       ),
-    },
-    {
-      title: (
-        <Space>
-          <MailOutlined /> Email
-        </Space>
-      ),
-      dataIndex: "email_id",
-      key: "email_id",
-      render: (text) => <span style={{ color: "#52c41a" }}>{text}</span>,
     },
     {
       title: "Purpose",
@@ -290,7 +277,7 @@ const ViewContactus = () => {
           </Row>
 
           <Input
-            placeholder="Search by name, email, phone, or purpose..."
+            placeholder="Search by name, phone, or purpose..."
             prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
             value={searchText}
             onChange={(e) => {

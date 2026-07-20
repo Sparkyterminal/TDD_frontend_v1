@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Form, Input, Select, Button, Card, Alert, Row, Col, DatePicker, Divider, Typography, Space, Spin } from "antd";
-import { CalendarOutlined, UserOutlined, MailOutlined, PhoneOutlined, TeamOutlined } from "@ant-design/icons";
+import { CalendarOutlined, UserOutlined, PhoneOutlined, TeamOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { API_BASE_URL } from "../../../../config";
@@ -113,7 +113,6 @@ const AddUserMember = () => {
       planId: values.membershipPlan,
       name: values.name,
       age: parseInt(values.age),
-      email: values.email,
       mobile_number: values.mobile_number,
       gender: values.gender,
       billing_interval: values.billingInterval.toUpperCase(),
@@ -302,22 +301,6 @@ const AddUserMember = () => {
                 </Form.Item>
               </Col>
             </Row>
-
-            {/* Email */}
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                { required: true, message: 'Please enter email' },
-                { type: 'email', message: 'Please enter a valid email' }
-              ]}
-            >
-              <Input 
-                prefix={<MailOutlined />} 
-                placeholder="Enter email address" 
-                size="large"
-              />
-            </Form.Item>
 
             {/* Mobile Number */}
             <Form.Item

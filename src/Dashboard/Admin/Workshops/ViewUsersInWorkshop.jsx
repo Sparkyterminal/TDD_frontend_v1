@@ -100,7 +100,6 @@ const ViewUsersInWorkshop = () => {
         full_name: booking.name || "N/A",
         age: booking.age || "N/A",
         gender: booking.gender || "N/A",
-        email: booking.email || "N/A",
         mobile: booking.mobile_number || booking.mobile || "N/A",
         media: booking.media || [],
         bookedAt: booking.bookedAt || "N/A", // Ensure bookedAt is mapped
@@ -127,7 +126,6 @@ const ViewUsersInWorkshop = () => {
       Name: booking.full_name,
       Age: booking.age,
       Gender: booking.gender,
-      Email: booking.email,
       Phone: booking.mobile,
       "Booked At": booking.bookedAt
         ? moment(booking.bookedAt)
@@ -270,7 +268,6 @@ const ViewUsersInWorkshop = () => {
     { title: "Name", dataIndex: "full_name", key: "full_name", width: 150 },
     { title: "Age", dataIndex: "age", key: "age", width: 80 },
     { title: "Gender", dataIndex: "gender", key: "gender", width: 100 },
-    { title: "Email", dataIndex: "email", key: "email", width: 200 },
     { title: "Phone", dataIndex: "mobile", key: "mobile", width: 150 },
     {
       title: "Booked At",
@@ -357,7 +354,7 @@ const ViewUsersInWorkshop = () => {
         <Table
           columns={bookingColumns}
           dataSource={bookings}
-          rowKey={(r, idx) => r.id || r._id || r.email || idx}
+          rowKey={(r, idx) => r.id || r._id || idx}
           loading={bookingsLoading}
           pagination={{ pageSize: 10 }}
           // 🎨 Added hover effect and border for better visual appeal

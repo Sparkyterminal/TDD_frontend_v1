@@ -78,7 +78,6 @@ const Rentals = () => {
       const payload = {
         name: values.fullName,
         phone_number: values.phone,
-        email_id: values.email,
         purpose: values.purpose,
       };
 
@@ -243,21 +242,6 @@ const Rentals = () => {
                   />
                 </Form.Item>
               </div>
-
-              <Form.Item
-                name="email"
-                label={<span className="text-[#D8CFC4] font-medium">Email</span>}
-                rules={[
-                  { required: true, message: "Please enter your email" },
-                  { type: "email", message: "Please enter a valid email" },
-                ]}
-              >
-                <Input
-                  size="large"
-                  placeholder="Enter your email"
-                  className="rounded-md bg-[#F5EFE6] text-[#3B3B2E] placeholder-[#777] border-none focus:ring-2 focus:ring-[#A6A178]"
-                />
-              </Form.Item>
 
               <Form.Item
                 name="purpose"

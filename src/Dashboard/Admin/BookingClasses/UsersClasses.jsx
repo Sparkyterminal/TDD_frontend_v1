@@ -244,11 +244,6 @@ const UsersClasses = () => {
       key: "last_name",
     },
     {
-      title: "Email",
-      dataIndex: ["user_id", "email_data", "temp_email_id"],
-      key: "email",
-    },
-    {
       title: "Phone Number",
       dataIndex: ["user_id", "phone_data", "phone_number"],
       key: "phone_number",

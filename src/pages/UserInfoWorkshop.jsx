@@ -13,7 +13,6 @@ const UserInfoWorkshop = () => {
   const [formValues, setFormValues] = useState({
     full_name: "",
     age: "",
-    email: "",
     mobile: "",
     gender: "",
   });
@@ -24,19 +23,14 @@ const UserInfoWorkshop = () => {
   };
 
   const validate = () => {
-    const { full_name, age, email, mobile, gender } = formValues;
-    if (!full_name || !age || !email || !mobile || !gender) {
+    const { full_name, age, mobile, gender } = formValues;
+    if (!full_name || !age || !mobile || !gender) {
       message.error("Please fill in all fields");
       return false;
     }
     const ageNum = Number(age);
     if (!Number.isInteger(ageNum) || ageNum <= 0) {
       message.error("Please enter a valid age");
-      return false;
-    }
-    const emailOk = /.+@.+\..+/.test(email);
-    if (!emailOk) {
-      message.error("Please enter a valid email address");
       return false;
     }
     const mobileOk = /^[0-9]{7,15}$/.test(mobile);
@@ -56,7 +50,6 @@ const UserInfoWorkshop = () => {
         workshopId: id,
         name: formValues.full_name,
         age: Number(formValues.age),
-        email: formValues.email,
         mobile_number: formValues.mobile,
         gender: formValues.gender,
       };
@@ -119,19 +112,6 @@ const UserInfoWorkshop = () => {
               <option value="Female">FEMALE</option>
               <option value="Other">OTHERS</option>
             </select>
-          </div>
-
-          <div className="sm:col-span-2">
-            <label className="block mb-1 text-[#26442C] font-medium">Email Id</label>
-            <input
-              type="email"
-              name="email"
-              value={formValues.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#adc290]"
-              required
-            />
           </div>
 
           <div className="sm:col-span-2">
