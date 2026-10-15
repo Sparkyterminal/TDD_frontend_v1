@@ -1,12 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useMemo, useState } from "react";
-import { Table, message, Card, Tag, Space, Tabs, Modal, Form, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, message, Card, Tag, Space, Tabs, Modal, Form, Input, Select, Tooltip } from "antd";
 import {
   UserOutlined,
   PhoneOutlined,
   FileTextOutlined,
   ClockCircleOutlined,
   EditOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ClockCircleFilled,
 } from "@ant-design/icons";
 import axios from "axios";
 import { API_BASE_URL } from "../../../../config";
@@ -14,6 +17,19 @@ import { useSelector } from "react-redux";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { Button } from "antd";
+
+const STATUS_META = {
+  NEW: { label: "New", color: "default" },
+  JOINED: { label: "Joined", color: "green" },
+  NOT_INTERESTED: { label: "Not Interested", color: "red" },
+  FOLLOW_UP: { label: "Follow Up", color: "orange" },
+};
+
+const STATUS_ACTIONS = [
+  { status: "JOINED", label: "Joined", icon: <CheckCircleOutlined />, color: "#16a34a" },
+  { status: "NOT_INTERESTED", label: "Not Interested", icon: <CloseCircleOutlined />, color: "#dc2626" },
+  { status: "FOLLOW_UP", label: "Follow Up", icon: <ClockCircleFilled />, color: "#ea580c" },
+];
 
 const ViewEnquiry = () => {
   const [data, setData] = useState([]);
@@ -27,6 +43,7 @@ const ViewEnquiry = () => {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editingEnquiry, setEditingEnquiry] = useState(null);
   const [submittingAdminEnquiry, setSubmittingAdminEnquiry] = useState(false);
+  const [statusUpdatingId, setStatusUpdatingId] = useState(null);
   const [adminEnquiryForm] = Form.useForm();
 
   const user = useSelector((state) => state.user.value);
@@ -109,8 +126,27 @@ const ViewEnquiry = () => {
       name: record.name,
       phone_number: String(record.phone_number || ""),
       purpose: record.purpose,
+      status: record.status || "NEW",
     });
     setIsAdminModalOpen(true);
+  };
+
+  const handleStatusChange = async (record, status) => {
+    const nextStatus = (record.status || "NEW") === status ? "NEW" : status;
+    setStatusUpdatingId(record.id);
+    try {
+      await axios.patch(
+        `${API_BASE_URL}enquire/${record.id}/status`,
+        { status: nextStatus },
+        config
+      );
+      message.success(`Status set to ${STATUS_META[nextStatus].label}`);
+      fetchEnquiryData(pagination.current, pagination.pageSize, activeTab);
+    } catch (err) {
+      message.error(err.response?.data?.message || "Failed to update status");
+    } finally {
+      setStatusUpdatingId(null);
+    }
   };
 
   const closeAdminModal = () => {
@@ -131,7 +167,7 @@ const ViewEnquiry = () => {
       if (editingEnquiry?.id) {
         await axios.put(
           `${API_BASE_URL}enquire/admin/${editingEnquiry.id}`,
-          payload,
+          { ...payload, status: values.status },
           config
         );
         message.success("Admin enquiry updated successfully");
@@ -171,6 +207,7 @@ const ViewEnquiry = () => {
         Name: item.name,
         Phone: item.phone_number,
         Purpose: item.purpose,
+        Status: STATUS_META[item.status || "NEW"].label,
         "Created At": createdAt,
       };
     });
@@ -186,8 +223,7 @@ const ViewEnquiry = () => {
     saveAs(blob, "Enquiries.xlsx");
   };
 
-  const columns = useMemo(() => {
-    const baseColumns = [
+  const columns = [
       {
         title: (
           <Space>
@@ -261,32 +297,70 @@ const ViewEnquiry = () => {
           </span>
         ),
       },
-    ];
-
-    if (activeTab !== "ADMIN") {
-      return baseColumns;
-    }
-
-    return [
-      ...baseColumns,
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        width: 130,
+        render: (status) => {
+          const meta = STATUS_META[status || "NEW"];
+          return (
+            <Tag color={meta.color} style={{ fontWeight: 600 }}>
+              {meta.label}
+            </Tag>
+          );
+        },
+      },
       {
         title: "Actions",
         key: "actions",
-        width: 100,
+        width: activeTab === "ADMIN" ? 400 : 340,
         fixed: "right",
-        render: (_, record) => (
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => openEditAdminModal(record)}
-            style={{ padding: 0 }}
-          >
-            Edit
-          </Button>
-        ),
+        render: (_, record) => {
+          const currentStatus = record.status || "NEW";
+          return (
+            <Space size={6} wrap>
+              {STATUS_ACTIONS.map((action) => {
+                const isActive = currentStatus === action.status;
+                return (
+                  <Tooltip
+                    key={action.status}
+                    title={isActive ? "Click again to reset to New" : `Mark as ${action.label}`}
+                  >
+                    <Button
+                      size="small"
+                      icon={action.icon}
+                      loading={statusUpdatingId === record.id}
+                      onClick={() => handleStatusChange(record, action.status)}
+                      style={{
+                        borderRadius: 6,
+                        fontWeight: 500,
+                        borderColor: action.color,
+                        color: isActive ? "#fff" : action.color,
+                        background: isActive ? action.color : "#fff",
+                      }}
+                    >
+                      {action.label}
+                    </Button>
+                  </Tooltip>
+                );
+              })}
+              {activeTab === "ADMIN" && (
+                <Button
+                  type="link"
+                  size="small"
+                  icon={<EditOutlined />}
+                  onClick={() => openEditAdminModal(record)}
+                  style={{ padding: 0 }}
+                >
+                  Edit
+                </Button>
+              )}
+            </Space>
+          );
+        },
       },
     ];
-  }, [activeTab]);
 
   return (
     <div
@@ -364,7 +438,7 @@ const ViewEnquiry = () => {
             columns={columns}
             dataSource={data}
             rowKey={(record) => record.id}
-            scroll={{ x: 900 }}
+            scroll={{ x: 1350 }}
             pagination={{
               current: pagination.current,
               pageSize: pagination.pageSize,
@@ -440,6 +514,16 @@ const ViewEnquiry = () => {
           >
             <Input.TextArea rows={4} placeholder="Enter purpose/details" />
           </Form.Item>
+          {editingEnquiry && (
+            <Form.Item name="status" label="Status">
+              <Select
+                options={Object.entries(STATUS_META).map(([value, meta]) => ({
+                  value,
+                  label: meta.label,
+                }))}
+              />
+            </Form.Item>
+          )}
           <Form.Item style={{ marginBottom: 0, textAlign: "right" }}>
             <Space>
               <Button onClick={closeAdminModal}>Cancel</Button>
