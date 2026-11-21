@@ -33,18 +33,13 @@ Live at `https://www.thedancedistrictbysahitya.in`. The API is at `/api/` on the
 
 ```bash
 npm install
-npm run dev       # http://localhost:5173 (talks to the PRODUCTION API unless overridden)
+npm run dev       # http://localhost:5173; /api is proxied to a local backend on :4044 (vite.config.js)
 npm run build     # production build -> dist/
 npm run lint      # must report 0 errors (warnings are tolerated)
 npm run preview   # serve dist/
 ```
 
-**Local development against a local backend:**
-```bash
-cp .env.example .env.local        # VITE_API_BASE_URL=http://localhost:4044/api/
-npm run dev
-```
-`.env.local` is git-ignored. Without it, the dev server talks to the **production** API, so take care with admin actions.
+**Local development:** start the backend (`../dance_district`, port 4044, pointed at a local or throwaway DB), then `npm run dev`. The app calls the same-origin `/api/` and Vite proxies it to `http://localhost:4044`, so no extra config is needed. To use a different API, set `VITE_API_BASE_URL` in `.env.local` (git-ignored); see `.env.example`.
 
 There are no automated tests. To verify a change: `npm run lint` (0 errors), `npm run build` (succeeds; a ">500 kB chunk" warning is expected), then click through the changed pages in `npm run dev` against a local backend, at desktop and phone widths.
 
@@ -61,7 +56,7 @@ public/
 src/
   main.jsx                # mounts <App/> with Redux Provider, PersistGate, BrowserRouter
   App.jsx                 # ALL routes + auth gating + 2 s splash (LoadingPage)
-  config.js               # API_BASE_URL (env-overridable), ROLES: the only config file
+  config.js               # API_BASE_URL (default same-origin "/api/", env-overridable), ROLES: the only config file
   api/client.js           # shared axios instance: adds Authorization, handles 401 (logout -> /login)
   store/index.js          # Redux store + persistor
   reducers/users.js       # user slice: login / logout / passwordChanged
@@ -95,7 +90,7 @@ const res = await api.get(`${API_BASE_URL}membership-plan`);          // absolut
 const res2 = await api.post("enquire", { name, phone_number, purpose }); // relative to API_BASE_URL also works
 ```
 
-- **Never `import axios from "axios"` in components** and never hardcode a domain. Use `api` and `API_BASE_URL` (it always ends with `/`, so write paths without a leading slash).
+- **Never `import axios from "axios"` in components** and never hardcode a domain. Use `api` and `API_BASE_URL` (default `"/api/"`, always ending in `/`, so write paths without a leading slash). The site and API share one origin: nginx in production, the Vite proxy in dev.
 - The client attaches the logged-in user's token automatically as `Authorization: <raw JWT>` (no `Bearer `). Older pages still pass `{ headers: { Authorization: user.access_token } }` explicitly, which is harmless; new code doesn't need it.
 - On a **401** while logged in, the client logs the user out and sends them to `/login`.
 - **Response shapes differ between endpoints** (`{ data }`, `{ success, data }`, raw arrays, `{ error }`). Read the backend controller before you parse a response, and show server errors with `error.response?.data?.error || error.response?.data?.message`.
