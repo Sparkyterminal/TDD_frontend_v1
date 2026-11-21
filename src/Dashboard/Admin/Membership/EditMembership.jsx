@@ -17,8 +17,8 @@ import {
 } from "antd";
 import { UploadOutlined, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useNavigate, useParams } from "react-router-dom";
 
 const { TextArea } = Input;
@@ -74,7 +74,7 @@ const EditMembership = () => {
     const fetchClassTypes = async () => {
       setLoadingClassTypes(true);
       try {
-        const res = await axios.get(`${API_BASE_URL}class-type?page=1&limit=100`, config);
+        const res = await api.get(`${API_BASE_URL}class-type?page=1&limit=100`, config);
         const arr = Array.isArray(res.data.data?.classTypes) ? res.data.data.classTypes : [];
         setClassTypes(arr);
       } catch (e) {
@@ -94,7 +94,7 @@ const EditMembership = () => {
     const fetchPlan = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${API_BASE_URL}membership-plan/${id}`, config);
+        const res = await api.get(`${API_BASE_URL}membership-plan/${id}`, config);
         const data = res.data?.data || res.data || {};
         if (cancelled) return;
 
@@ -192,7 +192,7 @@ const EditMembership = () => {
     formData.append("media", file);
 
     try {
-      const res = await axios.post(`${API_BASE_URL}media`, formData, config);
+      const res = await api.post(`${API_BASE_URL}media`, formData, config);
       if (![200, 201].includes(res.status)) throw new Error("Upload failed");
       const returnedId = res.data.data || res.data?.id || null;
       setImageId(returnedId);
@@ -281,7 +281,7 @@ const EditMembership = () => {
         image: imageId || undefined,
       };
 
-      await axios.put(`${API_BASE_URL}membership-plan/${id}`, payload, config);
+      await api.put(`${API_BASE_URL}membership-plan/${id}`, payload, config);
       message.success("Membership plan updated");
       navigate(-1);
     } catch (err) {

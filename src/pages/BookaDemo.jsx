@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import axios from "axios";
-import { API_BASE_URL } from "../../config";
+import api from "../api/client";
+import { API_BASE_URL } from "../config";
 
 const Input = ({ label, children }) => (
   <label className="block mb-4">
@@ -105,7 +105,7 @@ const BookaDemo = () => {
     const fetchById = async () => {
       setLoadingPlan(true);
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `${API_BASE_URL}membership-plan/${routeId}`,
           config
         );
@@ -145,7 +145,7 @@ const BookaDemo = () => {
         mobile_number: form.mobile,
       };
       
-      await axios.post(`${API_BASE_URL}demoClass/demo-bookings`, payload);
+      await api.post(`${API_BASE_URL}demoClass/demo-bookings`, payload);
       
       setShowSuccessModal(true);
       

@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
-import { API_BASE_URL } from "../../config";
+import api from "../api/client";
+import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from "../lib/media";
 
 const fadeSlideVariants = {
   initial: { opacity: 0, x: 40 },
@@ -25,12 +26,6 @@ const formatTimeToIST12Hour = (time24) => {
 };
 
 // Match backend URL patterns used elsewhere in the app (see Admin/ViewMembership.jsx)
-const getImageUrl = (url) => {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
-  if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
-  return `${API_BASE_URL}api/${url}`;
-};
 
 const MembershipCard = ({ item, onGetMembership, onBookDemo }) => {
   const [open, setOpen] = useState(false);
@@ -198,7 +193,7 @@ useEffect(() => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan`, {
+      const res = await api.get(`${API_BASE_URL}membership-plan`, {
         params: { page: 1, limit: 100 },
       });
       const data = res.data || {};

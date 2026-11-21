@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Upload, message, Card, Divider, Spin } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../../config";
+import api from "../../../../api/client";
+import { API_BASE_URL } from "../../../../config";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ const EditCoach = () => {
     const fetchCoachDetails = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${API_BASE_URL}user/${id}`, config);
+        const response = await api.get(`${API_BASE_URL}user/${id}`, config);
         const coachData = response.data.data || response.data;
         
         // Prefill form with existing data
@@ -104,7 +104,7 @@ const EditCoach = () => {
     formData.append("media", file);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}media`, formData, config);
+      const response = await api.post(`${API_BASE_URL}media`, formData, config);
 
       if (response.status !== 201 && response.status !== 200) throw new Error("Upload failed");
 
@@ -143,7 +143,7 @@ const EditCoach = () => {
         media: [imageId || existingImageId], // Use new image ID or existing one
       };
 
-      await axios.put(
+      await api.put(
         `${API_BASE_URL}user/edit/${id}`,
         payload,
         config

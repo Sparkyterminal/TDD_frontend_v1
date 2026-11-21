@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Upload, message, Card, Divider } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../../config";
+import api from "../../../../api/client";
+import { API_BASE_URL } from "../../../../config";
 import { useSelector } from "react-redux";
 
 const AddCoach = () => {
@@ -50,7 +50,7 @@ const AddCoach = () => {
     formData.append("media", file);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}media`, formData,config);
+      const response = await api.post(`${API_BASE_URL}media`, formData,config);
 
       if (response.status !== 201 && response.status !== 200) throw new Error("Upload failed");
 
@@ -90,7 +90,7 @@ const AddCoach = () => {
         media: [imageId], // send image id as string
       };
 
-      await axios.post(
+      await api.post(
         `${API_BASE_URL}user/add-coach`,
         payload,
         config

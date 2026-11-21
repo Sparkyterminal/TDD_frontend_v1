@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Table, Button, message, Popconfirm } from "antd";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -28,7 +28,7 @@ const ViewClassTypes = () => {
   const fetchClassTypes = async (page = 1, pageSize = 10) => {
     setLoading(true);
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}class-type?page=${page}&limit=${pageSize}`,
         config
       );
@@ -66,7 +66,7 @@ const ViewClassTypes = () => {
   // Delete handler
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_BASE_URL}class-type/${id}`, config);
+      await api.delete(`${API_BASE_URL}class-type/${id}`, config);
       message.success("Deleted successfully");
       fetchClassTypes(pagination.current, pagination.pageSize);
     } catch {

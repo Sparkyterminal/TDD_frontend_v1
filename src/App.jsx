@@ -1,20 +1,10 @@
-import { useLocation } from "react-router-dom";
 import "@ant-design/v5-patch-for-react-19";
-
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-}
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Navigate, Routes, Route } from "react-router-dom";
+import { Navigate, Routes, Route, useLocation } from "react-router-dom";
 import Homepage from "./pages/Homepage";
-import verifyToken from "./verifytoken";
-import { ROLES } from "../config";
+import verifyToken from "./verifyToken";
+import { ROLES } from "./config";
 import Instructors from "./pages/Instructors";
 import Rentals from "./pages/Rentals";
 import Workshops from "./pages/Workshops";
@@ -65,6 +55,14 @@ import RenewalForm from "./Dashboard/Admin/RenewalForm/RenewalForm";
 import AddUserMember from "./Dashboard/Admin/UserForm/AddUserMember";
 import WorkshopUserForm from "./Dashboard/Admin/WorkshopUserForm/WorkshopUserForm";
 // import LoadingPage from "./components/LoadingPage"; // Import your custom LoadingPage
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 const App = () => {
   const [auth, setAuth] = useState(null);

@@ -6,8 +6,8 @@ const { TextArea } = Input;
 import { SearchOutlined, UserOutlined, ReloadOutlined, StopOutlined, EditOutlined, DeleteOutlined, CommentOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import * as XLSX from "xlsx";
 import dayjs from "dayjs";
 
@@ -101,7 +101,7 @@ const AllUserDetails = () => {
 
   const fetchMemberships = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan`, config);
+      const res = await api.get(`${API_BASE_URL}membership-plan`, config);
       const data = res.data?.items || res.data?.data || res.data || [];
       setMemberships(data);
     } catch (e) {
@@ -121,7 +121,7 @@ const AllUserDetails = () => {
     });
 
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan/${membershipId}`, config);
+      const res = await api.get(`${API_BASE_URL}membership-plan/${membershipId}`, config);
       const planData = res.data?.data || res.data || {};
       
       setSelectedPlan(planData);
@@ -204,7 +204,7 @@ const AllUserDetails = () => {
         payment_status: values.payment_status,
       };
 
-      await axios.post(
+      await api.post(
         `${API_BASE_URL}membership-plan/renew-manual/${selectedBooking.id}`,
         payload,
         config
@@ -226,7 +226,7 @@ const AllUserDetails = () => {
   const handleDiscontinue = async (bookingId) => {
     try {
       setLoading(true);
-      await axios.patch(
+      await api.patch(
         `${API_BASE_URL}membership-plan/booking/${bookingId}/discontinued`,
         {},
         config
@@ -244,7 +244,7 @@ const AllUserDetails = () => {
   const handleReactivate = async (bookingId) => {
     try {
       setLoading(true);
-      await axios.patch(
+      await api.patch(
         `${API_BASE_URL}membership-plan/booking/${bookingId}/reactivate`,
         {},
         config
@@ -261,7 +261,7 @@ const AllUserDetails = () => {
   const handleDeleteUser = async (userId) => {
     try {
       setLoading(true);
-      await axios.delete(
+      await api.delete(
         `${API_BASE_URL}membership-plan/user/${userId}`,
         config
       );
@@ -286,7 +286,7 @@ const AllUserDetails = () => {
         ...(renewalEligible !== null && renewalEligible !== undefined && renewalEligible !== '' && { renewalEligible: renewalEligible.toString() }),
       }).toString();
 
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}membership-plan/bookings/all?${queryParams}`,
         config
       );
@@ -374,7 +374,7 @@ const AllUserDetails = () => {
       let totalItems = 0;
 
       do {
-        const res = await axios.get(
+        const res = await api.get(
           `${API_BASE_URL}membership-plan/bookings/all?page=${currentPage}&limit=${pageSize}`,
           config
         );
@@ -425,7 +425,7 @@ const AllUserDetails = () => {
     setEditUserModal(true);
     setEditBookingData(null);
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan/bookings/${bookingId}`, config);
+      const res = await api.get(`${API_BASE_URL}membership-plan/bookings/${bookingId}`, config);
       const booking = res.data.data || res.data;
 
       setEditBookingData(booking);
@@ -485,7 +485,7 @@ const AllUserDetails = () => {
         },
       };
 
-      await axios.put(
+      await api.put(
         `${API_BASE_URL}membership-plan/user-and-booking/${editBookingData.user._id}/${editBookingData._id}`,
         payload,
         config
@@ -523,7 +523,7 @@ const AllUserDetails = () => {
     setRemarksSaving(true);
     try {
       const text = values.admin_remarks ?? "";
-      await axios.patch(
+      await api.patch(
         `${API_BASE_URL}user/${remarksRecord.userId}/admin-remarks`,
         { admin_remarks: text },
         config

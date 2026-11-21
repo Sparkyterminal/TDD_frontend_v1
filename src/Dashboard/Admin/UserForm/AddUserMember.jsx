@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Select, Button, Card, Alert, Row, Col, DatePicker, Divider, Typography, Space, Spin } from "antd";
 import { CalendarOutlined, UserOutlined, PhoneOutlined, TeamOutlined } from "@ant-design/icons";
-import axios from "axios";
+import api from "../../../api/client";
 import { useSelector } from "react-redux";
-import { API_BASE_URL } from "../../../../config";
+import { API_BASE_URL } from "../../../config";
 import dayjs from "dayjs";
 
 const { Title, Paragraph, Text } = Typography;
@@ -32,7 +32,7 @@ const AddUserMember = () => {
   const fetchMemberships = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan`, config);
+      const res = await api.get(`${API_BASE_URL}membership-plan`, config);
       const data = res.data?.items || res.data?.data || res.data || [];
       setMemberships(data);
     } catch (e) {
@@ -58,7 +58,7 @@ const AddUserMember = () => {
     });
 
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan/${membershipId}`, config);
+      const res = await api.get(`${API_BASE_URL}membership-plan/${membershipId}`, config);
       const planData = res.data?.data || res.data || {};
       
       setSelectedPlan(planData);
@@ -124,7 +124,7 @@ const AddUserMember = () => {
     if (values.batchId) payload.batchId = values.batchId;
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${API_BASE_URL}membership-plan/manual-booking`,
         payload,
         config

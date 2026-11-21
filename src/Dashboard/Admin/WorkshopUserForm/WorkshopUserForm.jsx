@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../../../../config";
-import axios from "axios";
+import { API_BASE_URL } from "../../../config";
+import api from "../../../api/client";
 import { message } from "antd";
 
 const WorkshopUserForm = () => {
@@ -35,7 +35,7 @@ const WorkshopUserForm = () => {
     async function fetchWorkshops() {
       try {
         setLoading(true);
-        const res = await axios.get(`${API_BASE_URL}workshop`, config);
+        const res = await api.get(`${API_BASE_URL}workshop`, config);
         setWorkshops(res.data.reverse());
         console.log("all workshops", res.data);
       } catch (error) {
@@ -59,7 +59,7 @@ const WorkshopUserForm = () => {
 
       try {
         setLoading(true);
-        const res = await axios.get(
+        const res = await api.get(
           `${API_BASE_URL}workshop/${selectedWorkshop}`,
           config
         );
@@ -135,7 +135,7 @@ const WorkshopUserForm = () => {
 
     try {
       setSubmitting(true);
-      const res = await axios.post(
+      const res = await api.post(
         `${API_BASE_URL}workshop/manual-booking`,
         payload,
         config

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button, Modal, Form, Input, Space, message, Tooltip } from "antd";
 import { MessageCircle } from "lucide-react";
-import axios from "axios";
-import { API_BASE_URL } from "../../config";
+import api from "../api/client";
+import { API_BASE_URL } from "../config";
 import { useSelector } from "react-redux";
 
 const AdminEnquiryFloatingButton = () => {
@@ -25,7 +25,7 @@ const AdminEnquiryFloatingButton = () => {
   const onSubmit = async (values) => {
     setSaving(true);
     try {
-      await axios.post(
+      await api.post(
         `${API_BASE_URL}enquire/admin`,
         {
           name: values.name,

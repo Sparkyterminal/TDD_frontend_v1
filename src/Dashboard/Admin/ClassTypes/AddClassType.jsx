@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { Form, Input, Button, Select, message } from "antd";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 
 const { Option } = Select;
@@ -29,7 +29,7 @@ const AddClassType = () => {
         description: values.description,
       };
 
-      await axios.post(`${API_BASE_URL}class-type`, payload, config);
+      await api.post(`${API_BASE_URL}class-type`, payload, config);
       message.success("Class type added successfully!");
       form.resetFields();
     } catch (err) {

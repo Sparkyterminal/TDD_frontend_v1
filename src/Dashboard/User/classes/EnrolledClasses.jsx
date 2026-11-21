@@ -1,8 +1,8 @@
 // import React, { useEffect, useMemo, useState } from "react";
 import { Table, Tag } from "antd";
-import axios from "axios";
+import api from "../../../api/client";
 import { useSelector } from "react-redux";
-import { API_BASE_URL } from "../../../../config";
+import { API_BASE_URL } from "../../../config";
 import { BookOpen } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -23,7 +23,7 @@ const EnrolledClasses = () => {
   const fetchEnrollments = async (page = 1, pageSize = 10) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}class-session/user/${user.id}`, config);
+      const res = await api.get(`${API_BASE_URL}class-session/user/${user.id}`, config);
       const items = res.data.items;
       
       const today = new Date();

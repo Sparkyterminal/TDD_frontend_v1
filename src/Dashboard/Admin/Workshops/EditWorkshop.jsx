@@ -14,8 +14,8 @@ import {
   InputNumber,
   Upload,
 } from "antd";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { useParams, useNavigate } from "react-router-dom";
@@ -58,7 +58,7 @@ const EditWorkshop = () => {
   useEffect(() => {
     async function fetchInstructors() {
       try {
-        const res = await axios.get(`${API_BASE_URL}user/coaches`, config);
+        const res = await api.get(`${API_BASE_URL}user/coaches`, config);
         const fetchedInstructors = (res.data.data || []).map((ins) => ({
           _id: ins._id || ins.id,
           name: `${ins.first_name || ""} ${ins.last_name || ""}`.trim(),
@@ -84,7 +84,7 @@ const EditWorkshop = () => {
   useEffect(() => {
     async function fetchWorkshop() {
       try {
-        const res = await axios.get(`${API_BASE_URL}workshop/${id}`, config);
+        const res = await api.get(`${API_BASE_URL}workshop/${id}`, config);
         const w = res.data?.data || res.data || {};
 
         // Prefill simple fields
@@ -274,7 +274,7 @@ const EditWorkshop = () => {
     formData.append("media", file);
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${API_BASE_URL}media`,
         formData,
         config
@@ -326,7 +326,7 @@ const EditWorkshop = () => {
         ...(imageId ? { media: [imageId] } : {}),
       };
 
-      await axios.put(`${API_BASE_URL}workshop/${id}`, payload, config);
+      await api.put(`${API_BASE_URL}workshop/${id}`, payload, config);
       message.success("Workshop updated successfully!");
       navigate(-1);
     } catch (err) {

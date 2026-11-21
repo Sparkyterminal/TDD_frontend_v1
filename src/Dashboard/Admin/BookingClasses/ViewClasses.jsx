@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Table, Button, message, Popconfirm, Tag, Space } from "antd";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
@@ -29,7 +29,7 @@ const ViewClasses = () => {
   const fetchClasses = async (page = 1, pageSize = 10) => {
     setLoading(true);
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}class-session?page=${page}&limit=${pageSize}`,
         config
       );
@@ -65,7 +65,7 @@ const ViewClasses = () => {
   // Cancel class handler
   const handleCancelClass = async (id) => {
     try {
-      await axios.patch(`${API_BASE_URL}class-session/${id}/cancel`, {}, config);
+      await api.put(`${API_BASE_URL}class-session/${id}/cancel`, {}, config);
       message.success("Class cancelled successfully");
       fetchClasses(pagination.current, pagination.pageSize);
     } catch (error) {

@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, MessageCircle } from "lucide-react"; // Added MessageCircle icon
-import axios from "axios";
-import { API_BASE_URL } from "../../config";
+import api from "../api/client";
+import { API_BASE_URL } from "../config";
 
 export default function EnquiryButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,7 +37,7 @@ export default function EnquiryButton() {
     if (!validateForm()) return;
     setLoading(true);
     try {
-      await axios.post(`${API_BASE_URL}enquire`, {
+      await api.post(`${API_BASE_URL}enquire`, {
         name: formData.name,
         phone_number: formData.phone,
         purpose: formData.reason,

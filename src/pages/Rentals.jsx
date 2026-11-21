@@ -4,9 +4,9 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
 import { Form, Input, Select, Button, message } from "antd";
-import axios from "axios";
+import api from "../api/client";
 import { useSelector } from "react-redux";
-import { API_BASE_URL } from "../../config";
+import { API_BASE_URL } from "../config";
 // import { API_BASE_URL } from "../config";
 
 const { Option } = Select;
@@ -81,7 +81,7 @@ const Rentals = () => {
         purpose: values.purpose,
       };
 
-      await axios.post(`${API_BASE_URL}rental-contact`, payload, {
+      await api.post(`${API_BASE_URL}rental-contact`, payload, {
         ...config,
         headers: { "Content-Type": "application/json", ...(config.headers || {}) },
       });

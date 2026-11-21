@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../../api/client";
 import { useSelector } from "react-redux";
 import { Bar } from "react-chartjs-2";
 import {
@@ -12,7 +12,7 @@ import {
   Legend,
 } from "chart.js";
 import { Flame, Calendar, TrendingUp } from "lucide-react";
-import { API_BASE_URL } from "../../../config";
+import { API_BASE_URL } from "../../config";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -45,7 +45,7 @@ const UserHomePage = () => {
   useEffect(() => {
   const fetchWeeklyReport = async () => {
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}class-session/user/${user.id}/weekly-report`,
         config
       );
@@ -64,7 +64,7 @@ const UserHomePage = () => {
     // Fetch confirmed classes count
     const fetchConfirmedCount = async () => {
       try {
-        const response = await axios.get(
+        const response = await api.get(
           `${API_BASE_URL}class-session/user/${user.id}/confirmed-count`,
           config
         );
@@ -77,7 +77,7 @@ const UserHomePage = () => {
     // Fetch membership data
     const fetchMembershipData = async () => {
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `${API_BASE_URL}membership-plan/user/${user.id}`,
           config
         );

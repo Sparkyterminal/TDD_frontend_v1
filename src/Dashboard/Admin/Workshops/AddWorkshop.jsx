@@ -15,8 +15,8 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 
 const AddWorkshop = () => {
   const [form] = Form.useForm();
@@ -152,7 +152,7 @@ const AddWorkshop = () => {
     formData.append("media", file);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}media`, formData, config);
+      const response = await api.post(`${API_BASE_URL}media`, formData, config);
       if (response.status !== 201 && response.status !== 200) throw new Error("Upload failed");
 
       const returnedId = response.data.data || null;
@@ -202,7 +202,7 @@ const AddWorkshop = () => {
     };
 
     try {
-      await axios.post(`${API_BASE_URL}workshop`, payload, config);
+      await api.post(`${API_BASE_URL}workshop`, payload, config);
       message.success("Workshop added successfully!");
       form.resetFields();
       setBatches([

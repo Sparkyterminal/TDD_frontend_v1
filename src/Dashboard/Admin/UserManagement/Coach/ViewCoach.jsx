@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../../api/client";
 import { Table, Button, Modal, Spin, Popconfirm, message } from "antd";
-import { API_BASE_URL } from "../../../../../config";
+import { API_BASE_URL } from "../../../../config";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from "../../../../lib/media";
 
 const ViewCoach = () => {
   const [data, setData] = useState([]);
@@ -24,7 +25,7 @@ const ViewCoach = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios
+    api
       .get(`${API_BASE_URL}user/coaches`, config)
       .then((response) => {
         // Assuming response.data.data contains array of coaches
@@ -39,18 +40,6 @@ const ViewCoach = () => {
       .finally(() => setLoading(false));
   }, []);
 
-const getImageUrl = (url) => {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
-  if (url.startsWith("assets/")) {
-    // Try without "/api" if that's how your image URLs are served
-    const newUrl = `${API_BASE_URL}${url}`;
-    console.log("Constructed image url:", newUrl);
-    return newUrl;
-    // Or if it should have /api/, adjust accordingly
-  }
-  return `${API_BASE_URL}api/${url}`;
-};
 
 
 
@@ -71,7 +60,7 @@ const getImageUrl = (url) => {
   const handleDelete = async (id) => {
     try {
       setLoading(true);
-      await axios.delete(`${API_BASE_URL}user/delete/${id}`, config);
+      await api.delete(`${API_BASE_URL}user/delete/${id}`, config);
       setData((prev) => prev.filter((item) => item._id !== id));
       message.success("Coach deleted successfully");
     } catch (error) {

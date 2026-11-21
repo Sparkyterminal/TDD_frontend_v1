@@ -11,8 +11,8 @@ import {
   CloseCircleOutlined,
   ClockCircleFilled,
 } from "@ant-design/icons";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -56,7 +56,7 @@ const ViewEnquiry = () => {
   const fetchEnquiryData = async (page = 1, pageSize = 10, source = "PUBLIC") => {
     setLoading(true);
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}enquire?page=${page}&limit=${pageSize}&source=${source}`,
         config
       );
@@ -135,7 +135,7 @@ const ViewEnquiry = () => {
     const nextStatus = (record.status || "NEW") === status ? "NEW" : status;
     setStatusUpdatingId(record.id);
     try {
-      await axios.patch(
+      await api.patch(
         `${API_BASE_URL}enquire/${record.id}/status`,
         { status: nextStatus },
         config
@@ -165,14 +165,14 @@ const ViewEnquiry = () => {
       };
 
       if (editingEnquiry?.id) {
-        await axios.put(
+        await api.put(
           `${API_BASE_URL}enquire/admin/${editingEnquiry.id}`,
           { ...payload, status: values.status },
           config
         );
         message.success("Admin enquiry updated successfully");
       } else {
-        await axios.post(`${API_BASE_URL}enquire/admin`, payload, config);
+        await api.post(`${API_BASE_URL}enquire/admin`, payload, config);
         message.success("Admin enquiry added successfully");
       }
 

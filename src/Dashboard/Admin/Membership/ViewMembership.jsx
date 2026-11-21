@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useMemo, useState } from "react";
-import { API_BASE_URL } from "../../../../config";
-import axios from "axios";
+import { API_BASE_URL } from "../../../config";
+import api from "../../../api/client";
 import { useSelector } from "react-redux";
 import { Button, message, Table, Tag, Typography, Popconfirm, Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from "../../../lib/media";
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -31,7 +32,7 @@ const ViewMembership = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_BASE_URL}membership-plan/${id}`, config);
+      await api.delete(`${API_BASE_URL}membership-plan/${id}`, config);
       message.success("Membership deleted successfully");
       fetchMemberships(pagination.current, pagination.pageSize, searchQuery);
     } catch (e) {
@@ -39,17 +40,11 @@ const ViewMembership = () => {
     }
   };
 
-  const getImageUrl = (url) => {
-    if (!url) return "";
-    if (url.startsWith("http")) return url;
-    if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
-    return `${API_BASE_URL}api/${url}`;
-  };
 
   const fetchMemberships = async (page = 1, limit = 10, search = "") => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan`, {
+      const res = await api.get(`${API_BASE_URL}membership-plan`, {
         ...config,
         params: { page, limit, search },
       });

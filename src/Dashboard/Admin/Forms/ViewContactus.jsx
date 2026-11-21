@@ -19,8 +19,8 @@ import {
   UserOutlined,
   ClockCircleOutlined,
 } from "@ant-design/icons";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -42,7 +42,7 @@ const ViewContactus = () => {
   const fetchcontactdata = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}rental-contact`, config);
+      const res = await api.get(`${API_BASE_URL}rental-contact`, config);
       let contacts = res.data.contacts || [];
       contacts.sort(
         (a, b) =>

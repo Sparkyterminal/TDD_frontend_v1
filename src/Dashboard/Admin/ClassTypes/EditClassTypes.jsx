@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Select, message, Spin } from "antd";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -28,7 +28,7 @@ const EditClassTypes = () => {
     const fetchClassType = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${API_BASE_URL}class-type/${id}`, config);
+        const res = await api.get(`${API_BASE_URL}class-type/${id}`, config);
         const data = res.data.data;
         form.setFieldsValue({
           title: data.title,
@@ -55,7 +55,7 @@ const EditClassTypes = () => {
         category: values.category || "",
         description: values.description,
       };
-      await axios.put(`${API_BASE_URL}class-type/${id}`, payload, config);
+      await api.put(`${API_BASE_URL}class-type/${id}`, payload, config);
       message.success("Class type updated successfully!");
       navigate(-1); // Go back to previous page
     } catch (err) {

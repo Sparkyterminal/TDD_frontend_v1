@@ -7,12 +7,12 @@ import {
   Users as UsersIcon,
   XCircle,
 } from "lucide-react";
-import axios from "axios";
+import api from "../../../api/client";
 import dayjs from "dayjs";
 import { useSelector } from "react-redux";
 
 import { message, Spin, Tooltip } from "antd";
-import { API_BASE_URL } from "../../../../config";
+import { API_BASE_URL } from "../../../config";
 
 const formatDateDisplay = (date) => {
   const day = date.getDate();
@@ -70,7 +70,7 @@ const Bookclasses = () => {
   const fetchClassTypes = async () => {
     setTypesLoading(true);
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}class-type?page=1&limit=200`,
         config
       );
@@ -95,7 +95,7 @@ const Bookclasses = () => {
       params.set("date", dateToInputValue(selectedDate));
       if (activeTypeId) params.set("class_type_id", activeTypeId);
 
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}class-session?${params.toString()}`,
         config
       );
@@ -112,7 +112,7 @@ const Bookclasses = () => {
   // Fetch user enrollments
   const fetchUserEnrollments = async () => {
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}class-session/user/${user.id}`,
         config
       );
@@ -156,7 +156,7 @@ const Bookclasses = () => {
         classSessionId: sessionId,
         user_id: user.id,
       };
-      await axios.post(
+      await api.post(
         `${API_BASE_URL}class-session/${sessionId}/enroll`,
         payload,
         config
@@ -173,7 +173,7 @@ const Bookclasses = () => {
 
   const cancelEnrollment = async (enrollmentId) => {
     try {
-      await axios.put(
+      await api.put(
         `${API_BASE_URL}class-session/enrollment/${enrollmentId}/cancel`,
         { enrollmentId, user_id: user.id },
         config

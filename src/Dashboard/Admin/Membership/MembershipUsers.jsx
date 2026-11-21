@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { API_BASE_URL } from "../../../../config";
-import axios from "axios";
+import { API_BASE_URL } from "../../../config";
+import api from "../../../api/client";
 import { useSelector } from "react-redux";
 import {
   Button,
@@ -17,6 +17,7 @@ import { SearchOutlined, CloseOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { getImageUrl } from "../../../lib/media";
 
 const { Title } = Typography;
 
@@ -53,7 +54,7 @@ const MembershipUsers = () => {
   const fetchMemberships = async (page = 1, limit = 10) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan`, {
+      const res = await api.get(`${API_BASE_URL}membership-plan`, {
         ...config,
         params: { page, limit },
       });
@@ -77,12 +78,6 @@ const MembershipUsers = () => {
     // eslint-disable-next-line
   }, []);
 
-  const getImageUrl = (url) => {
-    if (!url) return "";
-    if (url.startsWith("http")) return url;
-    if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
-    return `${API_BASE_URL}api/${url}`;
-  };
 
   // Debounce helper
   const debounce = (func, delay) => {
@@ -98,7 +93,7 @@ const MembershipUsers = () => {
     debounce(async (planId, batchId, search = "") => {
       setDrawerLoading(true);
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `${API_BASE_URL}membership-plan/${planId}/${batchId}/bookings`,
           {
             ...config,

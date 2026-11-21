@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Form, Input, Select, TimePicker, DatePicker, Button, message, Card, Row, Col, InputNumber } from "antd";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 
@@ -26,7 +26,7 @@ const AddClasses = () => {
   // Fetch class types
   const fetchClassTypes = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}class-type?page=1&limit=100`, config);
+      const res = await api.get(`${API_BASE_URL}class-type?page=1&limit=100`, config);
       const classTypesData = Array.isArray(res.data.data?.classTypes)
         ? res.data.data.classTypes
         : [];
@@ -40,7 +40,7 @@ const AddClasses = () => {
   // Fetch coaches
   const fetchCoaches = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}user/coaches`, config);
+      const response = await api.get(`${API_BASE_URL}user/coaches`, config);
       const coachesData = Array.isArray(response.data.data)
         ? response.data.data
         : [];
@@ -75,7 +75,7 @@ const AddClasses = () => {
 
       console.log("Payload:", payload);
 
-      const response = await axios.post(`${API_BASE_URL}class-session`, payload, config);
+      const response = await api.post(`${API_BASE_URL}class-session`, payload, config);
       
       message.success("Class added successfully!");
       form.resetFields();

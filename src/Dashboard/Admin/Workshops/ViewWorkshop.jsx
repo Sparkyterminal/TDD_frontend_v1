@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
-import axios from "axios";
+import api from "../../../api/client";
 import React, { useEffect, useState } from "react";
-import { API_BASE_URL } from "../../../../config";
+import { API_BASE_URL } from "../../../config";
 import { message, Table, Button, Popconfirm, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import moment from "moment-timezone";
+import { getImageUrl } from "../../../lib/media";
 
 const ViewWorkshop = () => {
   const user = useSelector((state) => state.user.value);
@@ -19,7 +20,7 @@ const ViewWorkshop = () => {
   useEffect(() => {
     async function fetchWorkshops() {
       try {
-        const res = await axios.get(`${API_BASE_URL}workshop`, config);
+        const res = await api.get(`${API_BASE_URL}workshop`, config);
         setWorkshops(res.data.reverse());
       } catch {
         message.error("Failed to load workshops");
@@ -29,16 +30,10 @@ const ViewWorkshop = () => {
     // eslint-disable-next-line
   }, []);
 
-  const getImageUrl = (url) => {
-    if (!url) return "";
-    if (url.startsWith("http")) return url;
-    if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
-    return `${API_BASE_URL}api/${url}`;
-  };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${API_BASE_URL}workshop/${id}`, config);
+      await api.delete(`${API_BASE_URL}workshop/${id}`, config);
       message.success("Workshop cancelled successfully");
       setWorkshops((prev) => prev.filter((w) => w.id !== id));
     } catch {

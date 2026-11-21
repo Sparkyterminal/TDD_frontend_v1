@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Select, TimePicker, DatePicker, Button, message, Row, Col, InputNumber, Spin } from "antd";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
@@ -14,7 +14,7 @@ const EditClasses = () => {
   const [coaches, setCoaches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
-  const [initialData, setInitialData] = useState(null);
+  const [, setInitialData] = useState(null);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -30,7 +30,7 @@ const EditClasses = () => {
   // Fetch class types
   const fetchClassTypes = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}class-type?page=1&limit=100`, config);
+      const res = await api.get(`${API_BASE_URL}class-type?page=1&limit=100`, config);
       const classTypesData = Array.isArray(res.data.data?.classTypes)
         ? res.data.data.classTypes
         : [];
@@ -44,7 +44,7 @@ const EditClasses = () => {
   // Fetch coaches
   const fetchCoaches = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}user/coaches`, config);
+      const response = await api.get(`${API_BASE_URL}user/coaches`, config);
       const coachesData = Array.isArray(response.data.data)
         ? response.data.data
         : [];
@@ -58,7 +58,7 @@ const EditClasses = () => {
   // Fetch class data by ID
   const fetchClassData = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}class-session/${id}`, config);
+      const response = await api.get(`${API_BASE_URL}class-session/${id}`, config);
       const classData = response.data.session; // Access the session object
       setInitialData(classData);
       
@@ -109,7 +109,7 @@ const EditClasses = () => {
 
       console.log("Update Payload:", payload);
 
-      await axios.put(`${API_BASE_URL}class-session/${id}`, payload, config);
+      await api.put(`${API_BASE_URL}class-session/${id}`, payload, config);
       
       message.success("Class updated successfully!");
       navigate("/dashboard/viewclasses");

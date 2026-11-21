@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, message, Modal, Space, Tag } from "antd";
 import { EyeOutlined } from '@ant-design/icons';
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 
@@ -37,7 +37,7 @@ const UsersClasses = () => {
   const fetchClasses = async (page = 1, pageSize = 10) => {
     setLoadingClasses(true);
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}class-session?page=${page}&limit=${pageSize}`,
         config
       );
@@ -61,7 +61,7 @@ const UsersClasses = () => {
   const fetchBookedUsers = async (classId, page = 1, pageSize = 10) => {
     setLoadingUsers(true);
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}class-session/${classId}/bookings?page=${page}&limit=${pageSize}`,
         config
       );

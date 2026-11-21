@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import axios from "axios";
-import { API_BASE_URL, ROLES } from "../../config";
+import api from "../api/client";
+import { API_BASE_URL, ROLES } from "../config";
 import { login } from "../reducers/users";
 
 export default function Login() {
@@ -25,7 +25,7 @@ export default function Login() {
     setLoading(true);
     try {
       const apiPayload = { email, password };
-      const response = await axios.post(
+      const response = await api.post(
         `${API_BASE_URL}user/login`,
         apiPayload
       );
@@ -43,14 +43,12 @@ export default function Login() {
         );
         if (role === ROLES.ADMIN) {
           navigate("/dashboard");
-        } else if (role === ROLES.USER) {
-          navigate("/userdashboard");
         } else {
-          navigate("/"); // default fallback
+          navigate("/");
         }
       }
     } catch (err) {
-      setError(err.response?.message || "Invalid credentials");
+      setError(err.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }

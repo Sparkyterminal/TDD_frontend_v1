@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { Lock, Eye, EyeOff, Shield, CheckCircle } from "lucide-react";
-import { API_BASE_URL } from "../../../config";
+import { API_BASE_URL } from "../../config";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../api/client";
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -74,7 +74,7 @@ const ChangePassword = () => {
 
     if (!passwordError && !confirmPasswordError) {
       try {
-        await axios.patch(
+        await api.patch(
           `${API_BASE_URL}user/change/password`,
           { password: formData.password },
           config

@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
-import axios from "axios";
+import api from "../../../api/client";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { API_BASE_URL } from "../../../../config";
+import { API_BASE_URL } from "../../../config";
 import { message, Select, Form, Button, Card, Space, Typography } from "antd";
 import { useParams, useLocation } from "react-router-dom";
 
@@ -36,7 +36,7 @@ const RenewalForm = () => {
   const fetchMemberships = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan`, config);
+      const res = await api.get(`${API_BASE_URL}membership-plan`, config);
       console.log("membership", res.data);
       
       // Handle both array and object with items property
@@ -50,15 +50,9 @@ const RenewalForm = () => {
   };
 
   useEffect(() => {
+    // Works both from the admin dashboard (userId in navigation state, shown for reference)
+    // and from the customer's WhatsApp renewal link; the backend resolves the member from the booking.
     fetchMemberships();
-    
-    // Check if userId is passed
-    if (!renewalUserId) {
-      console.warn("No userId found in navigation state");
-      message.warning("User information not found. Please go back and try again.");
-    } else {
-      console.log("Renewal for user ID:", renewalUserId);
-    }
     // eslint-disable-next-line
   }, []);
 
@@ -75,7 +69,7 @@ const RenewalForm = () => {
     });
 
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan/${membershipId}`, config);
+      const res = await api.get(`${API_BASE_URL}membership-plan/${membershipId}`, config);
       const planData = res.data?.data || res.data || {};
       
       console.log("plan details", planData);
@@ -127,26 +121,19 @@ const RenewalForm = () => {
     console.log("Form values:", values);
     console.log("Selected price:", getSelectedPrice());
     
-    // Validate userId is available
-    if (!renewalUserId) {
-      message.error("User information is missing. Please go back and try again.");
-      return;
-    }
-    
     setSubmitting(true);
 
     try {
       const payload = {
         membershipBookingId: membershipBookingId,
         planId: values.membershipPlan,
-        userId: renewalUserId, // Use the userId from location state
         batchId: values.batch,
         billing_interval: values.billingInterval,
       };
 
       console.log("Sending payload:", payload);
 
-      const response = await axios.post(
+      const response = await api.post(
         `${API_BASE_URL}membership-plan/${membershipBookingId}/renew`,
         payload,
         config
@@ -163,7 +150,10 @@ const RenewalForm = () => {
       
     } catch (error) {
       console.error("Renewal error:", error);
-      const errorMessage = error.response?.data?.message || "Failed to process renewal. Please try again.";
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Failed to process renewal. Please try again.";
       message.error(errorMessage);
     } finally {
       setSubmitting(false);
@@ -270,7 +260,7 @@ const RenewalForm = () => {
             htmlType="submit"
             block
             size="large"
-            disabled={!selectedPlan || batches.length === 0 || !renewalUserId}
+            disabled={!selectedPlan || batches.length === 0}
             loading={submitting}
           >
             {submitting ? "Processing..." : "Proceed to Payment"}

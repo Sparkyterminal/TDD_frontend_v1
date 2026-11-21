@@ -16,8 +16,8 @@ import {
 } from "antd";
 import { UploadOutlined, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import axios from "axios";
-import { API_BASE_URL } from "../../../../config";
+import api from "../../../api/client";
+import { API_BASE_URL } from "../../../config";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -72,7 +72,7 @@ const AddMembership = () => {
     const fetchClassTypes = async () => {
       setLoadingClassTypes(true);
       try {
-        const res = await axios.get(
+        const res = await api.get(
           `${API_BASE_URL}class-type?page=1&limit=100`,
           config
         );
@@ -120,7 +120,7 @@ const AddMembership = () => {
     formData.append("media", file);
 
     try {
-      const res = await axios.post(`${API_BASE_URL}media`, formData, config);
+      const res = await api.post(`${API_BASE_URL}media`, formData, config);
       if (res.status !== 200 && res.status !== 201)
         throw new Error("Upload failed");
       const returnedId = res.data.data || null;
@@ -183,7 +183,7 @@ const AddMembership = () => {
         image: imageId || undefined,
       };
 
-      await axios.post(`${API_BASE_URL}membership-plan`, payload, config);
+      await api.post(`${API_BASE_URL}membership-plan`, payload, config);
       message.success("Membership plan created successfully!");
       form.resetFields();
       setFileList([]);

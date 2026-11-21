@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/client";
 import { message } from "antd";
-import { API_BASE_URL } from "../../config";
+import { API_BASE_URL } from "../config";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { getImageUrl } from "../lib/media";
 
 const MembershipCard = ({
   name,
@@ -130,7 +131,7 @@ const MembershipPage = () => {
   const fetchMemberships = async (page = 1, limit = 100) => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}membership-plan`, {
+      const res = await api.get(`${API_BASE_URL}membership-plan`, {
         params: { page, limit },
       });
       const data = res.data || {};
@@ -148,12 +149,6 @@ const MembershipPage = () => {
   }, []);
 
   // helper to resolve image urls (same logic as ViewMembership)
-  const getImageUrl = (url) => {
-    if (!url) return "";
-    if (url.startsWith("http")) return url;
-    if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
-    return `${API_BASE_URL}api/${url}`;
-  };
 
   const danceClasses = items.filter(
     (item) => item.dance_type?.category === "dance classes" && item.is_active

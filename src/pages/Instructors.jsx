@@ -3,9 +3,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "../api/client";
 import { useSelector } from "react-redux";
-import { API_BASE_URL } from "../../config";
+import { API_BASE_URL } from "../config";
+import { getImageUrl } from "../lib/media";
 
 const Instructors = () => {
   const user = useSelector((state) => state.user.value);
@@ -17,12 +18,6 @@ const Instructors = () => {
   //   [user?.access_token]
   // );
 
-  const getImageUrl = (url) => {
-    if (!url) return "";
-    if (url.startsWith("http")) return url;
-    if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
-    return `${API_BASE_URL}api/${url}`;
-  };
 
   const getThumbnailFromMedia = (mediaDetails) => {
     const first = Array.isArray(mediaDetails) ? mediaDetails[0] : null;
@@ -40,7 +35,7 @@ const Instructors = () => {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    axios
+    api
       .get(`${API_BASE_URL}user/coaches`)
       .then((res) => {
         const list = Array.isArray(res?.data?.data) ? res.data.data : [];

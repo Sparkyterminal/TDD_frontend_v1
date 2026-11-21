@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import axios from "axios";
+import api from "../../../api/client";
 import React, { useEffect, useMemo, useState } from "react";
-import { API_BASE_URL } from "../../../../config";
+import { API_BASE_URL } from "../../../config";
 import { Button, Drawer, message, Table, Tag, Typography } from "antd";
 import { useSelector } from "react-redux";
 import moment from "moment-timezone";
@@ -9,6 +9,7 @@ import { EyeOutlined } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { PrinterCheck } from "lucide-react";
+import { getImageUrl } from "../../../lib/media";
 
 // Destructuring for convenience
 const { Title } = Typography;
@@ -32,7 +33,7 @@ const ViewUsersInWorkshop = () => {
   useEffect(() => {
     async function fetchWorkshops() {
       try {
-        const res = await axios.get(`${API_BASE_URL}workshop`, config);
+        const res = await api.get(`${API_BASE_URL}workshop`, config);
         setWorkshops(res.data.reverse());
       } catch {
         message.error("Failed to load workshops");
@@ -42,12 +43,6 @@ const ViewUsersInWorkshop = () => {
     // eslint-disable-next-line
   }, []);
 
-  const getImageUrl = (url) => {
-    if (!url) return "";
-    if (url.startsWith("http")) return url;
-    if (url.startsWith("assets/")) return `${API_BASE_URL}${url}`;
-    return `${API_BASE_URL}api/${url}`;
-  };
 
   const isPastDate = (record) => {
     if (!record?.date) return false;
@@ -85,7 +80,7 @@ const ViewUsersInWorkshop = () => {
     setBookings([]);
     setBookingsLoading(true);
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${API_BASE_URL}workshop/${record.id}/bookings`,
         config
       );
