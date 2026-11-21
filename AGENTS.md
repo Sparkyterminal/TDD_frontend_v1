@@ -1,6 +1,8 @@
 # AGENTS.md — Dance District Frontend (`TDD_frontend_v1`)
 
 Guidance for AI agents and developers working on this repo. Read it fully before making changes.
+
+> **Production status, open items and the server/deploy runbook live in `../dance_district/AGENTS.md` (§0 and §12).** Read those first. Short version: live on AWS Sydney at `13.54.85.27`, nginx serves this repo's committed `dist/`, there's **no live payment gateway yet** (Pay buttons fail), and **photos are being re-uploaded** by the client (old uploads were lost).
 The backend API is a separate repo at `../dance_district` (its `AGENTS.md` covers the API, data model, auth rules and payment flows). Any change that touches an API call has to match the backend contract, so check both sides.
 
 ---
@@ -41,9 +43,16 @@ npm run preview   # serve dist/
 
 **Local development:** start the backend (`../dance_district`, port 4044, pointed at a local or throwaway DB), then `npm run dev`. The app calls the same-origin `/api/` and Vite proxies it to `http://localhost:4044`, so no extra config is needed. To use a different API, set `VITE_API_BASE_URL` in `.env.local` (git-ignored); see `.env.example`.
 
-There are no automated tests. To verify a change: `npm run lint` (0 errors), `npm run build` (succeeds; a ">500 kB chunk" warning is expected), then click through the changed pages in `npm run dev` against a local backend, at desktop and phone widths.
+There are no frontend unit tests (the backend has `npm test`). To verify a change:
+1. `npm run lint` (0 errors) and `npm run build` (succeeds; a ">500 kB chunk" warning is expected).
+2. Click through the changed pages in `npm run dev` against a local backend, at desktop and phone widths.
+3. **Before deploying, also test the production bundle:** run `npm run build && npx vite preview` (http://localhost:4173, `/api` proxied to `localhost:4044`) and load the changed pages. Dev mode and the minified build can behave differently: in 2026-11 an API-client bug that only showed up in the built bundle broke every API call in production for about 10 minutes.
 
-**`dist/` is committed** and the production server serves it. When you ship a change, run `npm run build` and commit `dist/` together with the source.
+**`dist/` is committed** and the production server serves it directly (nginx root = `/srv/dancedistrict/frontend/dist`). To ship: build, check the production bundle (above), commit source **and** `dist/`, push `main`, then on the server:
+```bash
+ssh -i ~/.ssh/dancedistrict-sydney.pem ubuntu@13.54.85.27 'cd /srv/dancedistrict/frontend && git pull'
+```
+No restart is needed. Then open the changed page on https://www.thedancedistrictbysahitya.in and confirm the `/api/` calls return 200 (DevTools → Network). `index.html` asset links must be absolute (`/assets/...`), or they break on nested routes such as `/dashboard/...`.
 
 ## 4. Directory layout
 
@@ -91,6 +100,7 @@ const res2 = await api.post("enquire", { name, phone_number, purpose }); // rela
 ```
 
 - **Never `import axios from "axios"` in components** and never hardcode a domain. Use `api` and `API_BASE_URL` (default `"/api/"`, always ending in `/`, so write paths without a leading slash). The site and API share one origin: nginx in production, the Vite proxy in dev.
+- The client has **no axios `baseURL`**. It prefixes only bare paths (`"enquire"` → `/api/enquire`) and leaves `${API_BASE_URL}path` and other `/...` URLs untouched. Don't add a `baseURL` back: with the relative `/api/` default it would produce `/api/api/...`.
 - The client attaches the logged-in user's token automatically as `Authorization: <raw JWT>` (no `Bearer `). Older pages still pass `{ headers: { Authorization: user.access_token } }` explicitly, which is harmless; new code doesn't need it.
 - On a **401** while logged in, the client logs the user out and sends them to `/login`.
 - **Response shapes differ between endpoints** (`{ data }`, `{ success, data }`, raw arrays, `{ error }`). Read the backend controller before you parse a response, and show server errors with `error.response?.data?.error || error.response?.data?.message`.
